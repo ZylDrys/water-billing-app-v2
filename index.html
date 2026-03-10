@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#007bff">
+    <meta name="description" content="Water Billing System">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Water Bill">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <title>Water Billing System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .header {
+            text-align: center;
+            padding: 15px 0;
+            border-bottom: 2px solid #eee;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            color: #333;
+            font-size: 24px;
+        }
+        .header .subtitle {
+            color: #666;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        .nav-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        button {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0,123,255,0.4);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        button.secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+        }
+        button.success {
+            background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+        }
+        button.danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        }
+        button.full-width {
+            grid-column: span 2;
+        }
+        button.small {
+            padding: 8px 12px;
+            font-size: 12px;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            margin: 8px 0;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+        input[readonly] {
+            background: #f8f9fa;
+            color: #666;
+        }
+        .form-group {
+            margin: 15px 0;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+        th, td {
+            border: 1px solid #e0e0e0;
+            padding: 12px 8px;
+            text-align: left;
+        }
+        th {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        .section {
+            display: none;
+        }
+        .section.active {
+            display: block;
+        }
+        .total-display {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 15px 0;
+        }
+        .total-display .label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .total-display .amount {
+            font-size: 32px;
+            font-weight: bold;
+        }
+        .customer-card {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .customer-card .name {
+            font-weight: 600;
+            color: #333;
+        }
+        .customer-card .actions {
+            display: flex;
+            gap: 5px;
+        }
+        .bill-card {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .bill-card .date {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .bill-card .details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            text-align: center;
+        }
+        .bill-card .detail-item {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .bill-card .detail-item .value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        .bill-card .detail-item .label {
+            font-size: 11px;
+            color: #666;
+        }
+        .bill-card .total {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #e0e0e0;
+            text-align: right;
+            font-size: 18px;
+            font-weight: bold;
+            color: #28a745;
+        }
+        .bill-card .actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        .empty-state .icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        .back-button {
+            margin-bottom: 15px;
+        }
+        .install-prompt {
+            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+            color: #333;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 15px;
+            display: none;
+        }
+        .install-prompt.show {
+            display: block;
+        }
+        
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                max-width: 80mm;
+                width: 80mm;
+                padding: 5mm;
+                margin: 0;
+                box-shadow: none;
+                border-radius: 0;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-only {
+                display: block !important;
+            }
+            .print-receipt {
+                font-size: 10pt;
+            }
+            .print-receipt h2 {
+                text-align: center;
+                font-size: 14pt;
+                margin-bottom: 5mm;
+            }
+            .print-receipt .divider {
+                border-top: 1px dashed #000;
+                margin: 3mm 0;
+            }
+            .print-receipt table {
+                width: 100%;
+                border: none;
+            }
+            .print-receipt table td {
+                border: none;
+                padding: 1mm 0;
+            }
+            .print-receipt .total-row {
+                font-size: 14pt;
+                font-weight: bold;
+                border-top: 1px solid #000;
+                margin-top: 3mm;
+                padding-top: 3mm;
+            }
+            .print-receipt .footer {
+                text-align: center;
+                font-size: 8pt;
+                margin-top: 5mm;
+                padding-top: 3mm;
+                border-top: 1px dashed #000;
+            }
+        }
+        .print-only {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Install Prompt -->
+        <div id="installPrompt" class="install-prompt">
+            <strong>📱 Install this app!</strong>
+            <p style="font-size:12px; margin:5px 0;">Add to your home screen for quick access</p>
+            <button onclick="installApp()" class="small" style="margin-top:10px;">Install Now</button>
+            <button onclick="dismissInstall()" class="small secondary" style="margin-top:10px;">Later</button>
+        </div>
+
+        <!-- Header -->
+        <div class="header">
+            <h1>💧 Water Billing</h1>
+            <div class="subtitle">Simple Water Meter Billing System</div>
+        </div>
+
+        <!-- Main Menu -->
+        <div id="menuSection" class="section active">
+            <div class="nav-buttons">
+                <button onclick="showSection('newBillSection')" class="success full-width">
+                    ➕ New Bill
+                </button>
+                <button onclick="showSection('customersSection')">
+                    👥 Customers
+                </button>
+                <button onclick="showSection('historySection')">
+                    📋 History
+                </button>
+                <button onclick="exportToExcel()" class="secondary full-width">
+                    📊 Export to Excel
+                </button>
+            </div>
+            
+            <!-- Quick Stats -->
+            <div style="background:#f8f9fa; padding:15px; border-radius:10px; margin-top:20px;">
+                <h3 style="margin-bottom:10px; color:#333;">📈 Quick Stats</h3>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <div style="background:white; padding:15px; border-radius:8px; text-align:center;">
+                        <div id="totalCustomers" style="font-size:24px; font-weight:bold; color:#007bff;">0</div>
+                        <div style="font-size:12px; color:#666;">Customers</div>
+                    </div>
+                    <div style="background:white; padding:15px; border-radius:8px; text-align:center;">
+                        <div id="totalBills" style="font-size:24px; font-weight:bold; color:#28a745;">0</div>
+                        <div style="font-size:12px; color:#666;">Total Bills</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customers Section -->
+        <div id="customersSection" class="section">
+            <button onclick="showSection('menuSection')" class="secondary back-button no-print">
+                ← Back to Menu
+            </button>
+            <h2 style="margin-bottom:15px;">👥 Manage Customers</h2>
+            
+            <div class="form-group">
+                <label>Add New Customer</label>
+                <div style="display:flex; gap:10px;">
+                    <input type="text" id="newCustomerName" placeholder="Enter customer name">
+                    <button onclick="addCustomer()" class="success" style="white-space:nowrap;">Add</button>
+                </div>
+            </div>
+            
+            <div id="customersList"></div>
+        </div>
+
+        <!-- New Bill Section -->
+        <div id="newBillSection" class="section">
+            <button onclick="showSection('menuSection')" class="secondary back-button no-print">
+                ← Back to Menu
+            </button>
+            <h2 style="margin-bottom:15px;">➕ Create New Bill</h2>
+            
+            <div class="form-group">
+                <label>Select Customer</label>
+                <select id="billCustomer" onchange="loadLastReading()">
+                    <option value="">-- Select Customer --</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Billing Date</label>
+                <input type="date" id="billDate">
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Previous Reading (m³)</label>
+                    <input type="number" id="prevReading" readonly placeholder="Auto">
+                </div>
+                <div class="form-group">
+                    <label>Present Reading (m³)</label>
+                    <input type="number" id="presReading" oninput="calculateTotal()" placeholder="Enter">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Price per Cubic Meter ($)</label>
+                <input type="number" id="pricePerCubic" step="0.01" value="1.50" oninput="calculateTotal()">
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Total Used (m³)</label>
+                    <input type="number" id="totalUsed" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Total Due ($)</label>
+                    <input type="number" id="totalDue" readonly>
+                </div>
+            </div>
+            
+            <div class="total-display">
+                <div class="label">Amount Due</div>
+                <div class="amount" id="displayTotal">$0.00</div>
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="saveBill(false)" class="secondary full-width">
+                    💾 Save Only
+                </button>
+                <button onclick="saveBill(true)" class="success full-width">
+                    🖨️ Save & Print
+                </button>
+            </div>
+        </div>
+
+        <!-- History Section -->
+        <div id="historySection" class="section">
+            <button onclick="showSection('menuSection')" class="secondary back-button no-print">
+                ← Back to Menu
+            </button>
+            <h2 style="margin-bottom:15px;">📋 Transaction History</h2>
+            
+            <div class="form-group">
+                <label>Filter by Customer</label>
+                <select id="historyFilter" onchange="loadHistory()">
+                    <option value="all">All Customers</option>
+                </select>
+            </div>
+            
+            <div id="historyList"></div>
+        </div>
+
+        <!-- Print Receipt (Hidden) -->
+        <div id="printReceipt" class="print-only print-receipt"></div>
+    </div>
+
+    <!-- SheetJS for Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <script>
+        // PWA Install
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installPrompt').classList.add('show');
+        });
+
+        function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    deferredPrompt = null;
+                    document.getElementById('installPrompt').classList.remove('show');
+                });
+            }
+        }
+
+        function dismissInstall() {
+            document.getElementById('installPrompt').classList.remove('show');
+        }
+
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(reg => console.log('Service Worker registered'))
+                .catch(err => console.log('Service Worker not registered', err));
+        }
+
+        // Data Storage
+        const STORAGE = {
+            customers: 'water_customers',
+            bills: 'water_bills'
+        };
+
+        function getCustomers() {
+            return JSON.parse(localStorage.getItem(STORAGE.customers) || '[]');
+        }
+
+        function getBills() {
+            return JSON.parse(localStorage.getItem(STORAGE.bills) || '[]');
+        }
+
+        function saveCustomers(data) {
+            localStorage.setItem(STORAGE.customers, JSON.stringify(data));
+        }
+
+        function saveBills(data) {
+            localStorage.setItem(STORAGE.bills, JSON.stringify(data));
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('billDate').value = new Date().toISOString().split('T')[0];
+            updateStats();
+            loadCustomerDropdowns();
+            loadCustomersList();
+        });
+
+        // Navigation
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            
+            if (sectionId === 'newBillSection') {
+                loadCustomerDropdowns();
+                clearBillForm();
+            } else if (sectionId === 'historySection') {
+                loadCustomerDropdowns();
+                loadHistory();
+            } else if (sectionId === 'customersSection') {
+                loadCustomersList();
+            } else if (sectionId === 'menuSection') {
+                updateStats();
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('totalCustomers').textContent = getCustomers().length;
+            document.getElementById('totalBills').textContent = getBills().length;
+        }
+
+        // Customers
+        function addCustomer() {
+            const name = document.getElementById('newCustomerName').value.trim();
+            if (!name) return alert('Please enter a customer name');
+            
+            const customers = getCustomers();
+            if (customers.find(c => c.name.toLowerCase() === name.toLowerCase())) {
+                return alert('Customer already exists!');
+            }
+            
+            customers.push({ id: Date.now(), name });
+            saveCustomers(customers);
+            document.getElementById('newCustomerName').value = '';
+            loadCustomersList();
+            loadCustomerDropdowns();
+            alert('Customer added successfully!');
+        }
+
+        function deleteCustomer(id) {
+            if (!confirm('Delete this customer and all their bills?')) return;
+            
+            let customers = getCustomers().filter(c => c.id !== id);
+            let bills = getBills().filter(b => b.customerId !== id);
+            
+            saveCustomers(customers);
+            saveBills(bills);
+            loadCustomersList();
+            loadCustomerDropdowns();
+        }
+
+        function loadCustomersList() {
+            const customers = getCustomers();
+            const container = document.getElementById('customersList');
+            
+            if (customers.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">👥</div>
+                        <div>No customers yet</div>
+                        <div style="font-size:12px;">Add your first customer above</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = customers.map(c => `
+                <div class="customer-card">
+                    <div class="name">${c.name}</div>
+                    <div class="actions">
+                        <button onclick="viewCustomerHistory(${c.id})" class="small">View</button>
+                        <button onclick="deleteCustomer(${c.id})" class="small danger">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function viewCustomerHistory(customerId) {
+            showSection('historySection');
+            document.getElementById('historyFilter').value = customerId;
+            loadHistory();
+        }
+
+        function loadCustomerDropdowns() {
+            const customers = getCustomers();
+            const options = '<option value="">-- Select Customer --</option>' + 
+                customers.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+            
+            document.getElementById('billCustomer').innerHTML = options;
+            document.getElementById('historyFilter').innerHTML = 
+                '<option value="all">All Customers</option>' + 
+                customers.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+        }
+
+        // Billing
+        function loadLastReading() {
+            const customerId = parseInt(document.getElementById('billCustomer').value);
+            if (!customerId) {
+                document.getElementById('prevReading').value = '';
+                return;
+            }
+            
+            const bills = getBills().filter(b => b.customerId === customerId);
+            if (bills.length > 0) {
+                const lastBill = bills.sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+                document.getElementById('prevReading').value = lastBill.presReading;
+            } else {
+                document.getElementById('prevReading').value = 0;
+            }
+            calculateTotal();
+        }
+
+        function calculateTotal() {
+            const prev = parseFloat(document.getElementById('prevReading').value) || 0;
+            const pres = parseFloat(document.getElementById('presReading').value) || 0;
+            const price = parseFloat(document.getElementById('pricePerCubic').value) || 0;
+            
+            const used = Math.max(0, pres - prev);
+            const due = used * price;
+            
+            document.getElementById('totalUsed').value = used.toFixed(2);
+            document.getElementById('totalDue').value = due.toFixed(2);
+            document.getElementById('displayTotal').textContent = '$' + due.toFixed(2);
+        }
+
+        function clearBillForm() {
+            document.getElementById('billCustomer').value = '';
+            document.getElementById('prevReading').value = '';
+            document.getElementById('presReading').value = '';
+            document.getElementById('totalUsed').value = '';
+            document.getElementById('totalDue').value = '';
+            document.getElementById('displayTotal').textContent = '$0.00';
+            document.getElementById('billDate').value = new Date().toISOString().split('T')[0];
+        }
+
+        function saveBill(shouldPrint) {
+            const customerId = parseInt(document.getElementById('billCustomer').value);
+            if (!customerId) return alert('Please select a customer');
+            
+            const presReading = parseFloat(document.getElementById('presReading').value);
+            if (isNaN(presReading)) return alert('Please enter present reading');
+            
+            const bill = {
+                id: Date.now(),
+                customerId,
+                date: document.getElementById('billDate').value,
+                prevReading: parseFloat(document.getElementById('prevReading').value) || 0,
+                presReading,
+                pricePerCubic: parseFloat(document.getElementById('pricePerCubic').value) || 0,
+                totalUsed: parseFloat(document.getElementById('totalUsed').value) || 0,
+                totalDue: parseFloat(document.getElementById('totalDue').value) || 0
+            };
+            
+            const bills = getBills();
+            bills.push(bill);
+            saveBills(bills);
+            
+            if (shouldPrint) {
+                printBill(bill);
+            } else {
+                alert('Bill saved successfully!');
+            }
+            
+            clearBillForm();
+            updateStats();
+        }
+
+        // History
+        function loadHistory() {
+            const filter = document.getElementById('historyFilter').value;
+            let bills = getBills();
+            
+            if (filter !== 'all') {
+                bills = bills.filter(b => b.customerId === parseInt(filter));
+            }
+            
+            bills = bills.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            const container = document.getElementById('historyList');
+            const customers = getCustomers();
+            
+            if (bills.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">📋</div>
+                        <div>No bills found</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = bills.map(bill => {
+                const customer = customers.find(c => c.id === bill.customerId);
+                return `
+                    <div class="bill-card">
+                        <div class="date">
+                            📅 ${new Date(bill.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                            ${filter === 'all' ? `<br>👤 ${customer ? customer.name : 'Unknown'}` : ''}
+                        </div>
+                        <div class="details">
+                            <div class="detail-item">
+                                <div class="value">${bill.prevReading}</div>
+                                <div class="label">Previous</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="value">${bill.presReading}</div>
+                                <div class="label">Present</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="value">${bill.totalUsed}</div>
+                                <div class="label">Used (m³)</div>
+                            </div>
+                        </div>
+                        <div class="total">Total Due: $${bill.totalDue.toFixed(2)}</div>
+                        <div class="actions no-print">
+                            <button onclick="printBillById(${bill.id})" class="small">🖨️ Print</button>
+                            <button onclick="deleteBill(${bill.id})" class="small danger">🗑️ Delete</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function deleteBill(id) {
+            if (!confirm('Delete this bill?')) return;
+            const bills = getBills().filter(b => b.id !== id);
+            saveBills(bills);
+            loadHistory();
+            updateStats();
+        }
+
+        // Printing
+        function printBillById(id) {
+            const bill = getBills().find(b => b.id === id);
+            if (bill) printBill(bill);
+        }
+
+        function printBill(bill) {
+            const customer = getCustomers().find(c => c.id === bill.customerId);
+            const receiptHTML = `
+                <h2>💧 WATER BILL</h2>
+                <div style="text-align:center; margin-bottom:3mm;">
+                    ${new Date(bill.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long' })}
+                </div>
+                <div class="divider"></div>
+                <p><strong>Customer:</strong> ${customer ? customer.name : 'Unknown'}</p>
+                <p><strong>Date:</strong> ${new Date(bill.date).toLocaleDateString()}</p>
+                <div class="divider"></div>
+                <table>
+                    <tr><td>Previous Reading:</td><td style="text-align:right">${bill.prevReading} m³</td></tr>
+                    <tr><td>Present Reading:</td><td style="text-align:right">${bill.presReading} m³</td></tr>
+                    <tr><td>Total Used:</td><td style="text-align:right">${bill.totalUsed} m³</td></tr>
+                    <tr><td>Rate:</td><td style="text-align:right">$${bill.pricePerCubic.toFixed(2)}/m³</td></tr>
+                </table>
+                <div class="total-row" style="text-align:center">
+                    TOTAL DUE: $${bill.totalDue.toFixed(2)}
+                </div>
+                <div class="footer">
+                    Thank you for your payment!<br>
+                    Please pay by due date.
+                </div>
+            `;
+            
+            document.getElementById('printReceipt').innerHTML = receiptHTML;
+            window.print();
+        }
+
+        // Excel Export
+        function exportToExcel() {
+            const bills = getBills();
+            const customers = getCustomers();
+            
+            if (bills.length === 0) {
+                alert('No bills to export');
+                return;
+            }
+            
+            const data = [['Customer Name', 'Date', 'Previous (m³)', 'Present (m³)', 'Used (m³)', 'Price/m³', 'Total Due']];
+            
+            bills.forEach(bill => {
+                const customer = customers.find(c => c.id === bill.customerId);
+                data.push([
+                    customer ? customer.name : 'Unknown',
+                    bill.date,
+                    bill.prevReading,
+                    bill.presReading,
+                    bill.totalUsed,
+                    bill.pricePerCubic,
+                    bill.totalDue
+                ]);
+            });
+            
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Water Bills');
+            
+            ws['!cols'] = [
+                {wch: 25}, {wch: 12}, {wch: 12}, {wch: 12}, {wch: 10}, {wch: 10}, {wch: 12}
+            ];
+            
+            XLSX.writeFile(wb, `water-bills-${new Date().toISOString().split('T')[0]}.xlsx`);
+        }
+    </script>
+</body>
+</html>
