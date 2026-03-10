@@ -2,433 +2,680 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#007bff">
-    <title>Water Billing System</title>
+    <title>💧 Water Billing System</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial; background: #f0f2f5; padding: 10px; }
-        .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .header { text-align: center; padding: 15px; border-bottom: 2px solid #007bff; margin-bottom: 20px; }
-        button { background: #007bff; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-size: 14px; margin: 5px 3px; width: calc(50% - 11px); }
+        body { font-family: Arial, sans-serif; background: #f5f7fa; padding: 15px; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        h1, h2 { color: #333; margin-bottom: 15px; }
+        button { background: #007bff; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; margin: 5px 0; width: 100%; font-weight: bold; }
         button:hover { background: #0056b3; }
-        button.full-width { width: 100%; }
-        button.secondary { background: #6c757d; }
-        button.success { background: #28a745; }
-        button.danger { background: #dc3545; }
-        button.small { padding: 8px; font-size: 12px; width: auto; }
-        input, select { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; }
+        input, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 14px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background: #007bff; color: white; }
+        tr:nth-child(even) { background: #f9f9f9; }
         .section { display: none; }
         .section.active { display: block; }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .total-display { background: #28a745; color: white; padding: 20px; border-radius: 8px; text-align: center; font-size: 24px; font-weight: bold; margin: 15px 0; }
-        .search-box { margin-bottom: 15px; }
-        .sort-buttons { display: flex; gap: 10px; margin-bottom: 15px; }
-        .settings-box { background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 10px 0; border: 1px solid #ddd; }
-        .info-text { font-size: 12px; color: #666; margin-top: 5px; }
-        @media print { body { background: white; } .container { width: 80mm; margin: 0; box-shadow: none; } .no-print { display: none; } }
+        .total-display { background: #28a745; color: white; padding: 15px; border-radius: 8px; text-align: center; font-size: 20px; font-weight: bold; margin: 15px 0; }
+        .settings-btn { background: #ffc107; color: #333; }
+        .search-box { padding: 12px; margin: 15px 0; border: 2px solid #007bff; border-radius: 8px; font-size: 16px; }
+        .sort-controls { display: flex; gap: 10px; margin: 15px 0; }
+        .sort-controls button { width: auto; font-size: 12px; padding: 8px; }
+        .currency-switcher { margin: 15px 0; text-align: center; }
+        .currency-switcher button { width: auto; margin: 0 5px; }
+        @media print { body { background: white; } .container { width: 80mm; margin: 0; box-shadow: none; } .no-print { display: none !important; } }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>💧 Water Billing</h1>
-            <div style="font-size:12px;">Monthly Billing & Print</div>
-        </div>
+        <h1 style="text-align:center;">💧 Water Billing System</h1>
 
-        <!-- MAIN MENU -->
+        <!-- Main Menu -->
         <div id="menuSection" class="section active">
-            <button onclick="showSection('newBillSection')" class="success full-width">➕ New Bill</button>
+            <button onclick="showSection('newBillSection')">➕ New Bill</button>
             <button onclick="showSection('customersSection')">👥 Customers</button>
             <button onclick="showSection('historySection')">📋 History</button>
-            <button onclick="showSection('settingsSection')" class="secondary full-width">⚙️ Settings</button>
-            <button onclick="exportToExcel()" class="full-width secondary">📊 Export Excel</button>
+            <button onclick="showSection('settingsSection')" class="settings-btn">⚙️ Settings</button>
+            <button onclick="exportToExcel()" class="no-print">📊 Export to Excel</button>
         </div>
 
-        <!-- CUSTOMERS SECTION -->
+        <!-- Settings Section -->
+        <div id="settingsSection" class="section">
+            <button onclick="showSection('menuSection')" class="no-print">← Back</button>
+            <h2>⚙️ System Settings</h2>
+            
+            <div class="currency-switcher">
+                <strong>Currency:</strong>
+                <button onclick="setCurrency('USD')">USD $</button>
+                <button onclick="setCurrency('PHP')">PHP ₱</button>
+                <button onclick="setCurrency('EUR')">EUR €</button>
+            </div>
+
+            <div class="form-group">
+                <label>Price per Cubic Meter</label>
+                <input type="number" id="adminPricePerCubic" step="0.01" placeholder="Enter current rate">
+            </div>
+            
+            <div class="form-group">
+                <label>Minimum Charge (if usage ≤ 0)</label>
+                <input type="number" id="adminMinCharge" step="0.01" placeholder="Enter minimum charge">
+            </div>
+            
+            <div class="form-group">
+                <label>Admin Password</label>
+                <input type="password" id="adminPassword" placeholder="Enter password to save">
+            </div>
+            
+            <button onclick="saveSettings()">💾 Save Settings</button>
+        </div>
+
+        <!-- Customers Section -->
         <div id="customersSection" class="section">
-            <button onclick="showSection('menuSection')" class="secondary full-width no-print">← Back</button>
+            <button onclick="showSection('menuSection')" class="no-print">← Back</button>
             <h2>👥 Manage Customers</h2>
             
-            <div class="search-box">
-                <input type="text" id="customerSearch" placeholder="🔍 Search customer name..." oninput="loadCustomersList()">
-                <div class="sort-buttons">
-                    <button onclick="sortCustomers('asc')" class="small secondary">A → Z</button>
-                    <button onclick="sortCustomers('desc')" class="small secondary">Z → A</button>
-                </div>
-            </div>
-
-            <input type="text" id="newCustomerName" placeholder="New customer name">
-            <button onclick="addCustomer()" class="success full-width">Add Customer</button>
+            <input type="text" id="customerSearch" class="search-box" placeholder="Search customer..." oninput="filterCustomers()">
             
-            <div id="customersList" style="margin-top:15px;"></div>
+            <div class="sort-controls">
+                <button onclick="sortCustomers('name', 'asc')">A→Z</button>
+                <button onclick="sortCustomers('name', 'desc')">Z→A</button>
+                <button onclick="sortCustomers('date', 'desc')">Newest First</button>
+                <button onclick="sortCustomers('date', 'asc')">Oldest First</button>
+            </div>
+            
+            <div class="form-group">
+                <input type="text" id="newCustomerName" placeholder="Enter customer name">
+                <button onclick="addCustomer()">➕ Add Customer</button>
+            </div>
+            
+            <div id="customersList"></div>
         </div>
 
-        <!-- NEW BILL SECTION -->
+        <!-- New Bill Section -->
         <div id="newBillSection" class="section">
-            <button onclick="showSection('menuSection')" class="secondary full-width no-print">← Back</button>
-            <h2>➕ Create New Bill</h2>
+            <button onclick="showSection('menuSection')" class="no-print">← Back</button>
+            <h2>📄 Create New Bill</h2>
             
-            <input type="text" id="billSearch" placeholder="🔍 Search customer..." oninput="filterBillCustomers()">
-            <select id="billCustomer" onchange="loadLastReading()"><option value="">-- Select --</option></select>
+            <input type="text" id="billCustomerSearch" class="search-box" placeholder="Search customer..." oninput="filterBillCustomers()">
+            
+            <select id="billCustomer" onchange="loadLastReading()">
+                <option value="">-- Select Customer --</option>
+            </select>
             
             <input type="date" id="billDate">
-            <input type="number" id="prevReading" placeholder="Previous Reading" readonly>
-            <input type="number" id="presReading" placeholder="Present Reading" oninput="calculateTotal()">
-            
-            <div class="settings-box">
-                <div><strong>Price/m³:</strong> <span id="displayPrice"></span></div>
-                <div><strong>Min. Charge:</strong> <span id="displayMin"></span></div>
-                <div class="info-text">Change these in ⚙️ Settings</div>
-            </div>
-            
-            <input type="text" id="totalUsed" placeholder="Total Used (m³)" readonly>
-            <input type="text" id="totalDue" placeholder="Total Due" readonly>
-            <div class="total-display">Total: <span id="displayTotal">0.00</span></div>
-            
-            <button onclick="saveBill(false)" class="secondary full-width no-print">💾 Save Bill</button>
-            <button onclick="saveBill(true)" class="success full-width no-print">🖨️ Save & Print</button>
-        </div>
-
-        <!-- HISTORY SECTION -->
-        <div id="historySection" class="section">
-            <button onclick="showSection('menuSection')" class="secondary full-width no-print">← Back</button>
-            <h2>📋 Transaction History</h2>
-            
-            <input type="text" id="historySearch" placeholder="🔍 Search customer..." oninput="loadHistory()">
-            <select id="historySort" onchange="loadHistory()" style="margin-top:10px;">
-                <option value="newest">📅 Newest First</option>
-                <option value="oldest">📅 Oldest First</option>
-            </select>
-            
-            <div id="historyList" style="margin-top:15px;"></div>
-        </div>
-
-        <!-- SETTINGS SECTION -->
-        <div id="settingsSection" class="section">
-            <button onclick="showSection('menuSection')" class="secondary full-width no-print">← Back</button>
-            <h2>⚙️ Settings</h2>
             
             <div class="form-row">
-                <div>
-                    <label>Price per m³:</label>
-                    <input type="number" id="settingsPrice" step="0.01">
+                <div class="form-group">
+                    <label>Previous Reading (m³)</label>
+                    <input type="number" id="prevReading" readonly>
                 </div>
-                <div>
-                    <label>Minimum Amount:</label>
-                    <input type="number" id="settingsMin" step="0.01">
+                <div class="form-group">
+                    <label>Present Reading (m³)</label>
+                    <input type="number" id="presReading" oninput="calculateTotal()">
                 </div>
             </div>
             
-            <label>Currency Symbol:</label>
-            <select id="settingsCurrency">
-                <option value="$">$ USD</option>
-                <option value="₱">₱ PHP</option>
-                <option value="€">€ EUR</option>
-                <option value="£">£ GBP</option>
-                <option value="¥">¥ JPY</option>
-                <option value="Rs">Rs INR</option>
-                <option value="₦">₦ NGN</option>
-            </select>
+            <div class="total-display">Total Due: <span id="displayCurrencySymbol">$</span><span id="displayTotal">0.00</span></div>
             
-            <div style="background:#fff3cd; padding:10px; border-radius:8px; margin:15px 0; font-size:14px;">
-                <strong>🔐 Password Protection</strong><br>
-                Set a password to lock changes to Price & Minimum Amount.
-            </div>
-            <input type="password" id="settingsPassword" placeholder="Enter new password (leave blank to keep current)">
-            
-            <button onclick="saveSettings()" class="success full-width">💾 Save Settings</button>
-            <div id="settingsStatus" style="text-align:center; margin-top:10px; font-size:14px;"></div>
+            <button onclick="saveBill(false)" class="no-print">💾 Save Only</button>
+            <button onclick="saveBill(true)" class="no-print">🖨️ Save & Print</button>
         </div>
 
-        <!-- PRINT AREA (Hidden) -->
+        <!-- History Section -->
+        <div id="historySection" class="section">
+            <button onclick="showSection('menuSection')" class="no-print">← Back</button>
+            <h2>📋 Transaction History</h2>
+            
+            <input type="text" id="historySearch" class="search-box" placeholder="Search by customer or date..." oninput="filterHistory()">
+            
+            <div class="sort-controls">
+                <button onclick="sortHistory('date', 'desc')">Newest First</button>
+                <button onclick="sortHistory('date', 'asc')">Oldest First</button>
+                <button onclick="sortHistory('amount', 'desc')">Highest Amount</button>
+                <button onclick="sortHistory('amount', 'asc')">Lowest Amount</button>
+            </div>
+            
+            <select id="historyFilter" onchange="loadFilteredHistory()">
+                <option value="all">All Customers</option>
+            </select>
+            
+            <div id="historyList"></div>
+        </div>
+
+        <!-- Hidden Print Area -->
         <div id="printReceipt" class="print-only"></div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
-        // --- DATA STORAGE ---
-        const STORAGE = { customers: 'water_customers', bills: 'water_bills', settings: 'water_settings' };
-        
-        // Default Settings
-        let appSettings = JSON.parse(localStorage.getItem(STORAGE.settings)) || {
-            pricePerCubic: 1.50,
-            minAmount: 10.00,
-            currency: '$',
-            passwordHash: null
+        // === STORAGE KEYS ===
+        const STORAGE = {
+            customers: 'water_customers_v2',
+            bills: 'water_bills_v2',
+            settings: 'water_settings_v2'
         };
 
-        function getCustomers() { return JSON.parse(localStorage.getItem(STORAGE.customers) || '[]'); }
-        function getBills() { return JSON.parse(localStorage.getItem(STORAGE.bills) || '[]'); }
-        function saveCustomers(d) { localStorage.setItem(STORAGE.customers, JSON.stringify(d)); }
-        function saveBills(d) { localStorage.setItem(STORAGE.bills, JSON.stringify(d)); }
-        function saveSettingsToStorage() { localStorage.setItem(STORAGE.settings, JSON.stringify(appSettings)); }
+        // === DEFAULT SETTINGS ===
+        const DEFAULT_SETTINGS = {
+            pricePerCubic: 1.50,
+            minCharge: 5.00,
+            currency: 'USD',
+            adminPassword: 'admin123' // Default password - CHANGE THIS!
+        };
 
-        // --- PASSWORD HASH (Simple) ---
-        function hashPassword(pwd) { let h=0; for(let i=0;i<pwd.length;i++){h=((h<<5)-h)+pwd.charCodeAt(i);h&=h;} return h.toString(); }
-        function verifyPassword(pwd) { return appSettings.passwordHash && hashPassword(pwd) === appSettings.passwordHash; }
+        // === HELPER FUNCTIONS ===
+        function getData(key) {
+            try {
+                return JSON.parse(localStorage.getItem(STORAGE[key]) || '[]');
+            } catch (e) {
+                return [];
+            }
+        }
 
-        // --- NAVIGATION ---
+        function saveData(key, data) {
+            localStorage.setItem(STORAGE[key], JSON.stringify(data));
+        }
+
+        function getSettings() {
+            try {
+                return JSON.parse(localStorage.getItem(STORAGE.settings)) || DEFAULT_SETTINGS;
+            } catch (e) {
+                return DEFAULT_SETTINGS;
+            }
+        }
+
+        function saveSettingsData(settings) {
+            localStorage.setItem(STORAGE.settings, JSON.stringify(settings));
+        }
+
+        function formatMoney(amount) {
+            const settings = getSettings();
+            const formatter = new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: settings.currency === 'PHP' ? 'PHP' : 
+                         settings.currency === 'EUR' ? 'EUR' : 'USD',
+                minimumFractionDigits: 2
+            });
+            return formatter.format(amount);
+        }
+
         function showSection(id) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             
-            if (id === 'menuSection') updateStats();
-            if (id === 'customersSection') loadCustomersList();
-            if (id === 'newBillSection') { loadBillCustomers(); document.getElementById('billDate').value = new Date().toISOString().split('T')[0]; loadSettingsToBill(); }
-            if (id === 'historySection') loadHistory();
-            if (id === 'settingsSection') loadSettingsToUI();
+            if (id === 'newBillSection') {
+                loadCustomerDropdowns();
+                clearBillForm();
+            } else if (id === 'historySection') {
+                loadCustomerDropdowns();
+                loadHistory();
+            } else if (id === 'customersSection') {
+                loadCustomersList();
+            } else if (id === 'settingsSection') {
+                loadSettings();
+            }
         }
 
-        function updateStats() {
-            document.getElementById('totalCustomers') && (document.getElementById('totalCustomers').textContent = getCustomers().length);
-            document.getElementById('totalBills') && (document.getElementById('totalBills').textContent = getBills().length);
+        // === SETTINGS ===
+        function loadSettings() {
+            const settings = getSettings();
+            document.getElementById('adminPricePerCubic').value = settings.pricePerCubic;
+            document.getElementById('adminMinCharge').value = settings.minCharge;
+            document.getElementById('adminPassword').value = '';
         }
 
-        // --- CUSTOMERS ---
-        let customerSortOrder = 'asc';
-        function sortCustomers(order) { customerSortOrder = order; loadCustomersList(); }
-        
-        function loadCustomersList() {
-            const search = (document.getElementById('customerSearch')?.value || '').toLowerCase();
-            let customers = getCustomers().filter(c => c.name.toLowerCase().includes(search));
-            customers.sort((a,b) => customerSortOrder === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name));
+        function setCurrency(currency) {
+            const settings = getSettings();
+            settings.currency = currency;
+            saveSettingsData(settings);
+            updateCurrencyDisplay();
+            loadHistory(); // Refresh display
+            alert(`Currency changed to ${currency}`);
+        }
+
+        function updateCurrencyDisplay() {
+            const settings = getSettings();
+            let symbol = '$';
+            if (settings.currency === 'PHP') symbol = '₱';
+            if (settings.currency === 'EUR') symbol = '€';
+            document.getElementById('displayCurrencySymbol').textContent = symbol;
+        }
+
+        function saveSettings() {
+            const password = document.getElementById('adminPassword').value;
+            const correctPassword = getSettings().adminPassword;
+            
+            if (password !== correctPassword) {
+                alert('❌ Incorrect password!');
+                return;
+            }
+            
+            const newPrice = parseFloat(document.getElementById('adminPricePerCubic').value) || DEFAULT_SETTINGS.pricePerCubic;
+            const newMinCharge = parseFloat(document.getElementById('adminMinCharge').value) || DEFAULT_SETTINGS.minCharge;
+            
+            const settings = getSettings();
+            settings.pricePerCubic = newPrice;
+            settings.minCharge = newMinCharge;
+            saveSettingsData(settings);
+            
+            alert('✅ Settings saved successfully!');
+            showSection('menuSection');
+        }
+
+        // === CUSTOMERS ===
+        function addCustomer() {
+            const name = document.getElementById('newCustomerName').value.trim();
+            if (!name) return alert('Please enter customer name');
+            
+            const customers = getData('customers');
+            if (customers.find(c => c.name.toLowerCase() === name.toLowerCase())) {
+                return alert('Customer already exists!');
+            }
+            
+            customers.push({
+                id: Date.now(),
+                name: name,
+                createdAt: new Date().toISOString()
+            });
+            
+            saveData('customers', customers);
+            document.getElementById('newCustomerName').value = '';
+            loadCustomersList();
+            loadCustomerDropdowns();
+            alert('✅ Customer added!');
+        }
+
+        function deleteCustomer(id) {
+            if (!confirm('Delete this customer and all their bills?')) return;
+            
+            const customers = getData('customers').filter(c => c.id !== id);
+            const bills = getData('bills').filter(b => b.customerId !== id);
+            
+            saveData('customers', customers);
+            saveData('bills', bills);
+            loadCustomersList();
+            loadCustomerDropdowns();
+        }
+
+        function loadCustomersList(sortBy = 'name', order = 'asc') {
+            let customers = getData('customers');
+            
+            // Apply search filter
+            const searchTerm = document.getElementById('customerSearch')?.value.toLowerCase() || '';
+            if (searchTerm) {
+                customers = customers.filter(c => c.name.toLowerCase().includes(searchTerm));
+            }
+            
+            // Apply sorting
+            customers.sort((a, b) => {
+                if (sortBy === 'name') {
+                    return order === 'asc' ? 
+                        a.name.localeCompare(b.name) : 
+                        b.name.localeCompare(a.name);
+                } else if (sortBy === 'date') {
+                    return order === 'asc' ? 
+                        new Date(a.createdAt) - new Date(b.createdAt) : 
+                        new Date(b.createdAt) - new Date(a.createdAt);
+                }
+                return 0;
+            });
             
             const container = document.getElementById('customersList');
-            if (!container) return;
-            if (customers.length === 0) { container.innerHTML = '<p style="text-align:center;color:#666;">No customers found</p>'; return; }
+            
+            if (customers.length === 0) {
+                container.innerHTML = '<p style="padding:20px; text-align:center; color:#666;">No customers found.</p>';
+                return;
+            }
             
             container.innerHTML = customers.map(c => `
-                <div style="border:1px solid #ddd; padding:10px; margin:5px 0; display:flex; justify-content:space-between; align-items:center;">
-                    <strong>${c.name}</strong>
-                    <div>
-                        <button onclick="deleteCustomer(${c.id})" class="small danger">Delete</button>
+                <div style="padding:15px; border:1px solid #eee; margin:10px 0; border-radius:8px;">
+                    <strong>${c.name}</strong><br>
+                    <small>Added: ${new Date(c.createdAt).toLocaleDateString()}</small>
+                    <div style="margin-top:10px;">
+                        <button onclick="viewCustomerHistory(${c.id})" style="padding:5px 10px; font-size:12px;">View Bills</button>
+                        <button onclick="deleteCustomer(${c.id})" style="padding:5px 10px; font-size:12px; background:#dc3545;">Delete</button>
                     </div>
                 </div>
             `).join('');
         }
 
-        function addCustomer() {
-            const name = document.getElementById('newCustomerName').value.trim();
-            if (!name) return alert('Enter name');
-            const customers = getCustomers();
-            if (customers.find(c => c.name.toLowerCase() === name.toLowerCase())) return alert('Customer exists');
-            customers.push({ id: Date.now(), name });
-            saveCustomers(customers);
-            document.getElementById('newCustomerName').value = '';
-            loadCustomersList();
-            alert('Customer added!');
+        function sortCustomers(by, order) {
+            loadCustomersList(by, order);
         }
 
-        function deleteCustomer(id) {
-            if (!confirm('Delete customer and all bills?')) return;
-            saveCustomers(getCustomers().filter(c => c.id !== id));
-            saveBills(getBills().filter(b => b.customerId !== id));
-            loadCustomersList();
+        function filterCustomers() {
+            loadCustomersList(); // Reapply filter
         }
 
-        // --- BILLING ---
-        let billCustomers = [];
-        function loadBillCustomers() {
-            billCustomers = getCustomers();
-            renderBillCustomerOptions(billCustomers);
+        function viewCustomerHistory(customerId) {
+            showSection('historySection');
+            document.getElementById('historyFilter').value = customerId;
+            loadFilteredHistory();
         }
-        function renderBillCustomerOptions(list) {
-            const search = (document.getElementById('billSearch')?.value || '').toLowerCase();
-            const filtered = list.filter(c => c.name.toLowerCase().includes(search));
-            const html = '<option value="">-- Select Customer --</option>' + filtered.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-            const sel = document.getElementById('billCustomer');
-            if (sel) sel.innerHTML = html;
-        }
-        function filterBillCustomers() { renderBillCustomerOptions(billCustomers); }
 
+        function loadCustomerDropdowns() {
+            const customers = getData('customers');
+            const options = '<option value="">-- Select Customer --</option>' + 
+                customers.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+            
+            document.getElementById('billCustomer').innerHTML = options;
+            document.getElementById('historyFilter').innerHTML = 
+                '<option value="all">All Customers</option>' + 
+                customers.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+        }
+
+        function filterBillCustomers() {
+            const searchTerm = document.getElementById('billCustomerSearch').value.toLowerCase();
+            const select = document.getElementById('billCustomer');
+            const originalOptions = Array.from(select.options);
+            
+            // Clear and repopulate based on search
+            select.innerHTML = '<option value="">-- Select Customer --</option>';
+            
+            originalOptions.forEach(opt => {
+                if (opt.value === "" || opt.text.toLowerCase().includes(searchTerm)) {
+                    select.appendChild(opt);
+                }
+            });
+        }
+
+        // === BILLING ===
         function loadLastReading() {
-            const id = document.getElementById('billCustomer').value;
-            if (!id) { document.getElementById('prevReading').value = ''; return; }
-            const bills = getBills().filter(b => b.customerId == id);
-            const last = bills.sort((a,b) => b.id - a.id)[0];
-            document.getElementById('prevReading').value = last ? last.presReading : 0;
+            const customerId = parseInt(document.getElementById('billCustomer').value);
+            if (!customerId) {
+                document.getElementById('prevReading').value = 0;
+                return;
+            }
+            
+            const bills = getData('bills').filter(b => b.customerId === customerId);
+            if (bills.length > 0) {
+                const lastBill = bills.sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+                document.getElementById('prevReading').value = lastBill.presReading;
+            } else {
+                document.getElementById('prevReading').value = 0;
+            }
             calculateTotal();
         }
 
-        function loadSettingsToBill() {
-            document.getElementById('displayPrice').textContent = appSettings.currency + appSettings.pricePerCubic;
-            document.getElementById('displayMin').textContent = appSettings.currency + appSettings.minAmount;
-        }
-
         function calculateTotal() {
+            const settings = getSettings();
             const prev = parseFloat(document.getElementById('prevReading').value) || 0;
             const pres = parseFloat(document.getElementById('presReading').value) || 0;
             const used = pres - prev;
-            const due = used <= 0 ? parseFloat(appSettings.minAmount) : (used * parseFloat(appSettings.pricePerCubic));
             
-            document.getElementById('totalUsed').value = used > 0 ? used.toFixed(2) : '0.00';
-            document.getElementById('totalDue').value = appSettings.currency + due.toFixed(2);
-            document.getElementById('displayTotal').textContent = appSettings.currency + due.toFixed(2);
+            let totalDue;
+            if (used <= 0) {
+                totalDue = settings.minCharge;
+            } else {
+                totalDue = used * settings.pricePerCubic;
+            }
+            
+            document.getElementById('displayTotal').textContent = totalDue.toFixed(2);
         }
 
-        function saveBill(print) {
-            const customerId = document.getElementById('billCustomer').value;
-            if (!customerId) return alert('Select customer');
-            const pres = parseFloat(document.getElementById('presReading').value);
-            if (isNaN(pres)) return alert('Enter present reading');
+        function clearBillForm() {
+            document.getElementById('billCustomer').value = '';
+            document.getElementById('prevReading').value = 0;
+            document.getElementById('presReading').value = '';
+            document.getElementById('displayTotal').textContent = '0.00';
+            document.getElementById('billDate').value = new Date().toISOString().split('T')[0];
+        }
+
+        function saveBill(shouldPrint) {
+            const customerId = parseInt(document.getElementById('billCustomer').value);
+            if (!customerId) return alert('Please select a customer');
+            
+            const presReading = parseFloat(document.getElementById('presReading').value);
+            if (isNaN(presReading)) return alert('Please enter present reading');
+            
+            const settings = getSettings();
+            const prevReading = parseFloat(document.getElementById('prevReading').value) || 0;
+            const used = presReading - prevReading;
+            
+            let totalDue;
+            if (used <= 0) {
+                totalDue = settings.minCharge;
+            } else {
+                totalDue = used * settings.pricePerCubic;
+            }
             
             const bill = {
                 id: Date.now(),
-                customerId,
+                customerId: customerId,
                 date: document.getElementById('billDate').value,
-                prevReading: parseFloat(document.getElementById('prevReading').value) || 0,
-                presReading: pres,
-                totalUsed: parseFloat(document.getElementById('totalUsed').value) || 0,
-                totalDue: parseFloat(document.getElementById('displayTotal').textContent.replace(/[^0-9.-]+/g,"")) || 0,
-                createdAt: Date.now()
+                prevReading: prevReading,
+                presReading: presReading,
+                totalUsed: Math.max(0, used),
+                pricePerCubic: settings.pricePerCubic,
+                totalDue: totalDue,
+                createdAt: new Date().toISOString()
             };
-            saveBills([...getBills(), bill]);
             
-            if (print) {
-                const customer = getCustomers().find(c => c.id == customerId);
-                printReceipt(bill, customer);
+            const bills = getData('bills');
+            bills.push(bill);
+            saveData('bills', bills);
+            
+            if (shouldPrint) {
+                printBill(bill);
             } else {
-                alert('Bill saved!');
+                alert('✅ Bill saved successfully!');
             }
-            showSection('menuSection');
+            
+            clearBillForm();
         }
 
-        // --- HISTORY ---
-        function loadHistory() {
-            const search = (document.getElementById('historySearch')?.value || '').toLowerCase();
-            const sortType = document.getElementById('historySort')?.value || 'newest';
-            let bills = getBills();
+        // === HISTORY ===
+        function loadHistory(sortBy = 'date', order = 'desc') {
+            loadFilteredHistory(sortBy, order);
+        }
+
+        function loadFilteredHistory(sortBy = 'date', order = 'desc') {
+            let bills = getData('bills');
+            const customers = getData('customers');
             
-            if (search) {
-                const customers = getCustomers();
-                bills = bills.filter(b => {
-                    const c = customers.find(cust => cust.id === b.customerId);
-                    return c && c.name.toLowerCase().includes(search);
+            // Filter by customer
+            const filter = document.getElementById('historyFilter').value;
+            if (filter !== 'all') {
+                bills = bills.filter(b => b.customerId === parseInt(filter));
+            }
+            
+            // Apply search
+            const searchTerm = document.getElementById('historySearch')?.value.toLowerCase() || '';
+            if (searchTerm) {
+                bills = bills.filter(bill => {
+                    const customer = customers.find(c => c.id === bill.customerId);
+                    const customerName = customer ? customer.name.toLowerCase() : '';
+                    const dateStr = new Date(bill.date).toLocaleDateString().toLowerCase();
+                    return customerName.includes(searchTerm) || dateStr.includes(searchTerm);
                 });
             }
             
-            bills.sort((a,b) => sortType === 'newest' ? b.createdAt - a.createdAt : a.createdAt - b.createdAt);
+            // Apply sorting
+            bills.sort((a, b) => {
+                if (sortBy === 'date') {
+                    return order === 'asc' ? 
+                        new Date(a.date) - new Date(b.date) : 
+                        new Date(b.date) - new Date(a.date);
+                } else if (sortBy === 'amount') {
+                    return order === 'asc' ? a.totalDue - b.totalDue : b.totalDue - a.totalDue;
+                }
+                return 0;
+            });
             
             const container = document.getElementById('historyList');
-            if (!container) return;
-            if (bills.length === 0) { container.innerHTML = '<p style="text-align:center;color:#666;">No bills found</p>'; return; }
             
-            const customers = getCustomers();
-            container.innerHTML = bills.map(b => {
-                const c = customers.find(cust => cust.id === b.customerId);
+            if (bills.length === 0) {
+                container.innerHTML = '<p style="padding:20px; text-align:center; color:#666;">No bills found.</p>';
+                return;
+            }
+            
+            container.innerHTML = bills.map(bill => {
+                const customer = customers.find(c => c.id === bill.customerId);
+                const customerName = customer ? customer.name : 'Unknown';
+                const formattedAmount = formatMoney(bill.totalDue);
+                
                 return `
-                    <div style="border:1px solid #ddd; padding:10px; margin:10px 0;">
-                        <strong>${c?c.name:'Unknown'}</strong> - ${new Date(b.date).toLocaleDateString()}<br>
-                        Prev: ${b.prevReading} | Pres: ${b.presReading} | Used: ${b.totalUsed}<br>
-                        <strong>Total: ${appSettings.currency}${b.totalDue.toFixed(2)}</strong>
+                    <div style="padding:15px; border:1px solid #eee; margin:10px 0; border-radius:8px;">
+                        <strong>${customerName}</strong> • ${new Date(bill.date).toLocaleDateString()}<br>
+                        Prev: ${bill.prevReading} → Pres: ${bill.presReading} = ${bill.totalUsed} m³<br>
+                        <strong>Total Due: ${formattedAmount}</strong><br>
                         <div style="margin-top:10px;">
-                            <button onclick="printById(${b.id})" class="small">Print</button>
-                            <button onclick="deleteBill(${b.id})" class="small danger">Delete</button>
+                            <button onclick="printBillById(${bill.id})" style="padding:5px 10px; font-size:12px;">🖨️ Print</button>
+                            <button onclick="deleteBill(${bill.id})" style="padding:5px 10px; font-size:12px; background:#dc3545;">🗑️ Delete</button>
                         </div>
                     </div>
                 `;
             }).join('');
         }
 
+        function sortHistory(by, order) {
+            loadFilteredHistory(by, order);
+        }
+
+        function filterHistory() {
+            loadFilteredHistory(); // Reapply filter
+        }
+
         function deleteBill(id) {
             if (!confirm('Delete this bill?')) return;
-            saveBills(getBills().filter(b => b.id !== id));
-            loadHistory();
+            const bills = getData('bills').filter(b => b.id !== id);
+            saveData('bills', bills);
+            loadFilteredHistory();
         }
 
-        function printById(id) {
-            const bill = getBills().find(b => b.id === id);
-            const customer = getCustomers().find(c => c.id === bill.customerId);
-            printReceipt(bill, customer);
+        function printBillById(id) {
+            const bill = getData('bills').find(b => b.id === id);
+            if (bill) printBill(bill);
         }
 
-        function printReceipt(bill, customer) {
-            const receipt = `
-                <h2>💧 WATER BILL</h2>
-                <div style="text-align:center">${new Date(bill.date).toLocaleDateString('en-US',{month:'long',year:'numeric'})}</div>
-                <div style="border-top:1px dashed #000; margin:5px 0;"></div>
-                <p><strong>Customer:</strong> ${customer?customer.name:'Unknown'}</p>
-                <p><strong>Date:</strong> ${new Date(bill.date).toLocaleDateString()}</p>
-                <div style="border-top:1px dashed #000; margin:5px 0;"></div>
-                <table>
-                    <tr><td>Previous:</td><td style="text-align:right">${bill.prevReading} m³</td></tr>
-                    <tr><td>Present:</td><td style="text-align:right">${bill.presReading} m³</td></tr>
-                    <tr><td>Used:</td><td style="text-align:right">${bill.totalUsed} m³</td></tr>
-                    <tr><td>Rate:</td><td style="text-align:right">${appSettings.currency}${appSettings.pricePerCubic}</td></tr>
-                </table>
-                <div style="text-align:center; font-size:14pt; font-weight:bold; border-top:1px solid #000; margin-top:5px; padding-top:5px;">
-                    TOTAL DUE: ${appSettings.currency}${bill.totalDue.toFixed(2)}
-                </div>
-                <div style="text-align:center; font-size:8pt; margin-top:10px; border-top:1px dashed #000; padding-top:5px;">
-                    Thank you! Printed: ${new Date().toLocaleString()}
+        function printBill(bill) {
+            const customers = getData('customers');
+            const customer = customers.find(c => c.id === bill.customerId);
+            const customerName = customer ? customer.name : 'Unknown';
+            const settings = getSettings();
+            
+            // Format currency properly for receipt
+            const currencyFormatter = new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: settings.currency === 'PHP' ? 'PHP' : 
+                         settings.currency === 'EUR' ? 'EUR' : 'USD'
+            });
+            
+            const receiptHTML = `
+                <div style="font-family: Arial; padding: 10px; width: 80mm;">
+                    <h2 style="text-align:center; margin-bottom:5px;">💧 WATER BILL</h2>
+                    <div style="text-align:center; margin-bottom:15px; font-size:14px;">
+                        ${new Date(bill.date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                    </div>
+                    <hr style="border: 1px dashed #000; margin: 10px 0;">
+                    <p><strong>Customer:</strong> ${customerName}</p>
+                    <p><strong>Date:</strong> ${new Date(bill.date).toLocaleDateString()}</p>
+                    <hr style="border: 1px dashed #000; margin: 10px 0;">
+                    <table style="width:100%; font-size:14px;">
+                        <tr>
+                            <td>Previous Reading:</td>
+                            <td style="text-align:right;">${bill.prevReading} m³</td>
+                        </tr>
+                        <tr>
+                            <td>Present Reading:</td>
+                            <td style="text-align:right;">${bill.presReading} m³</td>
+                        </tr>
+                        <tr>
+                            <td>Total Used:</td>
+                            <td style="text-align:right;">${bill.totalUsed} m³</td>
+                        </tr>
+                        <tr>
+                            <td>Rate:</td>
+                            <td style="text-align:right;">${currencyFormatter.format(settings.pricePerCubic)}/m³</td>
+                        </tr>
+                    </table>
+                    <hr style="border: 1px dashed #000; margin: 10px 0;">
+                    <div style="text-align:center; font-size:18px; font-weight:bold; margin:10px 0;">
+                        TOTAL DUE: ${currencyFormatter.format(bill.totalDue)}
+                    </div>
+                    <div style="text-align:center; font-size:12px; margin-top:20px;">
+                        Thank you for your payment!<br>
+                        Printed: ${new Date().toLocaleString()}
+                    </div>
                 </div>
             `;
-            document.getElementById('printReceipt').innerHTML = receipt;
+            
+            document.getElementById('printReceipt').innerHTML = receiptHTML;
             window.print();
         }
 
-        // --- SETTINGS ---
-        function loadSettingsToUI() {
-            document.getElementById('settingsPrice').value = appSettings.pricePerCubic;
-            document.getElementById('settingsMin').value = appSettings.minAmount;
-            document.getElementById('settingsCurrency').value = appSettings.currency;
-        }
-
-        function saveSettings() {
-            const newPrice = parseFloat(document.getElementById('settingsPrice').value);
-            const newMin = parseFloat(document.getElementById('settingsMin').value);
-            const newCurrency = document.getElementById('settingsCurrency').value;
-            const newPwd = document.getElementById('settingsPassword').value;
-            
-            // Password check if existing
-            if (appSettings.passwordHash) {
-                const entered = prompt('Enter current password to save changes:');
-                if (!entered || !verifyPassword(entered)) {
-                    document.getElementById('settingsStatus').innerHTML = '<span style="color:red;">❌ Incorrect password!</span>';
-                    return;
-                }
-            }
-            
-            // Update settings
-            appSettings.pricePerCubic = newPrice;
-            appSettings.minAmount = newMin;
-            appSettings.currency = newCurrency;
-            
-            // Set new password if provided
-            if (newPwd) {
-                appSettings.passwordHash = hashPassword(newPwd);
-                document.getElementById('settingsPassword').value = '';
-                document.getElementById('settingsStatus').innerHTML = '<span style="color:green;">✅ Password updated!</span>';
-            } else {
-                document.getElementById('settingsStatus').innerHTML = '<span style="color:green;">✅ Settings saved!</span>';
-            }
-            
-            saveSettingsToStorage();
-            loadSettingsToBill(); // refresh bill screen if open
-            setTimeout(() => document.getElementById('settingsStatus').innerHTML = '', 3000);
-        }
-
-        // --- EXPORT ---
+        // === EXPORT TO EXCEL ===
         function exportToExcel() {
-            const bills = getBills();
-            if (!bills.length) return alert('No bills to export');
-            const customers = getCustomers();
-            const data = [['Customer','Date','Previous','Present','Used','Price/m³','Total Due']];
-            bills.forEach(b => {
-                const c = customers.find(cust => cust.id === b.customerId);
-                data.push([c?c.name:'Unknown', b.date, b.prevReading, b.presReading, b.totalUsed, appSettings.pricePerCubic, b.totalDue]);
+            const bills = getData('bills');
+            const customers = getData('customers');
+            const settings = getSettings();
+            
+            if (bills.length === 0) {
+                alert('No bills to export');
+                return;
+            }
+            
+            // Determine currency symbol for column header
+            let currencySymbol = '$';
+            if (settings.currency === 'PHP') currencySymbol = '₱';
+            if (settings.currency === 'EUR') currencySymbol = '€';
+            
+            const headers = [
+                'Customer Name', 
+                'Date', 
+                'Previous (m³)', 
+                'Present (m³)', 
+                'Used (m³)', 
+                `Price/${currencySymbol} per m³`, 
+                `Total Due (${currencySymbol})`
+            ];
+            
+            const data = [headers];
+            
+            bills.forEach(bill => {
+                const customer = customers.find(c => c.id === bill.customerId);
+                data.push([
+                    customer ? customer.name : 'Unknown',
+                    bill.date,
+                    bill.prevReading,
+                    bill.presReading,
+                    bill.totalUsed,
+                    bill.pricePerCubic,
+                    bill.totalDue
+                ]);
             });
+            
             const ws = XLSX.utils.aoa_to_sheet(data);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, 'Water Bills');
-            ws['!cols'] = [{wch:25},{wch:12},{wch:12},{wch:12},{wch:10},{wch:10},{wch:12}];
-            XLSX.writeFile(wb, `water-bills-${new Date().toISOString().split('T')[0]}.xlsx`);
+            
+            // Set column widths
+            ws['!cols'] = [
+                {wch: 25}, {wch: 12}, {wch: 12}, {wch: 12}, {wch: 10}, {wch: 15}, {wch: 15}
+            ];
+            
+            // Generate filename with current date and currency
+            const filename = `water-bills-${settings.currency}-${new Date().toISOString().split('T')[0]}.xlsx`;
+            XLSX.writeFile(wb, filename);
         }
 
-        // --- INIT ---
-        document.getElementById('billDate').value = new Date().toISOString().split('T')[0];
-        loadSettingsToBill();
+        // === INITIALIZATION ===
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize date field
+            document.getElementById('billDate').value = new Date().toISOString().split('T')[0];
+            
+            // Load dropdowns
+            loadCustomerDropdowns();
+            
+            // Set currency display
+            updateCurrencyDisplay();
+            
+            // Show main menu
+            showSection('menuSection');
+        });
     </script>
 </body>
 </html>
