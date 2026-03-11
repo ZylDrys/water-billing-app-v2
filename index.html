@@ -149,18 +149,6 @@
         <div id="printReceipt" class="print-only"></div>
     </div>
 
-    <script src="adminAccess.js"></script>
-<script>
-    // Wrap your existing saveSettings function
-    saveSettings = saveSettingsWithTimer(saveSettings);
-
-    // Modify loadSettings call to auto-check access
-    const originalLoadSettings = loadSettings;
-    loadSettings = function() {
-        originalLoadSettings();
-        checkAdminAccessOnLoad();
-    };
-</script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
         // === STORAGE KEYS ===
@@ -691,4 +679,5 @@
     </script>
 </body>
 </html>
+
 
