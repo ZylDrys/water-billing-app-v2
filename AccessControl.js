@@ -1,0 +1,52 @@
+// accessControl.js
+
+const MASTER_PASSWORD = 'admin123';
+const TEMP_PASSWORD_KEY = 'tempPassword';
+const TEMP_PASSWORD_EXPIRY_KEY = 'tempPasswordExpiry';
+const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+
+// --- Login Check ---
+function checkAppAccess() {
+    const access = prompt('Enter password to access the app:');
+    if (!isValidPassword(access)) {
+        alert('❌ Access denied. Password invalid or expired!');
+        document.body.innerHTML = '<h2 style="text-align:center; margin-top:50px;">Access Denied</h2>';
+        throw new Error('Access denied');
+    }
+}
+
+// --- Validate Password ---
+function isValidPassword(password) {
+    if (password === MASTER_PASSWORD) return true;
+
+    const temp = localStorage.getItem(TEMP_PASSWORD_KEY);
+    const expiry = parseInt(localStorage.getItem(TEMP_PASSWORD_EXPIRY_KEY) || '0');
+    const now = Date.now();
+
+    return temp && password === temp && now < expiry;
+}
+
+// --- Create Temporary Password (Master Only) ---
+function createTempPassword(newPassword) {
+    const current = prompt('Enter master password to create temporary password:');
+    if (current !== MASTER_PASSWORD) {
+        alert('❌ Incorrect master password!');
+        return;
+    }
+    if (!newPassword) {
+        alert('❌ Temporary password cannot be empty!');
+        return;
+    }
+
+    localStorage.setItem(TEMP_PASSWORD_KEY, newPassword);
+    localStorage.setItem(TEMP_PASSWORD_EXPIRY_KEY, Date.now() + THIRTY_DAYS_MS);
+    alert('✅ Temporary password created! Valid for 30 days.');
+}
+
+// --- Utility: check remaining days for temp password ---
+function getTempPasswordDaysLeft() {
+    const expiry = parseInt(localStorage.getItem(TEMP_PASSWORD_EXPIRY_KEY) || '0');
+    const now = Date.now();
+    if (expiry <= now) return 0;
+    return Math.ceil((expiry - now) / (1000 * 60 * 60 * 24));
+}
