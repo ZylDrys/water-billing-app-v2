@@ -50,3 +50,17 @@ function getTempPasswordDaysLeft() {
     if (expiry <= now) return 0;
     return Math.ceil((expiry - now) / (1000 * 60 * 60 * 24));
 }
+
+// --- Show temporary password button if master password entered ---
+function showTempPasswordButtonIfMaster(password) {
+    if (password === MASTER_PASSWORD) {
+        const container = document.getElementById('temporaryPasswordButtonContainer');
+        if (container) container.style.display = 'block';
+    }
+}
+
+// --- Prompt wrapper for creating temp password ---
+function createTempPasswordPrompt() {
+    const newPassword = prompt('Enter new temporary password (valid 30 days):');
+    if (newPassword) createTempPassword(newPassword);
+}
