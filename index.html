@@ -71,10 +71,11 @@
             
             <button onclick="saveSettings()">💾 Save Settings</button>
             
-            <div id="tempPasswordSection" style="margin-top:15px; display:none;">
-                <button onclick="createTempPasswordUI()">🛠️ Create Temporary Password</button>
-                <p id="tempPasswordInfo" style="font-size:12px; color:#666;"></p>
+            <!-- Temporary Password Button (Hidden by default) -->
+            <div id="temporaryPasswordButtonContainer" style="display:none; margin-top: 15px;">
+                <button onclick="createTempPasswordPrompt()">➕ Create Temporary Password</button>
             </div>
+            
         </div>
 
         <!-- Customers Section -->
@@ -157,6 +158,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
     <script src="AccessControl.js"></script>
+ 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAppAccess();  // This will prompt the user for password immediately
+        });
+    </script>
     
     <script>
         // === STORAGE KEYS ===
@@ -671,10 +678,12 @@
         }
 
         // --- LOAD SETTINGS WRAPPER ---
-        const originalLoadSettings = loadSettings;       
+       const originalLoadSettings = loadSettings;
         
         loadSettings = function() {
             originalLoadSettings();
+            
+            // Check the admin password field
             const pwdInput = document.getElementById('adminPassword').value;
             showTempPasswordButtonIfMaster(pwdInput);
         };
@@ -696,6 +705,7 @@
     </script>
 </body>
 </html>
+
 
 
 
