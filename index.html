@@ -64,16 +64,27 @@
                 <input type="number" id="adminMinCharge" step="0.01" placeholder="Enter minimum charge">
             </div>
             
-            <div class="form-group">
+           <!-- Admin Password Field (with visibility toggle) -->
+            <div>
                 <label>Admin Password</label>
-                <input type="password" id="adminPassword" placeholder="Enter password to save">
+                <div style="position: relative;">
+                    <input type="password" id="adminPassword" placeholder="Enter password to save" />
+                    <span id="eyeIcon" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;">👁️</span>
+                </div>
             </div>
             
+            <!-- Save Settings Button -->
             <button onclick="saveSettings()">💾 Save Settings</button>
             
             <!-- Temporary Password Button (Hidden by default) -->
             <div id="temporaryPasswordButtonContainer" style="display:none; margin-top: 15px;">
                 <button onclick="createTempPasswordPrompt()">➕ Create Temporary Password</button>
+            </div>
+            
+            <!-- Master Password Field (Hidden by default, no toggle) -->
+            <div>
+                <label>Master Password</label>
+                <input type="password" id="masterPassword" placeholder="Enter master password" />
             </div>
             
         </div>
@@ -705,6 +716,7 @@
     </script>
 </body>
 </html>
+
 
 
 
