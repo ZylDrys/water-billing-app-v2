@@ -109,6 +109,14 @@
             </div>
             
             <div id="customersList"></div>
+
+            <!-- Customer Name Search -->
+            <input type="text" id="customerSearch" placeholder="Search customer..." oninput="filterCustomers()">
+            
+            <!-- Add Customer Form -->
+            <input type="text" id="newCustomerName" placeholder="Enter customer name">
+            <button onclick="addCustomer()">➕ Add Customer</button>
+            
         </div>
 
         <!-- New Bill Section -->
@@ -716,6 +724,7 @@
     </script>
 </body>
 </html>
+
 
 
 
