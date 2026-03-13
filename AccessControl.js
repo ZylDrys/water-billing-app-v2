@@ -64,3 +64,13 @@ function createTempPasswordPrompt() {
     const newPassword = prompt('Enter new temporary password (valid 30 days):');
     if (newPassword) createTempPassword(newPassword);
 }
+
+// Toggle visibility for admin password input
+document.getElementById('eyeIcon').addEventListener('click', function() {
+    const passwordField = document.getElementById('adminPassword');
+    const type = passwordField.type === 'password' ? 'text' : 'password';
+    passwordField.type = type;  // Toggle between text and password type
+    
+// Change the icon to represent the state (open or closed)
+    this.textContent = type === 'password' ? '👁️' : '🙈';
+});
