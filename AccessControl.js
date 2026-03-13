@@ -74,3 +74,82 @@ document.getElementById('eyeIcon').addEventListener('click', function() {
 // Change the icon to represent the state (open or closed)
     this.textContent = type === 'password' ? '👁️' : '🙈';
 });
+
+// --- Event listener for Enter key on customer search input ---
+document.getElementById('customerSearch')?.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+        filterCustomers();
+    }
+});
+
+// --- Event listener for Enter key on new customer name input ---
+document.getElementById('newCustomerName')?.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+        addCustomer();
+    }
+});
+
+// --- Event listener for Enter key on admin password input ---
+document.getElementById('adminPassword')?.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+        saveSettings(); // Save settings when pressing enter on admin password
+    }
+});
+
+// --- Event listener for Enter key on temporary password input ---
+document.getElementById('tempPassword')?.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+        createTempPasswordPrompt();
+    }
+});
+
+// --- Save Settings (without navigating back to menu) ---
+function saveSettings() {
+    const price = parseFloat(document.getElementById('adminPricePerCubic').value);
+    const minCharge = parseFloat(document.getElementById('adminMinCharge').value);
+    const adminPassword = document.getElementById('adminPassword').value;
+    
+    if (!price || !minCharge || !adminPassword) {
+        alert('❌ Please fill in all fields');
+        return;
+    }
+
+    // Save settings without redirecting to main menu
+    const settings = getSettings();
+    settings.pricePerCubic = price;
+    settings.minCharge = minCharge;
+    settings.adminPassword = adminPassword;
+    saveSettingsData(settings);
+
+    alert('✅ Settings saved successfully!');
+}
+
+// --- Add Customer Function ---
+function addCustomer() {
+    const name = document.getElementById('newCustomerName').value.trim();
+    if (!name) {
+        alert('❌ Please enter customer name');
+        return;
+    }
+
+    // Save customer data
+    const customers = getData('customers');
+    customers.push({
+        id: Date.now(),
+        name: name,
+        createdAt: new Date().toISOString()
+    });
+    saveData('customers', customers);
+    
+    // Clear the input field after saving
+    document.getElementById('newCustomerName').value = '';
+    loadCustomersList(); // Reload customers list
+}
+
+// --- Show Temporary Password Button (Master Only) ---
+function showTempPasswordButtonIfMaster(password) {
+    if (password === MASTER_PASSWORD) {
+        const container = document.getElementById('temporaryPasswordButtonContainer');
+        if (container) container.style.display = 'block';
+    }
+}
