@@ -669,14 +669,14 @@
             XLSX.writeFile(wb, filename); 
         }
 
-            // --- LOAD SETTINGS WRAPPER ---
-            const originalLoadSettings = loadSettings;
-            
-            loadSettings = function() {
-                originalLoadSettings();
-                const pwdInput = document.getElementById('adminPassword').value;
-                showTempPasswordButtonIfMaster(pwdInput);
-            };
+        // --- LOAD SETTINGS WRAPPER ---
+        const originalLoadSettings = loadSettings;       
+        
+        loadSettings = function() {
+            originalLoadSettings();
+            const pwdInput = document.getElementById('adminPassword').value;
+            showTempPasswordButtonIfMaster(pwdInput);
+        };
 
         // === INITIALIZATION ===
         document.addEventListener('DOMContentLoaded', () => {
@@ -695,6 +695,7 @@
     </script>
 </body>
 </html>
+
 
 
 
