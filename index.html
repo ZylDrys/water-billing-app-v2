@@ -95,21 +95,11 @@
                 <input 
                     type="password"
                     id="masterPassword"
-                    placeholder="Enter master password"
+                    prompt("Enter new master password")
                     onkeydown="if(event.key==='Enter'){ confirmMasterPassword(); }">
                 <button onclick="confirmMasterPassword()">Confirm</button>
             </div>
-
-            <!-- Master Password Field -->
-            <div>
-                <label>Master Password</label>
-                <div style="position: relative; margin-bottom: 10px;">
-                    <input type="password" id="masterPassword" placeholder="Enter master password" />
-                    <span id="eyeIconMaster" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;">👁️</span>
-                </div>
-                <button onclick="confirmMasterPassword()">Confirm Master Password</button>
-            </div>
-            
+           
             <!-- Master Password Action Buttons (Hidden by default) -->
             <div id="masterPasswordActions" style="margin-top: 10px;">
                 <button id="changeMasterPasswordButton" onclick="changeMasterPassword()" style="display:none;">🔑 Change Master Password</button>
