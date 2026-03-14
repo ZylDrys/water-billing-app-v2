@@ -1,16 +1,61 @@
 // UI.js
-const UI = (() => {
+export const UI = (() => {
+    let currency = '₱';
+
+    // Cache DOM elements
+    const dom = {
+        adminPassword: document.getElementById('adminPassword'),
+        eyeIcon: document.getElementById('eyeIcon'),
+        menuSection: document.getElementById('menuSection')
+    };
+
+    function init() {
+        bindEvents();
+        renderUI();
+    }
+
+    function bindEvents() {
+        // Toggle password visibility
+        if (dom.adminPassword && dom.eyeIcon) {
+            dom.eyeIcon.addEventListener('click', togglePasswordVisibility);
+
+            // Enter key triggers master password verification
+            dom.adminPassword.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    AccessControl.verifyMasterPassword(dom.adminPassword.value);
+                }
+            });
+        }
+    }
+
+    function renderUI() {
+        updateCurrencySymbol();
+        if (AccessControl.isMasterPasswordSet()) {
+            showAdminSection();
+        }
+    }
+
+    function togglePasswordVisibility() {
+        if (!dom.adminPassword) return;
+        dom.adminPassword.type = dom.adminPassword.type === 'password' ? 'text' : 'password';
+    }
+
+    function setCurrency(newCurrency) {
+        currency = newCurrency;
+        updateCurrencySymbol();
+        Storage.setItem('currency', currency);
+    }
+
+    function updateCurrencySymbol() {
+        const elements = document.querySelectorAll('.currencySymbol, .currencyBtn');
+        elements.forEach(el => el.textContent = currency);
+    }
+
     function showSection(sectionId) {
         const sections = document.querySelectorAll(".section");
         sections.forEach(sec => sec.style.display = "none");
         const target = document.getElementById(sectionId);
         if (target) target.style.display = "block";
-    }
-
-    function updateCurrencySymbol() {
-        const settings = JSON.parse(localStorage.getItem("waterBillingSettings")) || { currency: "PHP" };
-        const elements = document.querySelectorAll(".currencySymbol");
-        elements.forEach(el => el.textContent = settings.currency);
     }
 
     function printBill(customer) {
@@ -20,25 +65,34 @@ const UI = (() => {
         billWindow.document.write(`<p>Previous Reading: ${customer.previousReading}</p>`);
         billWindow.document.write(`<p>Current Reading: ${customer.currentReading}</p>`);
         billWindow.document.write(`<p>Consumption: ${customer.consumption} cubic meters</p>`);
-        billWindow.document.write(`<p>Total Due: ${customer.totalDue} ${getSettings().currency}</p>`);
+        billWindow.document.write(`<p>Total Due: ${customer.totalDue} ${currency}</p>`);
         billWindow.document.write("</body></html>");
         billWindow.document.close();
         billWindow.print();
-    }
-
-    function getSettings() {
-        const stored = localStorage.getItem("waterBillingSettings");
-        return stored ? JSON.parse(stored) : { pricePerCubic: 10, minCharge: 50, currency: "PHP" };
     }
 
     function alertMessage(msg) {
         alert(msg);
     }
 
+    function showAdminSection() {
+        const adminSec = document.getElementById('adminSection');
+        if (adminSec) adminSec.style.display = 'block';
+    }
+
+    function hideAdminSection() {
+        const adminSec = document.getElementById('adminSection');
+        if (adminSec) adminSec.style.display = 'none';
+    }
+
     return {
-        showSection,
+        init,
+        setCurrency,
         updateCurrencySymbol,
+        showSection,
         printBill,
-        alertMessage
+        alertMessage,
+        showAdminSection,
+        hideAdminSection
     };
 })();
