@@ -89,31 +89,25 @@
                 </button>
             </div>
             
-            <!-- Master Password Field (Hidden by default, no toggle) -->
-            <div>
-                <label>Master Password</label>
-                <input 
-                    type="password"
-                    id="masterPassword"
-                    prompt("Enter new master password")
-                    onkeydown="if(event.key==='Enter'){ confirmMasterPassword(); }">
-                <button onclick="confirmMasterPassword()">Confirm</button>
-            </div>
-
-            <!-- Master Password Field -->
+           <!-- Master Password Section -->
             <div>
                 <label>Master Password</label>
                 <div style="position: relative; margin-bottom: 10px;">
-                    <span id="eyeIconMaster" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;">👁️</span>
+                    <input
+                        type="password"
+                        id="masterPassword"
+                        placeholder="Enter master password"
+                        onkeydown="if(event.key==='Enter'){ confirmMasterPassword(); }">
+                    <span id="eyeIconMaster"
+                        style="position:absolute; right:10px; top:50%; transform:translateY(-50%); cursor:pointer;">👁️
+                    </span>
                 </div>
-                
                 <button onclick="confirmMasterPassword()">Confirm Master Password</button>
             </div>
-           
             <!-- Master Password Action Buttons (Hidden by default) -->
-            <div id="masterPasswordActions" style="margin-top: 10px;">
-                <button id="changeMasterPasswordButton" onclick="changeMasterPassword()" style="display:none;">🔑 Change Master Password</button>
-                <button id="showDefaultMasterPasswordButton" onclick="showDefaultMasterPassword()" style="display:none;">👁 Show Default Master Password</button>
+            <div id="masterPasswordActions" style="margin-top: 10px; display:none;">
+                <button onclick="changeMasterPassword()">🔑 Change Master Password</button>
+                <button onclick="showDefaultMasterPassword()">👁 Show Default Master Password</button>
                 <button onclick="restoreDefaultMasterPassword()">♻ Restore Default</button>
             </div>
             
@@ -382,12 +376,69 @@
             return false;
         }
 
+        //===Master Password Censorship===// 
         const eyeMaster = document.getElementById('eyeIconMaster');
         eyeMaster.addEventListener('click', () => {
             const pwd = document.getElementById('masterPassword');
             if(pwd.type === 'password') pwd.type = 'text';
             else pwd.type = 'password';
         });
+
+        document.getElementById("eyeIconMaster").addEventListener("click", function(){
+            const field = document.getElementById("masterPassword");
+            if(field.type === "password"){
+                field.type = "text";
+            }else{
+                field.type = "password";
+            }
+        });
+
+        //===Master Password System===//
+        const MASTER_PASSWORD_KEY = "masterPassword";
+        const DEFAULT_MASTER_PASSWORD = "admin123";
+        function getMasterPassword(){
+            return localStorage.getItem(MASTER_PASSWORD_KEY) || DEFAULT_MASTER_PASSWORD;
+        }
+        
+        function confirmMasterPassword(){
+            const input =
+                document.getElementById("masterPassword").value.trim();
+            
+            if(input === getMasterPassword()){
+                document.getElementById("masterPasswordActions").style.display = "block";
+                document.getElementById("temporaryPasswordButtonContainer").style.display = "block";
+                alert("Master access granted");
+            }else{
+                alert("Incorrect master password");
+            }
+        }
+        
+        function changeMasterPassword(){
+            const current = prompt("Enter current master password:");
+            if(current !== getMasterPassword()){
+                alert("Incorrect current master password");
+                return;
+            }
+            
+            const newPass = prompt("Enter new master password:");
+            if(!newPass){
+                alert("Password cannot be empty");
+                return;
+            }
+            
+            localStorage.setItem(MASTER_PASSWORD_KEY, newPass);
+            alert("Master password changed successfully");
+        }
+        
+        function showDefaultMasterPassword(){
+            alert("Default Master Password: " + DEFAULT_MASTER_PASSWORD);
+        }
+        
+        function restoreDefaultMasterPassword(){
+            if(!confirm("Restore default master password?")) return;
+            localStorage.removeItem(MASTER_PASSWORD_KEY);
+            alert("Master password restored to default (admin123)");
+        }
 
         // === CUSTOMERS ===
         function addCustomer() {
