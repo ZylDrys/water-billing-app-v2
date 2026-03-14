@@ -76,9 +76,17 @@
             <!-- Save Settings Button -->
             <button onclick="saveSettings()">💾 Save Settings</button>
             
-            <!-- Temporary Password Button (Hidden by default) -->
-            <div id="temporaryPasswordButtonContainer" style="display:none; margin-top: 15px;">
-                <button onclick="createTempPasswordPrompt()">➕ Create Temporary Password</button>
+            <!-- Temporary Password Button [Create/Delete] & Restore Defaults (Hidden by default) -->
+            <div id="temporaryPasswordButtonContainer" style="display:none; margin-top:15px;">
+                <button onclick="createTempPasswordPrompt()">
+                    ➕ Create Temporary Password
+                </button>
+                <button onclick="deleteTempPassword()">
+                    🗑 Delete Temporary Password
+                </button>
+                <button onclick="restoreDefaults()">
+                    ♻ Restore Default
+                </button>
             </div>
             
             <!-- Master Password Field (Hidden by default, no toggle) -->
@@ -90,6 +98,23 @@
                     placeholder="Enter master password"
                     onkeydown="if(event.key==='Enter'){ confirmMasterPassword(); }">
                 <button onclick="confirmMasterPassword()">Confirm</button>
+            </div>
+
+            <!-- Master Password Field -->
+            <div>
+                <label>Master Password</label>
+                <div style="position: relative; margin-bottom: 10px;">
+                    <input type="password" id="masterPassword" placeholder="Enter master password" />
+                    <span id="eyeIconMaster" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;">👁️</span>
+                </div>
+                <button onclick="confirmMasterPassword()">Confirm Master Password</button>
+            </div>
+            
+            <!-- Master Password Action Buttons (Hidden by default) -->
+            <div id="masterPasswordActions" style="margin-top: 10px;">
+                <button id="changeMasterPasswordButton" onclick="changeMasterPassword()" style="display:none;">🔑 Change Master Password</button>
+                <button id="showDefaultMasterPasswordButton" onclick="showDefaultMasterPassword()" style="display:none;">👁 Show Default Master Password</button>
+                <button onclick="restoreDefaultMasterPassword()">♻ Restore Default</button>
             </div>
             
         </div>
@@ -280,8 +305,8 @@
             const password = document.getElementById('adminPassword').value;
             const correctPassword = getSettings().adminPassword;
             
-            if (password !== correctPassword) {
-                alert('❌ Incorrect password!');
+            if(!isValidAdminAccess(password)) {
+                alert("Invalid password");
                 return;
             }
             
@@ -306,6 +331,63 @@
                 alert("Incorrect master password");
             }
         }
+
+        function deleteTempPassword() {
+            const confirmDelete = confirm(
+                "Delete the temporary password and revoke its access?"
+            );
+            
+            if(!confirmDelete) return;
+            localStorage.removeItem("tempPassword");
+            localStorage.removeItem("tempPasswordExpiry");
+            alert("Temporary password deleted. Access revoked.");
+        }
+
+        function restoreDefaults() {
+            const confirmReset = confirm(
+                "Restore all settings to default? This cannot be undone."
+            );
+            
+            if(!confirmReset) return;
+            
+            // Reset billing settings
+            localStorage.removeItem("pricePerCubic");
+            localStorage.removeItem("minimumCharge");
+            
+            // Reset admin password
+            localStorage.removeItem("adminPassword");
+            
+            // Remove temporary password
+            localStorage.removeItem("tempPassword");
+            localStorage.removeItem("tempPasswordExpiry");
+            alert("All settings restored to default.");
+            location.reload();
+        }
+
+        function isValidAdminAccess(password) {
+            const master = "admin123";
+            const admin = localStorage.getItem("adminPassword");
+            const temp = localStorage.getItem("tempPassword");
+            const expiry = parseInt(localStorage.getItem("tempPasswordExpiry") || "0");
+            const now = Date.now();
+            
+            // Master password always valid
+            if(password === master) return true;
+            
+            // Admin password
+            if(admin && password === admin) return true;
+            
+            // Temporary password
+            if(temp && password === temp && now < expiry) return true;
+            return false;
+        }
+
+        const eyeMaster = document.getElementById('eyeIconMaster');
+        eyeMaster.addEventListener('click', () => {
+            const pwd = document.getElementById('masterPassword');
+            if(pwd.type === 'password') pwd.type = 'text';
+            else pwd.type = 'password';
+        });
 
         // === CUSTOMERS ===
         function addCustomer() {
