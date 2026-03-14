@@ -153,3 +153,54 @@ function showTempPasswordButtonIfMaster(password) {
         if (container) container.style.display = 'block';
     }
 }
+
+// Current master password stored in localStorage
+const MASTER_PASSWORD_KEY = 'masterPassword';
+const DEFAULT_MASTER_PASSWORD = 'admin123';
+
+// Get current master password
+function getMasterPassword() {
+    return localStorage.getItem(MASTER_PASSWORD_KEY) || DEFAULT_MASTER_PASSWORD;
+}
+
+// Change master password
+function changeMasterPassword() {
+    const current = prompt("Enter current master password:");
+    if(current !== getMasterPassword()) {
+        alert("❌ Incorrect current master password!");
+        return;
+    }
+
+    const newPwd = prompt("Enter new master password:");
+    if(!newPwd) {
+        alert("❌ Password cannot be empty!");
+        return;
+    }
+
+    localStorage.setItem(MASTER_PASSWORD_KEY, newPwd);
+    alert("✅ Master password updated successfully!");
+}
+
+// Restore default master password
+function restoreDefaultMasterPassword() {
+    localStorage.setItem(MASTER_PASSWORD_KEY, DEFAULT_MASTER_PASSWORD);
+    alert("✅ Master password restored to default!");
+}
+
+// Show default master password
+function showDefaultMasterPassword() {
+    alert("Default master password: " + DEFAULT_MASTER_PASSWORD);
+}
+
+// Master password login validation
+function confirmMasterPassword() {
+    const input = document.getElementById("masterPassword").value.trim();
+    if(input === getMasterPassword()) {
+        document.getElementById("temporaryPasswordButtonContainer").style.display = "block";
+        document.getElementById("changeMasterPasswordButton").style.display = "inline-block";
+        document.getElementById("showDefaultMasterPasswordButton").style.display = "inline-block";
+        alert("Master access granted");
+    } else {
+        alert("❌ Incorrect master password");
+    }
+}
