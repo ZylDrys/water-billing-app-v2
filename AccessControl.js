@@ -153,21 +153,3 @@ function showTempPasswordButtonIfMaster(password) {
         if (container) container.style.display = 'block';
     }
 }
-
-function confirmMasterPassword() {
-
-    const masterInput = document.getElementById("masterPassword").value;
-
-    if(masterInput === "admin123") {
-
-        alert("Master password confirmed");
-
-        document.getElementById("temporaryPasswordButtonContainer").style.display = "block";
-
-    } else {
-
-        alert("Incorrect master password");
-
-    }
-
-}
