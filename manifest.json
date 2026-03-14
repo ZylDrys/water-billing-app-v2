@@ -1,24 +1,24 @@
 {
-    "name": "Water Billing System",
-    "short_name": "Water Bill",
-    "description": "Simple water meter billing system with print and export",
-    "start_url": "/index.html",
-    "display": "standalone",
-    "background_color": "#667eea",
-    "theme_color": "#007bff",
-    "orientation": "portrait",
-    "icons": [
-        {
-            "src": "icon-192.png",
-            "sizes": "192x192",
-            "type": "image/png",
-            "purpose": "any maskable"
-        },
-        {
-            "src": "icon-512.png",
-            "sizes": "512x512",
-            "type": "image/png",
-            "purpose": "any maskable"
-        }
-    ]
+  "name": "Water Billing App",
+  "short_name": "WaterBill",
+  "description": "Simple water meter billing system with print and export",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#667eea",
+  "theme_color": "#007bff",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
 }
