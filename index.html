@@ -163,18 +163,27 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <!-- Modules -->
-    <script src="Storage.js"></script>
-    <script src="AccessControl.js"></script>
-    <script src="UI.js"></script>
-    <script src="Customers.js"></script>
-    <script src="Billing.js"></script>
-    <script src="History.js"></script>
+       <script type="module">
+        import { UI } from './UI.js';
+        import { Customers } from './Customers.js';
+        import { Billing } from './Billing.js';
+        import { History } from './History.js';
+        import { Storage } from './Storage.js';
+        import { AccessControl } from './AccessControl.js';
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            AccessControl.checkAppAccess();
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize UI and bind events
             UI.init();
+
+            // Restore defaults button
+            const restoreBtn = document.getElementById('restoreDefaultsBtn');
+            if (restoreBtn) {
+                restoreBtn.addEventListener('click', () => {
+                    AccessControl.restoreDefaults();
+                });
+            }
         });
     </script>
+    
 </body>
 </html>
