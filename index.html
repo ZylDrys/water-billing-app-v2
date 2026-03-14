@@ -86,6 +86,16 @@
                 <label>Master Password</label>
                 <input type="password" id="masterPassword" placeholder="Enter master password" />
             </div>
+
+            <div>
+                <label>Master Password</label>
+                <input 
+                    type="password"
+                    id="masterPassword"
+                    placeholder="Enter master password"
+                    onkeydown="if(event.key==='Enter'){ confirmMasterPassword(); }">
+                <button onclick="confirmMasterPassword()">Confirm</button>
+            </div>
             
         </div>
 
@@ -109,14 +119,7 @@
             </div>
             
             <div id="customersList"></div>
-
-            <!-- Customer Name Search -->
-            <input type="text" id="customerSearch" placeholder="Search customer..." oninput="filterCustomers()">
-            
-            <!-- Add Customer Form -->
-            <input type="text" id="newCustomerName" placeholder="Enter customer name">
-            <button onclick="addCustomer()">➕ Add Customer</button>
-            
+                      
         </div>
 
         <!-- New Bill Section -->
