@@ -394,7 +394,6 @@
         });
 
         //===Master Password System===//
-        const MASTER_PASSWORD_KEY = "masterPassword";
         const DEFAULT_MASTER_PASSWORD = "admin123";
         function getMasterPassword(){
             return localStorage.getItem(MASTER_PASSWORD_KEY) || DEFAULT_MASTER_PASSWORD;
@@ -438,6 +437,15 @@
             if(!confirm("Restore default master password?")) return;
             localStorage.removeItem(MASTER_PASSWORD_KEY);
             alert("Master password restored to default (admin123)");
+        }
+
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll(".section");
+            sections.forEach(section => {
+                section.style.display = "none";
+            });
+            
+            document.getElementById(sectionId).style.display = "block";
         }
 
         // === CUSTOMERS ===
