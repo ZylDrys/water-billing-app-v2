@@ -1,97 +1,73 @@
 // AccessControl.js
-const AccessControl = (() => {
-    const DEFAULT_MASTER_PASSWORD = "admin123"; // default master password
-    const TEMP_PASSWORD_KEY = "tempPassword";
-    const SETTINGS_KEY = "waterBillingSettings";
+import { UI } from './UI.js';
+import { Storage } from './storage.js';
 
-    function getSettings() {
-        const stored = localStorage.getItem(SETTINGS_KEY);
-        if (stored) return JSON.parse(stored);
-        return { pricePerCubic: 10, minCharge: 50, currency: 'PHP' };
-    }
-
-    function saveSettingsToStorage(settings) {
-        localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-    }
-
-    function saveSettings() {
-        const adminPwd = document.getElementById("adminPassword").value;
-        if (!adminPwd || adminPwd !== getMasterPassword()) {
-            alert("Incorrect master/admin password!");
-            return;
-        }
-
-        const price = parseFloat(document.getElementById("adminPricePerCubic").value);
-        const minCharge = parseFloat(document.getElementById("adminMinCharge").value);
-
-        const settings = getSettings();
-        if (!isNaN(price)) settings.pricePerCubic = price;
-        if (!isNaN(minCharge)) settings.minCharge = minCharge;
-
-        saveSettingsToStorage(settings);
-        alert("Settings saved successfully!");
-        UI.updateCurrencySymbol();
-    }
-
-    function createTempPasswordPrompt() {
-        const tempPwd = prompt("Enter temporary password to set:");
-        if (!tempPwd) return;
-        localStorage.setItem(TEMP_PASSWORD_KEY, tempPwd);
-        alert("Temporary password saved!");
-    }
-
-    function deleteTempPassword() {
-        localStorage.removeItem(TEMP_PASSWORD_KEY);
-        alert("Temporary password deleted!");
-    }
-
-    function restoreDefaults() {
-        localStorage.removeItem(SETTINGS_KEY);
-        localStorage.removeItem(TEMP_PASSWORD_KEY);
-        alert("Settings restored to default!");
-        UI.updateCurrencySymbol();
-    }
+export const AccessControl = (() => {
+    const DEFAULT_MASTER_PASSWORD = 'admin123';
+    const MASTER_PASSWORD_KEY = 'waterBillingMasterPassword';
+    const TEMP_PASSWORD_KEY = 'waterBillingTempPassword';
 
     function getMasterPassword() {
-        const stored = localStorage.getItem("masterPassword");
+        const stored = Storage.getItem(MASTER_PASSWORD_KEY);
         return stored || DEFAULT_MASTER_PASSWORD;
     }
 
-    function confirmMasterPassword() {
-        const input = document.getElementById("masterPassword").value;
+    function isMasterPasswordSet() {
+        return !!Storage.getItem(MASTER_PASSWORD_KEY);
+    }
+
+    function verifyMasterPassword(input) {
         if (input === getMasterPassword()) {
-            alert("Master password confirmed!");
-            document.getElementById("masterPasswordActions").style.display = "block";
+            UI.showAdminSection();
+            UI.alertMessage('Master password verified!');
+            return true;
         } else {
-            alert("Incorrect master password!");
-            document.getElementById("masterPasswordActions").style.display = "none";
+            UI.alertMessage('Incorrect master password!');
+            return false;
         }
     }
 
-    function changeMasterPassword() {
-        const current = prompt("Enter current master password:");
-        if (current !== getMasterPassword()) {
-            alert("Incorrect current master password!");
-            return;
-        }
-        const newPwd = prompt("Enter new master password:");
-        if (!newPwd) return;
-        localStorage.setItem("masterPassword", newPwd);
-        alert("Master password changed successfully!");
+    function setMasterPassword(password) {
+        Storage.setItem(MASTER_PASSWORD_KEY, password);
+        UI.showAdminSection();
     }
 
-    function showDefaultMasterPassword() {
-        alert(`Default master password is: ${DEFAULT_MASTER_PASSWORD}`);
+    function removeMasterPassword() {
+        Storage.removeItem(MASTER_PASSWORD_KEY);
+        UI.hideAdminSection();
     }
 
-    function restoreDefaultMasterPassword() {
-        localStorage.removeItem("masterPassword");
-        alert("Master password restored to default!");
+    function setTempPassword(password) {
+        Storage.setItem(TEMP_PASSWORD_KEY, password);
+    }
+
+    function removeTempPassword() {
+        Storage.removeItem(TEMP_PASSWORD_KEY);
+    }
+
+    function restoreDefaults() {
+        // Remove all stored settings
+        Storage.clear();
+        UI.hideAdminSection();
+
+        // Reset currency to default
+        UI.setCurrency('₱');
+
+        // Clear all input fields
+        const allInputs = document.querySelectorAll('input');
+        allInputs.forEach(input => input.value = '');
+
+        UI.alertMessage('All settings have been restored to default.');
+    }
+
+    function bindRestoreButton() {
+        const restoreBtn = document.getElementById('restoreDefaults');
+        if (restoreBtn) restoreBtn.addEventListener('click', restoreDefaults);
     }
 
     function checkAppAccess() {
         const pwd = prompt("Enter master or temporary password to access the app:");
-        const tempPwd = localStorage.getItem(TEMP_PASSWORD_KEY);
+        const tempPwd = Storage.getItem(TEMP_PASSWORD_KEY);
         if (pwd !== getMasterPassword() && pwd !== tempPwd) {
             alert("Access denied! Reload to try again.");
             document.body.innerHTML = "<h2 style='text-align:center;color:red;margin-top:50px;'>Access Denied</h2>";
@@ -99,14 +75,15 @@ const AccessControl = (() => {
     }
 
     return {
-        saveSettings,
-        createTempPasswordPrompt,
-        deleteTempPassword,
+        getMasterPassword,
+        isMasterPasswordSet,
+        verifyMasterPassword,
+        setMasterPassword,
+        removeMasterPassword,
+        setTempPassword,
+        removeTempPassword,
         restoreDefaults,
-        confirmMasterPassword,
-        changeMasterPassword,
-        showDefaultMasterPassword,
-        restoreDefaultMasterPassword,
+        bindRestoreButton,
         checkAppAccess
     };
 })();
