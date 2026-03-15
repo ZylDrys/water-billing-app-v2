@@ -31,24 +31,20 @@ const Customers = (() => {
 
         customers.push(newCustomer);
         saveCustomers(customers);
-
         UI.alertMessage("Customer added successfully");
         return newCustomer;
     }
 
     function deleteCustomer(customerId) {
         if (!customerId) return;
-
         const confirmDelete = confirm("Delete this customer and all their bills?");
         if (!confirmDelete) return;
-
         const customers = getCustomers().filter(c => c.id !== customerId);
         saveCustomers(customers);
 
         // Delete associated bills
         const bills = Billing.getBills().filter(b => b.customerId !== customerId);
         Billing.saveBills(bills);
-
         UI.alertMessage("Customer and their bills deleted successfully");
     }
 
