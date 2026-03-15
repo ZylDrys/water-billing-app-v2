@@ -5,13 +5,13 @@ export const UI = (() => {
     let currency = "₱";
 
     function init() {
-
         bindEvents();
+        bindNavigation();
+        bindCurrencyButtons();
+        bindExport();
         loadSettings();
         updateCurrencySymbol();
-
     }
-
 
     function bindEvents() {
 
