@@ -68,7 +68,7 @@
             <div>
                 <label>Admin Password</label>
                 <div style="position: relative;">
-                    <input type="password" id="adminPassword" placeholder="Enter password to save" />
+                    <input type="password" id="adminPassword" placeholder="Enter password to save" data-clear-on-confirm="true"/>
                     <span id="eyeIcon" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;">👁️</span>
                 </div>
             </div>
@@ -96,7 +96,7 @@
                     <input
                         type="password"
                         id="masterPassword"
-                        placeholder="Enter master password"
+                        placeholder="Enter master password" data-clear-on-confirm="true"
                         onkeydown="if(event.key==='Enter'){ confirmMasterPassword(); }">
                     <span id="eyeIconMaster"
                         style="position:absolute; right:10px; top:50%; transform:translateY(-50%); cursor:pointer;">👁️
