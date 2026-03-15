@@ -325,7 +325,16 @@
                 alert("Incorrect master password");
             }
         }
-
+    //=====Create Temporary Password=====//
+        function createTempPasswordPrompt() {
+            const tempPwd = prompt("Enter a temporary password:");
+            if (tempPwd) {
+                Storage.setItem('waterBillingTempPassword', tempPwd);
+                UI.alertMessage("Temporary password created!");
+            }
+        }
+        
+    //=====Delete Temporary Password=====//
         function deleteTempPassword() {
             const confirmDelete = confirm(
                 "Delete the temporary password and revoke its access?"
@@ -337,6 +346,7 @@
             alert("Temporary password deleted. Access revoked.");
         }
 
+        //=====Reset all settings to default=====//
         function restoreDefaults() {
             const confirmReset = confirm(
                 "Restore all settings to default? This cannot be undone."
