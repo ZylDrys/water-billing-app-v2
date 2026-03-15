@@ -11,29 +11,39 @@ export const UI = (() => {
     }
 
     function bindEvents() {
-
-        const adminPassword = document.getElementById("adminPassword");
-        const eyeIcon = document.getElementById("eyeIcon");
-
+    // Toggle password visibility
+        const adminPassword = document.getElementById('adminPassword');
+        const eyeIcon = document.getElementById('eyeIcon');
         if (adminPassword && eyeIcon) {
-
-            eyeIcon.addEventListener("click", () => {
-                adminPassword.type =
-                    adminPassword.type === "password" ? "text" : "password";
+            eyeIcon.addEventListener('click', () => {
+                adminPassword.type = adminPassword.type === 'password' ? 'text' : 'password';
             });
-
-            adminPassword.addEventListener("keydown", (e) => {
-
-                if (e.key === "Enter") {
+            
+            adminPassword.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
                     AccessControl.verifyMasterPassword(adminPassword.value);
                 }
-
             });
-
         }
 
-    }
+    // Section navigation buttons
+        const navButtons = document.querySelectorAll('button[data-section]');
+        navButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const section = btn.getAttribute('data-section');
+                showSection(section);
+            });
+        });
 
+    // Currency buttons
+    const currencyButtons = document.querySelectorAll('button[data-currency]');
+    currencyButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const curr = btn.getAttribute('data-currency');
+            setCurrency(curr);
+        });
+    });
+}
 
     function loadSettings() {
 
