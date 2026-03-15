@@ -203,6 +203,41 @@
     </script>
     
     <script>
+        // 🔹 ADDED FOR AUTO-CLEAR
+        function clearPasswordFields() {
+            const passwordFields = document.querySelectorAll('input[type="password"][data-clear-on-confirm="true"]');
+            passwordFields.forEach(field => field.value = '');
+        }
+        
+        // 🔹 WRAPPER FUNCTION TO CLEAR PASSWORDS AFTER CONFIRM
+        function confirmWithClear(confirmFunction) {
+            return function(...args) {
+                confirmFunction(...args); // Run original logic
+                clearPasswordFields();    // Then clear all marked password fields
+            }
+        }
+        
+        // 🔹 WRAP CONFIRM FUNCTIONS (must come after their last definition)
+        confirmMasterPassword = confirmWithClear(confirmMasterPassword);
+        saveSettings = confirmWithClear(saveSettings);
+        
+        // 🔹 UNIVERSAL ENTER KEY LISTENER FOR PASSWORD FIELDS
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                const active = document.activeElement;
+                if (active && active.type === 'password' && active.dataset.clearOnConfirm === 'true') {
+                    
+                    // Attempt to click the first button in the same section
+                    const section = active.closest('.section');
+                    const confirmBtn = section.querySelector('button');
+                    if(confirmBtn) confirmBtn.click();
+                    setTimeout(clearPasswordFields, 10); // Clear after original function
+                }
+            }
+        });// ... the rest of your index.html <script> content remains unchanged ...
+    </script>
+    
+    <script>
         // === STORAGE KEYS ===
         const STORAGE = {
             customers: 'water_customers_v2',
