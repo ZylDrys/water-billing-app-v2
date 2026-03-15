@@ -457,6 +457,17 @@
             document.getElementById(sectionId).style.display = "block";
         }
 
+        // Universal password confirm handler
+        function handlePasswordConfirm(inputField, callback) {
+            const value = inputField.value.trim();
+            if(callback) callback(value); // run your original confirm logic
+            
+        // Clear password automatically
+            if(inputField.dataset.clearOnConfirm === "true") {
+                inputField.value = '';
+            }
+        }
+
         // === CUSTOMERS ===
         function addCustomer() {
             const name = document.getElementById('newCustomerName').value.trim();
