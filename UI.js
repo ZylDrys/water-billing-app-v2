@@ -6,7 +6,6 @@ export const UI = (() => {
 
     function init() {
         bindEvents();
-        bindExport();
         loadSettings();
         updateCurrencySymbol();
     }
