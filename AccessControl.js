@@ -204,14 +204,3 @@ function confirmMasterPassword() {
         alert("❌ Incorrect master password");
     }
 }
-
-// Universal password confirm handler
-function handlePasswordConfirm(inputField, callback) {
-    const value = inputField.value.trim();
-    if(callback) callback(value); // run your original confirm logic
-
-    // Clear password automatically
-    if(inputField.dataset.clearOnConfirm === "true") {
-        inputField.value = '';
-    }
-}
