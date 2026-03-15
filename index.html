@@ -159,12 +159,19 @@
         import { History } from './History.js';
         import { Storage } from './Storage.js';
         import { AccessControl } from './AccessControl.js';
-
-        document.addEventListener('DOMContentLoaded', () => {
+        
+    /* expose modules so HTML onclick works */
+        window.UI = UI;
+        window.Customers = Customers;
+        window.Billing = Billing;
+        window.History = History;
+        window.Storage = Storage;
+        window.AccessControl = AccessControl;
+        document.addEventListener("DOMContentLoaded", () => {
             UI.init();
-            AccessControl.bindRestoreButton();
-            // You can bind all buttons via module here instead of inline onclick
+            AccessControl.checkAppAccess();
         });
     </script>
+    
 </body>
 </html>
