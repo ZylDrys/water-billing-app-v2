@@ -56,7 +56,6 @@ export const AccessControl = (() => {
         // Clear all input fields
         const allInputs = document.querySelectorAll('input');
         allInputs.forEach(input => input.value = '');
-
         UI.alertMessage('All settings have been restored to default.');
     }
 
