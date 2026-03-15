@@ -30,6 +30,32 @@
     </style>
 </head>
 <body>
+    <!-- LOGIN MODAL -->
+    <div id="loginModal" style="
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;
+        z-index: 9999; display: none;">
+        
+        <div style="
+            background: white; padding: 25px; border-radius: 12px; width: 320px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2); text-align: center;">
+            <h2>🔒 Enter Password</h2>
+            <input id="loginPassword" type="password" placeholder="Password" style="
+                width: 100%; padding: 12px; margin: 15px 0; border-radius: 8px; border: 1px solid #ccc;">
+            
+            <span id="toggleLoginPassword" style="
+                position: absolute; right: 40px; cursor: pointer; font-size: 18px;
+                ">👁️</span>
+            
+            <div id="loginMessage" style="color: red; font-size: 14px; min-height: 18px;"></div>
+            
+            <button id="loginBtn" style="
+                width: 100%; padding: 12px; background: #007bff; color: white; border: none; border-radius: 8px;
+                font-weight: bold; cursor: pointer;
+                ">Login</button>
+        </div>
+    </div>
+    
     <div class="container">
         <h1 style="text-align:center;">💧 Water Billing System</h1>
 
@@ -934,6 +960,87 @@
             
             // Show main menu
             showSection('menuSection');
+        });
+    </script>
+
+    <script>
+        // ====== LOGIN MODAL SCRIPT ======
+        const MASTER_PASSWORD_KEY = 'masterPassword';
+        const DEFAULT_MASTER_PASSWORD = 'admin123';
+        const TEMP_PASSWORD_KEY = 'tempPassword';
+        const TEMP_PASSWORD_EXPIRY_KEY = 'tempPasswordExpiry';
+        const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+        
+        // Show modal
+        function showLoginModal() {
+            document.getElementById('loginModal').style.display = 'flex';
+            document.getElementById('loginPassword').value = '';
+            document.getElementById('loginMessage').textContent = '';
+            document.getElementById('loginPassword').focus();
+        }
+        
+        // Hide modal
+        function hideLoginModal() {
+            document.getElementById('loginModal').style.display = 'none';
+        }
+        
+        // Toggle show/hide password
+        document.getElementById('toggleLoginPassword').addEventListener('click', () => {
+            const pwd = document.getElementById('loginPassword');
+            if(pwd.type === 'password') {
+                pwd.type = 'text';
+                document.getElementById('toggleLoginPassword').textContent = '🙈';
+            } else {
+                pwd.type = 'password';
+                document.getElementById('toggleLoginPassword').textContent = '👁️';
+            }
+        });
+        
+        // Get current master password
+        function getMasterPassword() {
+            return localStorage.getItem(MASTER_PASSWORD_KEY) || DEFAULT_MASTER_PASSWORD;
+        }
+        
+        // Check login password
+        function checkLogin(password) {
+            const master = getMasterPassword();
+            const temp = localStorage.getItem(TEMP_PASSWORD_KEY);
+            const expiry = parseInt(localStorage.getItem(TEMP_PASSWORD_EXPIRY_KEY) || '0');
+            const now = Date.now();
+            // Master password always valid
+            if(password === master) return true;
+            
+            // Admin password (now accepts master too)
+            const settings = getSettings();
+            if(password === settings.adminPassword) return true;
+            
+            // Temporary password (30 days limit)
+            if(temp && password === temp && now < expiry) return true;
+            return false;
+        }
+        
+        // Login button click
+        document.getElementById('loginBtn').addEventListener('click', () => {
+            const pwd = document.getElementById('loginPassword').value.trim();
+            if(!pwd) return;
+            if(checkLogin(pwd)) {
+                hideLoginModal();
+                alert('✅ Access granted');
+            } else {
+                document.getElementById('loginMessage').textContent = '❌ Incorrect password, try again';
+                document.getElementById('loginPassword').value = '';
+                document.getElementById('loginPassword').focus();
+            }
+        });
+        
+        // Enter key triggers login
+        document.getElementById('loginPassword').addEventListener('keydown', (e) => {
+            if(e.key === 'Enter') document.getElementById('loginBtn').click();
+        });
+        
+        // Show modal on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            showLoginModal();
         });
     </script>
 </body>
