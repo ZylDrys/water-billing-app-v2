@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#007bff">
+    <title>💧 Water Billing System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f7fa; padding: 15px; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        h1, h2 { color: #333; margin-bottom: 15px; }
+        button { background: #007bff; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; margin: 5px 0; width: 100%; font-weight: bold; }
+        button:hover { background: #0056b3; }
+        input, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 14px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background: #007bff; color: white; }
+        tr:nth-child(even) { background: #f9f9f9; }
+        .section { display: none; }
+        .section.active { display: block; }
+        .total-display { background: #28a745; color: white; padding: 15px; border-radius: 8px; text-align: center; font-size: 20px; font-weight: bold; margin: 15px 0; }
+        .settings-btn { background: #ffc107; color: #333; }
+        .search-box { padding: 12px; margin: 15px 0; border: 2px solid #007bff; border-radius: 8px; font-size: 16px; }
+        .sort-controls { display: flex; gap: 10px; margin: 15px 0; }
+        .sort-controls button { width: auto; font-size: 12px; padding: 8px; }
+        .currency-switcher { margin: 15px 0; text-align: center; }
+        .currency-switcher button { width: auto; margin: 0 5px; }
+        @media print { body { background: white; } .container { width: 80mm; margin: 0; box-shadow: none; } .no-print { display: none !important; } }
+    </style>
+</head>
+<body>
+    <!-- LOGIN MODAL -->
+    <div id="loginModal" style="
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;
+        z-index: 9999; display: none;">
+        
+        <div style="
+            background: white; padding: 25px; border-radius: 12px; width: 320px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2); text-align: center;">
+            <h2>🔒 Enter Password</h2>
+            <input id="loginPassword" type="password" placeholder="Password" style="
+                width: 100%; padding: 12px; margin: 15px 0; border-radius: 8px; border: 1px solid #ccc;">
+            
+            <span id="toggleLoginPassword" style="
+                position: absolute; right: 40px; cursor: pointer; font-size: 18px;
+                ">👁️</span>
+            
+            <div id="loginMessage" style="color: red; font-size: 14px; min-height: 18px;"></div>
+            
+            <button id="loginBtn" style="
+                width: 100%; padding: 12px; background: #007bff; color: white; border: none; border-radius: 8px;
+                font-weight: bold; cursor: pointer;
+                ">Login</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h1 style="text-align:center;">💧 Water Billing System</h1>
+
+        <!-- Main Menu -->
+        <div id="menuSection" class="section active">
+            <button onclick="showSection('newBillSection')">➕ New Bill</button>
+            <button onclick="showSection('customersSection')">👥 Customers</button>
+            <button onclick="showSection('historySection')">📋 History</button>
+            <button onclick="showSection('settingsSection')" class="settings-btn">⚙️ Settings</button>
+            <button onclick="exportToExcel()" class="no-print">📊 Export to Excel</button>
+        </div>
+
+        <!-- Settings Section -->
+        <div id="settingsSection" class="section">
+            <button onclick="showSection('menuSection')" class="no-print">← Back</button>
+            <h2>⚙️ System Settings</h2>
+            
+            <div class="currency-switcher">
+                <strong>Currency:</strong>
+                <button onclick="setCurrency('USD')">USD $</button>
+                <button onclick="setCurrency('PHP')">PHP ₱</button>
+                <button onclick="setCurrency('EUR')">EUR €</button>
+            </div>
+
+            <div class="form-group">
+                <label>Price per Cubic Meter</label>
+                <input type="number" id="adminPricePerCubic" step="0.01" placeholder="Enter current rate">
+            </div>
+            
+            <div class="form-group">
+                <label>Minimum Charge (if usage ≤ 0)</label>
+                <input type="number" id="adminMinCharge" step="0.01" placeholder="Enter minimum charge">
+            </div>
+            
+           <!-- Admin Password Field (with visibility toggle) -->
+            <div>
+                <label>Admin Password</label>
+                <div style="position: relative;">
+                    <input type="password" id="adminPassword" placeholder="Enter password to save" data-clear-on-confirm="true"/>
+                    <span id="eyeIcon" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;">👁️</span>
+                </div>
+            </div>
+            
+            <!-- Save Settings Button -->
+            <button onclick="saveSettings()">💾 Save Settings</button>
+            
+            <!-- Temporary Password Button [Create/Delete] & Restore Defaults (Hidden by default) -->
+            <div id="temporaryPasswordButtonContainer" style="display:none; margin-top:15px;">
+                <button onclick="createTempPasswordPrompt()">
+                    ➕ Create Temporary Password
+                </button>
+                <button onclick="deleteTempPassword()">
+                    🗑 Delete Temporary Password
+                </button>
+                <button onclick="restoreDefaults()">
+                    ♻ Restore Default
+                </button>
+            </div>
+            
+           <!-- Master Password Section -->
+            <div>
+                <label>Master Password</label>
+                <div style="position: relative; margin-bottom: 10px;">
+                    <input
+                        type="password"
+                        id="masterPassword"
+                        placeholder="Enter master password"
+                        data-clear-on-confirm="true"
+                        onkeydown="if(event.key==='Enter'){ confirmMasterPassword(); }">
+                    <span id="eyeIconMaster"
+                        style="position:absolute; right:10px; top:50%; transform:translateY(-50%); cursor:pointer;">👁️
+                    </span>
+                </div>
+                <button onclick="confirmMasterPassword()">Confirm Master Password</button>
+            </div>
+            <!-- Master Password Action Buttons (Hidden by default) -->
+            <div id="masterPasswordActions" style="margin-top: 10px; display:none;">
+                <button onclick="changeMasterPassword()">🔑 Change Master Password</button>
+                <button onclick="showDefaultMasterPassword()">👁 Show Default Master Password</button>
+                <button onclick="restoreDefaultMasterPassword()">♻ Restore Default</button>
+            </div>
+            
+        </div>
+
+        <!-- Customers Section -->
+        <div id="customersSection" class="section">
+            <button onclick="showSection('menuSection')" class="no-print">← Back</button>
+            <h2>👥 Manage Customers</h2>
+            
+            <input type="text" id="customerSearch" class="search-box" placeholder="Search customer..." oninput="filterCustomers()">
+            
+            <div class="sort-controls">
+                <button onclick="sortCustomers('name', 'asc')">A→Z</button>
+                <button onclick="sortCustomers('name', 'desc')">Z→A</button>
+                <button onclick="sortCustomers('date', 'desc')">Newest First</button>
+                <button onclick="sortCustomers('date', 'asc')">Oldest First</button>
+            </div>
+            
+            <div class="form-group">
+                <input type="text" id="newCustomerName" placeholder="Enter customer name">
+                <button onclick="addCustomer()">➕ Add Customer</button>
+            </div>
+            
+            <div id="customersList"></div>
+                      
+        </div>
+
+        <!-- New Bill Section -->
+        <div id="newBillSection" class="section">
+            <button onclick="showSection('menuSection')" class="no-print">← Back</button>
+            <h2>📄 Create New Bill</h2>
+            
+            <input type="text" id="billCustomerSearch" class="search-box" placeholder="Search customer..." oninput="filterBillCustomers()">
+            
+            <select id="billCustomer" onchange="loadLastReading()">
+                <option value="">-- Select Customer --</option>
+            </select>
+            
+            <input type="date" id="billDate">
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Previous Reading (m³)</label>
+                    <input type="number" id="prevReading" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Present Reading (m³)</label>
+                    <input type="number" id="presReading" oninput="calculateTotal()">
+                </div>
+            </div>
+            
+            <div class="total-display">Total Due: <span id="displayCurrencySymbol">$</span><span id="displayTotal">0.00</span></div>
+            
+            <button onclick="saveBill(false)" class="no-print">💾 Save Only</button>
+            <button onclick="saveBill(true)" class="no-print">🖨️ Save & Print</button>
+        </div>
+
+        <!-- History Section -->
+        <div id="historySection" class="section">
+            <button onclick="showSection('menuSection')" class="no-print">← Back</button>
+            <h2>📋 Transaction History</h2>
+            
+            <input type="text" id="historySearch" class="search-box" placeholder="Search by customer or date..." oninput="filterHistory()">
+            
+            <div class="sort-controls">
+                <button onclick="sortHistory('date', 'desc')">Newest First</button>
+                <button onclick="sortHistory('date', 'asc')">Oldest First</button>
+                <button onclick="sortHistory('amount', 'desc')">Highest Amount</button>
+                <button onclick="sortHistory('amount', 'asc')">Lowest Amount</button>
+            </div>
+            
+            <select id="historyFilter" onchange="loadFilteredHistory()">
+                <option value="all">All Customers</option>
+            </select>
+            
+            <div id="historyList"></div>
+        </div>
+
+        <!-- Hidden Print Area -->
+        <div id="printReceipt" class="print-only"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <script src="AccessControl.js"></script>
+ 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAppAccess();  // This will prompt the user for password immediately
+        });
+    </script>
+    
+    <script>
+        // 🔹 ADDED FOR AUTO-CLEAR
+        function clearPasswordFields() {
+            const passwordFields = document.querySelectorAll('input[type="password"][data-clear-on-confirm="true"]');
+            passwordFields.forEach(field => field.value = '');
+        }
+        
+        // 🔹 WRAPPER FUNCTION TO CLEAR PASSWORDS AFTER CONFIRM
+        function confirmWithClear(confirmFunction) {
+            return function(...args) {
+                confirmFunction(...args); // Run original logic
+                clearPasswordFields();    // Then clear all marked password fields
+            }
+        }
+        
+        // 🔹 WRAP CONFIRM FUNCTIONS (must come after their last definition)
+        confirmMasterPassword = confirmWithClear(confirmMasterPassword);
+        saveSettings = confirmWithClear(saveSettings);
+        
+        // 🔹 UNIVERSAL ENTER KEY LISTENER FOR PASSWORD FIELDS
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                const active = document.activeElement;
+                if (active && active.type === 'password' && active.dataset.clearOnConfirm === 'true') {
+                    
+                    // Attempt to click the first button in the same section
+                    const section = active.closest('.section');
+                    const confirmBtn = section.querySelector('button');
+                    if(confirmBtn) confirmBtn.click();
+                    setTimeout(clearPasswordFields, 10); // Clear after original function
+                }
+            }
+        });// ... the rest of your index.html <script> content remains unchanged ...
+    </script>
+    
+    <script>
+        // === STORAGE KEYS ===
+        const STORAGE = {
+            customers: 'water_customers_v2',
+            bills: 'water_bills_v2',
+            settings: 'water_settings_v2'
+        };
+
+        // === DEFAULT SETTINGS ===
+        const DEFAULT_SETTINGS = {
+            pricePerCubic: 1.50,
+            minCharge: 5.00,
+            currency: 'USD',
+            adminPassword: 'admin123' // Default password - CHANGE THIS!
+        };
+
+        // === HELPER FUNCTIONS ===
+        function getData(key) {
+            try {
+                return JSON.parse(localStorage.getItem(STORAGE[key]) || '[]');
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveData(key, data) {
+            localStorage.setItem(STORAGE[key], JSON.stringify(data));
+        }
+
+        function getSettings() {
+            try {
+                return JSON.parse(localStorage.getItem(STORAGE.settings)) || DEFAULT_SETTINGS;
+            } catch (e) {
+                return DEFAULT_SETTINGS;
+            }
+        }
+
+        function saveSettingsData(settings) {
+            localStorage.setItem(STORAGE.settings, JSON.stringify(settings));
+        }
+
+        function formatMoney(amount) {
+            const settings = getSettings();
+            const formatter = new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: settings.currency === 'PHP' ? 'PHP' : 
+                         settings.currency === 'EUR' ? 'EUR' : 'USD',
+                minimumFractionDigits: 2
+            });
+            return formatter.format(amount);
+        }
+
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            
+            if (id === 'newBillSection') {
+                loadCustomerDropdowns();
+                clearBillForm();
+            } else if (id === 'historySection') {
+                loadCustomerDropdowns();
+                loadHistory();
+            } else if (id === 'customersSection') {
+                loadCustomersList();
+            } else if (id === 'settingsSection') {
+                loadSettings();
+            }
+        }
+
+        // === SETTINGS ===
+        function loadSettings() {
+            const settings = getSettings();
+            document.getElementById('adminPricePerCubic').value = settings.pricePerCubic;
+            document.getElementById('adminMinCharge').value = settings.minCharge;
+            document.getElementById('adminPassword').value = '';
+        }
+
+        function setCurrency(currency) {
+            const settings = getSettings();
+            settings.currency = currency;
+            saveSettingsData(settings);
+            updateCurrencyDisplay();
+            loadHistory(); // Refresh display
+            alert(`Currency changed to ${currency}`);
+        }
+
+        function updateCurrencyDisplay() {
+            const settings = getSettings();
+            let symbol = '$';
+            if (settings.currency === 'PHP') symbol = '₱';
+            if (settings.currency === 'EUR') symbol = '€';
+            document.getElementById('displayCurrencySymbol').textContent = symbol;
+        }
+
+        function saveSettings() {
+            const password = document.getElementById('adminPassword').value;
+            const correctPassword = getSettings().adminPassword;
+            
+            if(!isValidAdminAccess(password)) {
+                alert("Invalid password");
+                return;
+            }
+            
+            const newPrice = parseFloat(document.getElementById('adminPricePerCubic').value) || DEFAULT_SETTINGS.pricePerCubic;
+            const newMinCharge = parseFloat(document.getElementById('adminMinCharge').value) || DEFAULT_SETTINGS.minCharge;
+            
+            const settings = getSettings();
+            settings.pricePerCubic = newPrice;
+            settings.minCharge = newMinCharge;
+            saveSettingsData(settings);
+            
+            alert('✅ Settings saved successfully!'); 
+        }
+
+        function confirmMasterPassword() {
+            const masterInput = document.getElementById("masterPassword").value;
+            
+            if(masterInput === "admin123") {
+                alert("Master password confirmed");
+                document.getElementById("temporaryPasswordButtonContainer").style.display = "block";
+            } else {
+                alert("Incorrect master password");
+            }
+        }
+    //=====Create Temporary Password=====//
+        function createTempPasswordPrompt() {
+            const tempPwd = prompt("Enter a temporary password:");
+            if (tempPwd) {
+                Storage.setItem('waterBillingTempPassword', tempPwd);
+                UI.alertMessage("Temporary password created!");
+            }
+        }
+        
+    //=====Delete Temporary Password=====//
+        function deleteTempPassword() {
+            const confirmDelete = confirm(
+                "Delete the temporary password and revoke its access?"
+            );
+            
+            if(!confirmDelete) return;
+            localStorage.removeItem("tempPassword");
+            localStorage.removeItem("tempPasswordExpiry");
+            alert("Temporary password deleted. Access revoked.");
+        }
+
+        //=====Reset all settings to default=====//
+        function restoreDefaults() {
+            const confirmReset = confirm(
+                "Restore all settings to default? This cannot be undone."
+            );
+            
+            if(!confirmReset) return;
+            
+            // Reset billing settings
+            localStorage.removeItem("pricePerCubic");
+            localStorage.removeItem("minimumCharge");
+            
+            // Reset admin password
+            localStorage.removeItem("adminPassword");
+            
+            // Remove temporary password
+            localStorage.removeItem("tempPassword");
+            localStorage.removeItem("tempPasswordExpiry");
+            alert("All settings restored to default.");
+            location.reload();
+        }
+
+        function isValidAdminAccess(password) {
+            const master = "admin123";
+            const admin = localStorage.getItem("adminPassword");
+            const temp = localStorage.getItem("tempPassword");
+            const expiry = parseInt(localStorage.getItem("tempPasswordExpiry") || "0");
+            const now = Date.now();
+            
+            // Master password always valid
+            if(password === master) return true;
+            
+            // Admin password
+            if(admin && password === admin) return true;
+            
+            // Temporary password
+            if(temp && password === temp && now < expiry) return true;
+            return false;
+        }
+
+        //===Master Password Censorship===// 
+        const eyeMaster = document.getElementById('eyeIconMaster');
+        eyeMaster.addEventListener('click', () => {
+            const pwd = document.getElementById('masterPassword');
+            if(pwd.type === 'password') pwd.type = 'text';
+            else pwd.type = 'password';
+        });
+
+        document.getElementById("eyeIconMaster").addEventListener("click", function(){
+            const field = document.getElementById("masterPassword");
+            if(field.type === "password"){
+                field.type = "text";
+            }else{
+                field.type = "password";
+            }
+        });
+
+        //===Master Password System===//
+        function getMasterPassword(){
+            return localStorage.getItem(MASTER_PASSWORD_KEY) || DEFAULT_MASTER_PASSWORD;
+        }
+        
+        function confirmMasterPassword(){
+            const input =
+                document.getElementById("masterPassword").value.trim();
+            
+            if(input === getMasterPassword()){
+                document.getElementById("masterPasswordActions").style.display = "block";
+                document.getElementById("temporaryPasswordButtonContainer").style.display = "block";
+                alert("Master access granted");
+            }else{
+                alert("Incorrect master password");
+            }
+        }
+        
+        function changeMasterPassword(){
+            const current = prompt("Enter current master password:");
+            if(current !== getMasterPassword()){
+                alert("Incorrect current master password");
+                return;
+            }
+            
+            const newPass = prompt("Enter new master password:");
+            if(!newPass){
+                alert("Password cannot be empty");
+                return;
+            }
+            
+            localStorage.setItem(MASTER_PASSWORD_KEY, newPass);
+            alert("Master password changed successfully");
+        }
+        
+        function showDefaultMasterPassword(){
+            alert("Default Master Password: " + DEFAULT_MASTER_PASSWORD);
+        }
+        
+        function restoreDefaultMasterPassword(){
+            if(!confirm("Restore default master password?")) return;
+            localStorage.removeItem(MASTER_PASSWORD_KEY);
+            alert("Master password restored to default (admin123)");
+        }
+
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll(".section");
+            sections.forEach(section => {
+                section.style.display = "none";
+            });
+            
+            document.getElementById(sectionId).style.display = "block";
+        }
+
+        // UNIVERSAL PASSWORD CLEARING AFTER CONFIRM
+        function clearPasswordFields() {
+            // Find all password fields with the data attribute
+            const passwordFields = document.querySelectorAll('input[type="password"][data-clear-on-confirm="true"]');
+            passwordFields.forEach(field => field.value = ''); // Clear each field
+        }
+        
+        // Wrap your existing confirm functions
+        function confirmWithClear(confirmFunction) {
+            return function(...args) {
+                confirmFunction(...args); // Run the original confirm logic
+                clearPasswordFields();    // Then clear all marked password fields
+            }
+        }
+        
+        // Example: override existing confirm functions
+        confirmMasterPassword = confirmWithClear(confirmMasterPassword);
+        saveSettings = confirmWithClear(saveSettings);
+        // Add other confirm functions here if needed
+
+        // === CUSTOMERS ===
+        function addCustomer() {
+            const name = document.getElementById('newCustomerName').value.trim();
+            if (!name) return alert('Please enter customer name');
+            
+            const customers = getData('customers');
+            if (customers.find(c => c.name.toLowerCase() === name.toLowerCase())) {
+                return alert('Customer already exists!');
+            }
+            
+            customers.push({
+                id: Date.now(),
+                name: name,
+                createdAt: new Date().toISOString()
+            });
+            
+            saveData('customers', customers);
+            document.getElementById('newCustomerName').value = '';
+            loadCustomersList();
+            loadCustomerDropdowns();
+            alert('✅ Customer added!');
+        }
+
+        function deleteCustomer(id) {
+            if (!confirm('Delete this customer and all their bills?')) return;
+            
+            const customers = getData('customers').filter(c => c.id !== id);
+            const bills = getData('bills').filter(b => b.customerId !== id);
+            
+            saveData('customers', customers);
+            saveData('bills', bills);
+            loadCustomersList();
+            loadCustomerDropdowns();
+        }
+
+        function loadCustomersList(sortBy = 'name', order = 'asc') {
+            let customers = getData('customers');
+            
+            // Apply search filter
+            const searchTerm = document.getElementById('customerSearch')?.value.toLowerCase() || '';
+            if (searchTerm) {
+                customers = customers.filter(c => c.name.toLowerCase().includes(searchTerm));
+            }
+            
+            // Apply sorting
+            customers.sort((a, b) => {
+                if (sortBy === 'name') {
+                    return order === 'asc' ? 
+                        a.name.localeCompare(b.name) : 
+                        b.name.localeCompare(a.name);
+                } else if (sortBy === 'date') {
+                    return order === 'asc' ? 
+                        new Date(a.createdAt) - new Date(b.createdAt) : 
+                        new Date(b.createdAt) - new Date(a.createdAt);
+                }
+                return 0;
+            });
+            
+            const container = document.getElementById('customersList');
+            
+            if (customers.length === 0) {
+                container.innerHTML = '<p style="padding:20px; text-align:center; color:#666;">No customers found.</p>';
+                return;
+            }
+            
+            container.innerHTML = customers.map(c => `
+                <div style="padding:15px; border:1px solid #eee; margin:10px 0; border-radius:8px;">
+                    <strong>${c.name}</strong><br>
+                    <small>Added: ${new Date(c.createdAt).toLocaleDateString()}</small>
+                    <div style="margin-top:10px;">
+                        <button onclick="viewCustomerHistory(${c.id})" style="padding:5px 10px; font-size:12px;">View Bills</button>
+                        <button onclick="deleteCustomer(${c.id})" style="padding:5px 10px; font-size:12px; background:#dc3545;">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function sortCustomers(by, order) {
+            loadCustomersList(by, order);
+        }
+
+        function filterCustomers() {
+            loadCustomersList(); // Reapply filter
+        }
+
+        function viewCustomerHistory(customerId) {
+            showSection('historySection');
+            document.getElementById('historyFilter').value = customerId;
+            loadFilteredHistory();
+        }
+
+        function loadCustomerDropdowns() {
+            const customers = getData('customers');
+            const options = '<option value="">-- Select Customer --</option>' + 
+                customers.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+            
+            document.getElementById('billCustomer').innerHTML = options;
+            document.getElementById('historyFilter').innerHTML = 
+                '<option value="all">All Customers</option>' + 
+                customers.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+        }
+
+        function filterBillCustomers() {
+            const searchTerm = document.getElementById('billCustomerSearch').value.toLowerCase();
+            const select = document.getElementById('billCustomer');
+            const originalOptions = Array.from(select.options);
+            
+            // Clear and repopulate based on search
+            select.innerHTML = '<option value="">-- Select Customer --</option>';
+            
+            originalOptions.forEach(opt => {
+                if (opt.value === "" || opt.text.toLowerCase().includes(searchTerm)) {
+                    select.appendChild(opt);
+                }
+            });
+        }
+
+        // === BILLING ===
+        function loadLastReading() {
+            const customerId = parseInt(document.getElementById('billCustomer').value);
+            if (!customerId) {
+                document.getElementById('prevReading').value = 0;
+                return;
+            }
+            
+            const bills = getData('bills').filter(b => b.customerId === customerId);
+            if (bills.length > 0) {
+                const lastBill = bills.sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+                document.getElementById('prevReading').value = lastBill.presReading;
+            } else {
+                document.getElementById('prevReading').value = 0;
+            }
+            calculateTotal();
+        }
+
+        function calculateTotal() {
+            const settings = getSettings();
+            const prev = parseFloat(document.getElementById('prevReading').value) || 0;
+            const pres = parseFloat(document.getElementById('presReading').value) || 0;
+            const used = pres - prev;
+            
+            let totalDue;
+            if (used <= 0) {
+                totalDue = settings.minCharge;
+            } else {
+                totalDue = used * settings.pricePerCubic;
+            }
+            
+            document.getElementById('displayTotal').textContent = totalDue.toFixed(2);
+        }
+
+        function clearBillForm() {
+            document.getElementById('billCustomer').value = '';
+            document.getElementById('prevReading').value = 0;
+            document.getElementById('presReading').value = '';
+            document.getElementById('displayTotal').textContent = '0.00';
+            document.getElementById('billDate').value = new Date().toISOString().split('T')[0];
+        }
+
+        function saveBill(shouldPrint) {
+            const customerId = parseInt(document.getElementById('billCustomer').value);
+            if (!customerId) return alert('Please select a customer');
+            
+            const presReading = parseFloat(document.getElementById('presReading').value);
+            if (isNaN(presReading)) return alert('Please enter present reading');
+            
+            const settings = getSettings();
+            const prevReading = parseFloat(document.getElementById('prevReading').value) || 0;
+            const used = presReading - prevReading;
+            
+            let totalDue;
+            if (used <= 0) {
+                totalDue = settings.minCharge;
+            } else {
+                totalDue = used * settings.pricePerCubic;
+            }
+            
+            const bill = {
+                id: Date.now(),
+                customerId: customerId,
+                date: document.getElementById('billDate').value,
+                prevReading: prevReading,
+                presReading: presReading,
+                totalUsed: Math.max(0, used),
+                pricePerCubic: settings.pricePerCubic,
+                totalDue: totalDue,
+                createdAt: new Date().toISOString()
+            };
+            
+            const bills = getData('bills');
+            bills.push(bill);
+            saveData('bills', bills);
+            
+            if (shouldPrint) {
+                printBill(bill);
+            } else {
+                alert('✅ Bill saved successfully!');
+            }
+            
+            clearBillForm();
+        }
+
+        // === HISTORY ===
+        function loadHistory(sortBy = 'date', order = 'desc') {
+            loadFilteredHistory(sortBy, order);
+        }
+
+        function loadFilteredHistory(sortBy = 'date', order = 'desc') {
+            let bills = getData('bills');
+            const customers = getData('customers');
+            
+            // Filter by customer
+            const filter = document.getElementById('historyFilter').value;
+            if (filter !== 'all') {
+                bills = bills.filter(b => b.customerId === parseInt(filter));
+            }
+            
+            // Apply search
+            const searchTerm = document.getElementById('historySearch')?.value.toLowerCase() || '';
+            if (searchTerm) {
+                bills = bills.filter(bill => {
+                    const customer = customers.find(c => c.id === bill.customerId);
+                    const customerName = customer ? customer.name.toLowerCase() : '';
+                    const dateStr = new Date(bill.date).toLocaleDateString().toLowerCase();
+                    return customerName.includes(searchTerm) || dateStr.includes(searchTerm);
+                });
+            }
+            
+            // Apply sorting
+            bills.sort((a, b) => {
+                if (sortBy === 'date') {
+                    return order === 'asc' ? 
+                        new Date(a.date) - new Date(b.date) : 
+                        new Date(b.date) - new Date(a.date);
+                } else if (sortBy === 'amount') {
+                    return order === 'asc' ? a.totalDue - b.totalDue : b.totalDue - a.totalDue;
+                }
+                return 0;
+            });
+            
+            const container = document.getElementById('historyList');
+            
+            if (bills.length === 0) {
+                container.innerHTML = '<p style="padding:20px; text-align:center; color:#666;">No bills found.</p>';
+                return;
+            }
+            
+            container.innerHTML = bills.map(bill => {
+                const customer = customers.find(c => c.id === bill.customerId);
+                const customerName = customer ? customer.name : 'Unknown';
+                const formattedAmount = formatMoney(bill.totalDue);
+                
+                return `
+                    <div style="padding:15px; border:1px solid #eee; margin:10px 0; border-radius:8px;">
+                        <strong>${customerName}</strong> • ${new Date(bill.date).toLocaleDateString()}<br>
+                        Prev: ${bill.prevReading} → Pres: ${bill.presReading} = ${bill.totalUsed} m³<br>
+                        <strong>Total Due: ${formattedAmount}</strong><br>
+                        <div style="margin-top:10px;">
+                            <button onclick="printBillById(${bill.id})" style="padding:5px 10px; font-size:12px;">🖨️ Print</button>
+                            <button onclick="deleteBill(${bill.id})" style="padding:5px 10px; font-size:12px; background:#dc3545;">🗑️ Delete</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function sortHistory(by, order) {
+            loadFilteredHistory(by, order);
+        }
+
+        function filterHistory() {
+            loadFilteredHistory(); // Reapply filter
+        }
+
+        function deleteBill(id) {
+            if (!confirm('Delete this bill?')) return;
+            const bills = getData('bills').filter(b => b.id !== id);
+            saveData('bills', bills);
+            loadFilteredHistory();
+        }
+
+        function printBillById(id) {
+            const bill = getData('bills').find(b => b.id === id);
+            if (bill) printBill(bill);
+        }
+
+        function printBill(bill) {
+            const customers = getData('customers');
+            const customer = customers.find(c => c.id === bill.customerId);
+            const customerName = customer ? customer.name : 'Unknown';
+            const settings = getSettings();
+            
+            // Format currency properly for receipt
+            const currencyFormatter = new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: settings.currency === 'PHP' ? 'PHP' : 
+                         settings.currency === 'EUR' ? 'EUR' : 'USD'
+            });
+            
+            const receiptHTML = `
+                <div style="font-family: Arial; padding: 10px; width: 80mm;">
+                    <h2 style="text-align:center; margin-bottom:5px;">💧 WATER BILL</h2>
+                    <div style="text-align:center; margin-bottom:15px; font-size:14px;">
+                        ${new Date(bill.date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                    </div>
+                    <hr style="border: 1px dashed #000; margin: 10px 0;">
+                    <p><strong>Customer:</strong> ${customerName}</p>
+                    <p><strong>Date:</strong> ${new Date(bill.date).toLocaleDateString()}</p>
+                    <hr style="border: 1px dashed #000; margin: 10px 0;">
+                    <table style="width:100%; font-size:14px;">
+                        <tr>
+                            <td>Previous Reading:</td>
+                            <td style="text-align:right;">${bill.prevReading} m³</td>
+                        </tr>
+                        <tr>
+                            <td>Present Reading:</td>
+                            <td style="text-align:right;">${bill.presReading} m³</td>
+                        </tr>
+                        <tr>
+                            <td>Total Used:</td>
+                            <td style="text-align:right;">${bill.totalUsed} m³</td>
+                        </tr>
+                        <tr>
+                            <td>Rate:</td>
+                            <td style="text-align:right;">${currencyFormatter.format(settings.pricePerCubic)}/m³</td>
+                        </tr>
+                    </table>
+                    <hr style="border: 1px dashed #000; margin: 10px 0;">
+                    <div style="text-align:center; font-size:18px; font-weight:bold; margin:10px 0;">
+                        TOTAL DUE: ${currencyFormatter.format(bill.totalDue)}
+                    </div>
+                    <div style="text-align:center; font-size:12px; margin-top:20px;">
+                        Thank you for your payment!<br>
+                        Printed: ${new Date().toLocaleString()}
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('printReceipt').innerHTML = receiptHTML;
+            window.print();
+        }
+
+        // === EXPORT TO EXCEL ===
+        function exportToExcel() {
+            const bills = getData('bills');
+            const customers = getData('customers');
+            const settings = getSettings();
+            
+            if (bills.length === 0) {
+                alert('No bills to export');
+                return;
+            }
+            
+            // Determine currency symbol for column header
+            let currencySymbol = '$';
+            if (settings.currency === 'PHP') currencySymbol = '₱';
+            if (settings.currency === 'EUR') currencySymbol = '€';
+            
+            const headers = [
+                'Customer Name', 
+                'Date', 
+                'Previous (m³)', 
+                'Present (m³)', 
+                'Used (m³)', 
+                `Price/${currencySymbol} per m³`, 
+                `Total Due (${currencySymbol})`
+            ];
+            
+            const data = [headers];
+            
+            bills.forEach(bill => {
+                const customer = customers.find(c => c.id === bill.customerId);
+                data.push([
+                    customer ? customer.name : 'Unknown',
+                    bill.date,
+                    bill.prevReading,
+                    bill.presReading,
+                    bill.totalUsed,
+                    bill.pricePerCubic,
+                    bill.totalDue
+                ]);
+            });
+            
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Water Bills');
+            
+            // Set column widths
+            ws['!cols'] = [
+                {wch: 25}, {wch: 12}, {wch: 12}, {wch: 12}, {wch: 10}, {wch: 15}, {wch: 15}
+            ];
+            
+            // Generate filename with current date and currency
+            const filename = `water-bills-${settings.currency}-${new Date().toISOString().split('T')[0]}.xlsx`;
+            XLSX.writeFile(wb, filename); 
+        }
+
+        // --- LOAD SETTINGS WRAPPER ---
+       const originalLoadSettings = loadSettings;
+        
+        loadSettings = function() {
+            originalLoadSettings();
+            
+            // Check the admin password field
+            const pwdInput = document.getElementById('adminPassword').value;
+            showTempPasswordButtonIfMaster(pwdInput);
+        };
+
+        // === INITIALIZATION ===
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize date field
+            document.getElementById('billDate').value = new Date().toISOString().split('T')[0];
+            
+            // Load dropdowns
+            loadCustomerDropdowns();
+            
+            // Set currency display
+            updateCurrencyDisplay();
+            
+            // Show main menu
+            showSection('menuSection');
+        });
+    </script>
+
+    <script>
+        // ====== LOGIN MODAL SCRIPT ======
+        const MASTER_PASSWORD_KEY = 'masterPassword';
+        const DEFAULT_MASTER_PASSWORD = 'admin123';
+        const TEMP_PASSWORD_KEY = 'tempPassword';
+        const TEMP_PASSWORD_EXPIRY_KEY = 'tempPasswordExpiry';
+        const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+        
+        // Show modal
+        function showLoginModal() {
+            document.getElementById('loginModal').style.display = 'flex';
+            document.getElementById('loginPassword').value = '';
+            document.getElementById('loginMessage').textContent = '';
+            document.getElementById('loginPassword').focus();
+        }
+        
+        // Hide modal
+        function hideLoginModal() {
+            document.getElementById('loginModal').style.display = 'none';
+        }
+        
+        // Toggle show/hide password
+        document.getElementById('toggleLoginPassword').addEventListener('click', () => {
+            const pwd = document.getElementById('loginPassword');
+            if(pwd.type === 'password') {
+                pwd.type = 'text';
+                document.getElementById('toggleLoginPassword').textContent = '🙈';
+            } else {
+                pwd.type = 'password';
+                document.getElementById('toggleLoginPassword').textContent = '👁️';
+            }
+        });
+        
+        // Get current master password
+        function getMasterPassword() {
+            return localStorage.getItem(MASTER_PASSWORD_KEY) || DEFAULT_MASTER_PASSWORD;
+        }
+        
+        // Check login password
+        function checkLogin(password) {
+            const master = getMasterPassword();
+            const temp = localStorage.getItem(TEMP_PASSWORD_KEY);
+            const expiry = parseInt(localStorage.getItem(TEMP_PASSWORD_EXPIRY_KEY) || '0');
+            const now = Date.now();
+            // Master password always valid
+            if(password === master) return true;
+            
+            // Admin password (now accepts master too)
+            const settings = getSettings();
+            if(password === settings.adminPassword) return true;
+            
+            // Temporary password (30 days limit)
+            if(temp && password === temp && now < expiry) return true;
+            return false;
+        }
+        
+        // Login button click
+        document.getElementById('loginBtn').addEventListener('click', () => {
+            const pwd = document.getElementById('loginPassword').value.trim();
+            if(!pwd) return;
+            if(checkLogin(pwd)) {
+                hideLoginModal();
+                alert('✅ Access granted');
+            } else {
+                document.getElementById('loginMessage').textContent = '❌ Incorrect password, try again';
+                document.getElementById('loginPassword').value = '';
+                document.getElementById('loginPassword').focus();
+            }
+        });
+        
+        // Enter key triggers login
+        document.getElementById('loginPassword').addEventListener('keydown', (e) => {
+            if(e.key === 'Enter') document.getElementById('loginBtn').click();
+        });
+        
+        // Show modal on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            showLoginModal();
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
