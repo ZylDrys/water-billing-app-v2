@@ -42,7 +42,6 @@ const Billing = (() => {
         const bills = getBills();
         bills.push(bill);
         saveBills(bills);
-
         return bill;
     }
 
