@@ -641,7 +641,7 @@
       const settings = getSettings();
       const prev = parseFloat(document.getElementById('prevReading').value) || 0;
       const pres = parseFloat(document.getElementById('presReading').value) || 0;
-      const used = pres - prev;
+      const used = prev - pres;
 
       const totalDue = (used <= 0) ? settings.minCharge : used * settings.pricePerCubic;
       document.getElementById('displayTotal').textContent = totalDue.toFixed(2);
