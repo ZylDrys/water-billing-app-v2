@@ -1188,7 +1188,7 @@
       return header;
     }
 
-    function printBill(bill) {
+        function printBill(bill) {
       const custs = getData('customers'), c = custs.find(x => x.id === bill.customerId);
       const cn = c ? c.name : 'Unknown', s = getSettings(), cf = getCurrencyFormatter();
       const isMin = bill.totalUsed <= 0;
@@ -1197,8 +1197,7 @@
         <div style="font-family:'Segoe UI',Arial,sans-serif;padding:12px;width:80mm;color:#222;">
           ${buildReceiptHeader()}
           <div style="text-align:center;margin:8px 0;padding:6px;background:#f0f0f0;border-radius:4px;">
-            <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:2px;">Official Receipt</div>
-            <div style="font-size:10px;color:#777;">No. ${String(bill.id).slice(-8)}</div>
+            <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:2px;">Official Billing</div>
           </div>
           <hr style="border:none;border-top:1px solid #ddd;margin:8px 0;">
           <table style="width:100%;font-size:12px;border-collapse:collapse;margin:6px 0;">
@@ -1209,9 +1208,9 @@
           <hr style="border:none;border-top:1px solid #ddd;margin:8px 0;">
           <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#444;margin-bottom:6px;">Meter Reading</div>
           <table style="width:100%;font-size:12px;border-collapse:collapse;">
-            <tr style="background:#f8f8f8;"><td style="padding:5px 8px;border:1px solid #e0e0e0;">Previous</td><td style="text-align:right;padding:5px 8px;border:1px solid #e0e0e0;font-weight:600;">${bill.prevReading} m³</td></tr>
-            <tr><td style="padding:5px 8px;border:1px solid #e0e0e0;">Present</td><td style="text-align:right;padding:5px 8px;border:1px solid #e0e0e0;font-weight:600;">${bill.presReading} m³</td></tr>
-            <tr style="background:#f8f8f8;"><td style="padding:5px 8px;border:1px solid #e0e0e0;font-weight:700;">Consumption</td><td style="text-align:right;padding:5px 8px;border:1px solid #e0e0e0;font-weight:700;">${bill.totalUsed} m³</td></tr>
+            <tr style="background:#f8f8f8;"><td style="padding:5px 8px;">Previous</td><td style="text-align:right;padding:5px 8px;font-weight:600;">${bill.prevReading} m³</td></tr>
+            <tr><td style="padding:5px 8px;">Present</td><td style="text-align:right;padding:5px 8px;font-weight:600;">${bill.presReading} m³</td></tr>
+            <tr style="background:#f8f8f8;"><td style="padding:5px 8px;font-weight:700;">Consumption</td><td style="text-align:right;padding:5px 8px;font-weight:700;">${bill.totalUsed} m³</td></tr>
           </table>
           <hr style="border:none;border-top:1px solid #ddd;margin:8px 0;">
           <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#444;margin-bottom:6px;">Charges</div>
@@ -1240,20 +1239,20 @@
     // ============================================================
     // PRINT ALL SHOWN BILLS
     // ============================================================
-    function printAllShownBills() {
+        function printAllShownBills() {
       if (!lastFilteredBills.length) { alert('No bills to print'); return; }
-      const custs = getData('customers'), s = getSettings(), cf = getCurrencyFormatter(), cust = getCustomization();
+      const custs = getData('customers'), s = getSettings(), cf = getCurrencyFormatter();
       let totalSum = 0;
 
       let rows = lastFilteredBills.map((b, i) => {
         const c = custs.find(x => x.id === b.customerId);
         totalSum += b.totalDue;
         return `<tr${i % 2 === 0 ? ' style="background:#f8f8f8;"' : ''}>
-          <td style="padding:5px 4px;border:1px solid #ddd;font-size:11px;">${i + 1}</td>
-          <td style="padding:5px 4px;border:1px solid #ddd;font-size:11px;">${c ? c.name : 'Unknown'}</td>
-          <td style="padding:5px 4px;border:1px solid #ddd;font-size:11px;">${new Date(b.date).toLocaleDateString()}</td>
-          <td style="padding:5px 4px;border:1px solid #ddd;font-size:11px;text-align:right;">${b.totalUsed} m³</td>
-          <td style="padding:5px 4px;border:1px solid #ddd;font-size:11px;text-align:right;">${cf.format(b.totalDue)}</td>
+          <td style="padding:5px 4px;font-size:11px;">${i + 1}</td>
+          <td style="padding:5px 4px;font-size:11px;">${c ? c.name : 'Unknown'}</td>
+          <td style="padding:5px 4px;font-size:11px;">${new Date(b.date).toLocaleDateString()}</td>
+          <td style="padding:5px 4px;font-size:11px;text-align:right;">${b.totalUsed} m³</td>
+          <td style="padding:5px 4px;font-size:11px;text-align:right;">${cf.format(b.totalDue)}</td>
         </tr>`;
       }).join('');
 
