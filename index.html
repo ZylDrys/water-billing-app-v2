@@ -44,10 +44,23 @@
     .sort-controls button { width: auto; font-size: 12px; padding: 8px; }
     .currency-switcher { margin: 15px 0; text-align: center; }
     .currency-switcher button { width: auto; margin: 0 5px; }
+    .form-group { margin-bottom: 10px; }
+    .form-row { display: flex; gap: 10px; }
+    .form-row .form-group { flex: 1; }
+    .print-only { display: none; }
     @media print {
-      body { background: white; }
-      .container { width: 80mm; margin: 0; box-shadow: none; }
-      .no-print { display: none !important; }
+      * { visibility: hidden !important; }
+      .print-only,
+      .print-only * {
+        display: block !important;
+        visibility: visible !important;
+      }
+      .print-only {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 80mm;
+      }
     }
   </style>
 </head>
@@ -62,14 +75,42 @@
       background: white; padding: 25px; border-radius: 12px; width: 320px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.2); text-align: center;">
       <h2>🔒 Enter Password</h2>
-      <input id="loginPassword" type="password" placeholder="Password"
-        style="width: 100%; padding: 12px; margin: 15px 0; border-radius: 8px; border: 1px solid #ccc;">
-      <span id="toggleLoginPassword"
-        style="position: absolute; right: 40px; cursor: pointer; font-size: 18px;">👁</span>
+      <div style="position: relative;">
+        <input id="loginPassword" type="password" placeholder="Password"
+          style="width: 100%; padding: 12px; margin: 15px 0; border-radius: 8px; border: 1px solid #ccc;">
+        <span id="toggleLoginPassword"
+          style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+          cursor: pointer; font-size: 18px;">👁</span>
+      </div>
       <div id="loginMessage" style="color: red; font-size: 14px; min-height: 18px;"></div>
       <button id="loginBtn" style="
         width: 100%; padding: 12px; background: #007bff; color: white;
         border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Login</button>
+    </div>
+  </div>
+
+  <!-- PROMPT MODAL -->
+  <div id="promptModal" style="
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5); align-items: center; justify-content: center;
+    z-index: 10000; display: none;">
+    <div style="
+      background: white; padding: 25px; border-radius: 12px; width: 320px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2); text-align: center;">
+      <h2 id="promptTitle"></h2>
+      <div style="position: relative;">
+        <input id="promptInput" type="text" style="
+          width: 100%; padding: 12px; margin: 15px 0;
+          border-radius: 8px; border: 1px solid #ccc; font-size: 16px;">
+        <span id="togglePromptPassword" style="
+          position: absolute; right: 10px; top: 50%;
+          transform: translateY(-50%); cursor: pointer; font-size: 18px;
+          display: none;">👁</span>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <button id="promptCancel" style="background: #dc3545;">Cancel</button>
+        <button id="promptConfirm">Confirm</button>
+      </div>
     </div>
   </div>
 
@@ -107,7 +148,6 @@
         <input type="number" id="adminMinCharge" step="0.01" placeholder="Enter minimum charge">
       </div>
 
-      <!-- Admin Password Field (with visibility toggle) -->
       <div>
         <label>Admin Password</label>
         <div style="position: relative;">
@@ -119,23 +159,19 @@
         </div>
       </div>
 
-      <!-- Save Settings Button -->
       <button onclick="saveSettings()">💾 Save Settings</button>
 
-      <!-- Temporary Password Buttons & Restore Defaults (Hidden by default) -->
       <div id="temporaryPasswordButtonContainer" style="display:none; margin-top:15px;">
         <button onclick="createTempPasswordPrompt()">➕ Create Temporary Password</button>
         <button onclick="deleteTempPassword()">🗑 Delete Temporary Password</button>
         <button onclick="restoreDefaults()">♻ Restore Default</button>
       </div>
 
-      <!-- Master Password Section -->
       <div>
         <label>Master Password</label>
         <div style="position: relative; margin-bottom: 10px;">
           <input type="password" id="masterPassword" placeholder="Enter master password"
-            data-clear-on-confirm="true"
-            onkeydown="if(event.key==='Enter'){ confirmMasterPassword(); }">
+            data-clear-on-confirm="true">
           <span id="eyeIconMaster" style="
             position: absolute; right: 10px; top: 50%;
             transform: translateY(-50%); cursor: pointer;">👁</span>
@@ -143,7 +179,6 @@
         <button onclick="confirmMasterPassword()">Confirm Master Password</button>
       </div>
 
-      <!-- Master Password Action Buttons (Hidden by default) -->
       <div id="masterPasswordActions" style="margin-top: 10px; display:none;">
         <button onclick="changeMasterPassword()">🔑 Change Master Password</button>
         <button onclick="showDefaultMasterPassword()">👁 Show Default Master Password</button>
@@ -229,7 +264,6 @@
       <div id="historyList"></div>
     </div>
 
-    <!-- Hidden Print Area -->
     <div id="printReceipt" class="print-only"></div>
   </div>
 
@@ -243,7 +277,10 @@
     const DEFAULT_MASTER_PASSWORD = 'admin123';
     const TEMP_PASSWORD_KEY = 'tempPassword';
     const TEMP_PASSWORD_EXPIRY_KEY = 'tempPasswordExpiry';
+    const TIME_SYNC_INTERNET_KEY = 'timeSync_internet';
+    const TIME_SYNC_DEVICE_KEY = 'timeSync_device';
     const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+    const CLOCK_DRIFT_TOLERANCE = 2 * 60 * 1000; // 2 minutes tolerance
 
     const STORAGE = {
       customers: 'water_customers_v2',
@@ -301,24 +338,228 @@
     }
 
     // ============================================================
-    // PASSWORD VALIDATION
+    // HYBRID TIME SYSTEM (internet + offline calibration)
     // ============================================================
-    function isValidAdminAccess(password) {
+
+    // Fetch real time from internet APIs
+    async function getInternetTime() {
+      const apis = [
+        {
+          url: 'https://worldtimeapi.org/api/ip',
+          parse: (data) => new Date(data.utc_datetime).getTime()
+        },
+        {
+          url: 'https://timeapi.io/api/time/current/zone?timeZone=UTC',
+          parse: (data) => new Date(data.dateTime + 'Z').getTime()
+        }
+      ];
+
+      for (const api of apis) {
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 5000);
+          const response = await fetch(api.url, { signal: controller.signal });
+          clearTimeout(timeoutId);
+
+          if (response.ok) {
+            const data = await response.json();
+            const time = api.parse(data);
+            if (time && !isNaN(time)) return time;
+          }
+        } catch (e) {
+          continue;
+        }
+      }
+
+      // Last resort: try getting Date header from any HTTPS request
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        const response = await fetch('https://www.google.com/generate_204', {
+          method: 'HEAD',
+          mode: 'no-cors',
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+        const dateHeader = response.headers.get('date');
+        if (dateHeader) {
+          const time = new Date(dateHeader).getTime();
+          if (!isNaN(time)) return time;
+        }
+      } catch (e) {}
+
+      return null; // No internet
+    }
+
+    // Sync calibration point (called whenever internet is available)
+    function saveTimeSync(internetTime) {
+      localStorage.setItem(TIME_SYNC_INTERNET_KEY, String(internetTime));
+      localStorage.setItem(TIME_SYNC_DEVICE_KEY, String(Date.now()));
+    }
+
+    // Get current time using hybrid approach
+    // Returns: { time: number|null, source: 'internet'|'offline'|'none'|'tampered' }
+    async function getCurrentTime() {
+      // Try internet first
+      const internetTime = await getInternetTime();
+
+      if (internetTime !== null) {
+        // Online — save calibration and return real time
+        saveTimeSync(internetTime);
+        return { time: internetTime, source: 'internet' };
+      }
+
+      // Offline — use calibrated device time
+      const lastSyncInternet = parseInt(localStorage.getItem(TIME_SYNC_INTERNET_KEY) || '0');
+      const lastSyncDevice = parseInt(localStorage.getItem(TIME_SYNC_DEVICE_KEY) || '0');
+
+      // Never synced before — can't trust anything
+      if (lastSyncInternet === 0 || lastSyncDevice === 0) {
+        return { time: null, source: 'none' };
+      }
+
+      const deviceNow = Date.now();
+      const elapsed = deviceNow - lastSyncDevice;
+
+      // Clock went backward beyond tolerance — manipulation detected
+      if (elapsed < -CLOCK_DRIFT_TOLERANCE) {
+        return { time: null, source: 'tampered' };
+      }
+
+      // Calculate estimated real time
+      // Even if device clock drifts slightly, this stays accurate
+      // because we measure ELAPSED time from a known-good sync point
+      const estimatedTime = lastSyncInternet + Math.max(0, elapsed);
+
+      // Update device sync point to prevent accumulated drift issues
+      // (keeps the offline window relative to latest check)
+      localStorage.setItem(TIME_SYNC_DEVICE_KEY, String(deviceNow));
+      localStorage.setItem(TIME_SYNC_INTERNET_KEY, String(estimatedTime));
+
+      return { time: estimatedTime, source: 'offline' };
+    }
+
+    // Background sync — silently calibrate whenever possible
+    async function backgroundTimeSync() {
+      const internetTime = await getInternetTime();
+      if (internetTime !== null) {
+        saveTimeSync(internetTime);
+      }
+    }
+
+    // ============================================================
+    // PROMPT MODAL
+    // ============================================================
+    function showPromptModal(title, isPassword = false) {
+      return new Promise((resolve) => {
+        const modal = document.getElementById('promptModal');
+        const input = document.getElementById('promptInput');
+        const titleEl = document.getElementById('promptTitle');
+        const toggleBtn = document.getElementById('togglePromptPassword');
+        const confirmBtn = document.getElementById('promptConfirm');
+        const cancelBtn = document.getElementById('promptCancel');
+
+        titleEl.textContent = title;
+        input.value = '';
+        input.type = isPassword ? 'password' : 'text';
+        toggleBtn.style.display = isPassword ? 'inline' : 'none';
+        toggleBtn.textContent = '👁';
+        modal.style.display = 'flex';
+        input.focus();
+
+        function cleanup() {
+          modal.style.display = 'none';
+          confirmBtn.removeEventListener('click', onConfirm);
+          cancelBtn.removeEventListener('click', onCancel);
+          input.removeEventListener('keydown', onKeydown);
+          toggleBtn.removeEventListener('click', onToggle);
+        }
+
+        function onConfirm() {
+          const val = input.value.trim();
+          cleanup();
+          resolve(val || null);
+        }
+
+        function onCancel() {
+          cleanup();
+          resolve(null);
+        }
+
+        function onKeydown(e) {
+          if (e.key === 'Enter') onConfirm();
+          if (e.key === 'Escape') onCancel();
+        }
+
+        function onToggle() {
+          if (input.type === 'password') {
+            input.type = 'text';
+            toggleBtn.textContent = '🙈';
+          } else {
+            input.type = 'password';
+            toggleBtn.textContent = '👁';
+          }
+        }
+
+        confirmBtn.addEventListener('click', onConfirm);
+        cancelBtn.addEventListener('click', onCancel);
+        input.addEventListener('keydown', onKeydown);
+        toggleBtn.addEventListener('click', onToggle);
+      });
+    }
+
+    // ============================================================
+    // PASSWORD VALIDATION (hybrid time)
+    // ============================================================
+
+    // Sync check — master + admin (no internet needed)
+    function isValidAdminAccessSync(password) {
       const master = getMasterPassword();
       const settings = getSettings();
       const admin = settings.adminPassword;
-      const temp = localStorage.getItem(TEMP_PASSWORD_KEY);
-      const expiry = parseInt(localStorage.getItem(TEMP_PASSWORD_EXPIRY_KEY) || '0');
-      const now = Date.now();
 
       if (password === master) return true;
       if (admin && password === admin) return true;
-      if (temp && password === temp && now < expiry) return true;
       return false;
     }
 
-    function checkLogin(password) {
-      return isValidAdminAccess(password);
+    // Full async check including temp password
+    async function isValidAdminAccess(password) {
+      // Master & admin — instant, no internet needed
+      if (isValidAdminAccessSync(password)) return true;
+
+      // Temp password — needs time verification
+      const temp = localStorage.getItem(TEMP_PASSWORD_KEY);
+      const expiry = parseInt(localStorage.getItem(TEMP_PASSWORD_EXPIRY_KEY) || '0');
+
+      if (temp && password === temp) {
+        const timeResult = await getCurrentTime();
+
+        if (timeResult.source === 'tampered') {
+          return 'tampered';
+        }
+
+        if (timeResult.time === null) {
+          return 'no-sync';
+        }
+
+        if (timeResult.time < expiry) {
+          // Calculate days remaining for info
+          const daysLeft = Math.ceil((expiry - timeResult.time) / (24 * 60 * 60 * 1000));
+          return { valid: true, source: timeResult.source, daysLeft: daysLeft };
+        }
+
+        // Expired — clean up
+        localStorage.removeItem(TEMP_PASSWORD_KEY);
+        localStorage.removeItem(TEMP_PASSWORD_EXPIRY_KEY);
+        return 'expired';
+      }
+
+      return false;
+    }
+
+    async function checkLogin(password) {
+      return await isValidAdminAccess(password);
     }
 
     // ============================================================
@@ -382,10 +623,19 @@
       document.getElementById('displayCurrencySymbol').textContent = symbol;
     }
 
-    function saveSettings() {
+    async function saveSettings() {
       const password = document.getElementById('adminPassword').value;
+      const result = await isValidAdminAccess(password);
 
-      if (!isValidAdminAccess(password)) {
+      if (result === 'tampered') {
+        alert('⚠️ Clock manipulation detected. Cannot verify password.');
+        return;
+      }
+      if (result === 'no-sync') {
+        alert('⚠️ No time reference available.\nConnect to internet at least once, or use master/admin password.');
+        return;
+      }
+      if (result !== true && !(result && result.valid === true)) {
         alert('Invalid password');
         return;
       }
@@ -416,14 +666,15 @@
       }
     }
 
-    function changeMasterPassword() {
-      const current = prompt('Enter current master password:');
+    async function changeMasterPassword() {
+      const current = await showPromptModal('Enter current master password:', true);
+      if (current === null) return;
       if (current !== getMasterPassword()) {
         alert('Incorrect current master password');
         return;
       }
 
-      const newPass = prompt('Enter new master password:');
+      const newPass = await showPromptModal('Enter new master password:', true);
       if (!newPass) {
         alert('Password cannot be empty');
         return;
@@ -431,6 +682,10 @@
 
       localStorage.setItem(MASTER_PASSWORD_KEY, newPass);
       alert('Master password changed successfully');
+
+      document.getElementById('masterPasswordActions').style.display = 'none';
+      document.getElementById('temporaryPasswordButtonContainer').style.display = 'none';
+      showSection('menuSection');
     }
 
     function showDefaultMasterPassword() {
@@ -444,14 +699,37 @@
     }
 
     // ============================================================
-    // TEMPORARY PASSWORD
+    // TEMPORARY PASSWORD (hybrid time — 30 day expiry)
     // ============================================================
-    function createTempPasswordPrompt() {
-      const tempPwd = prompt('Enter a temporary password:');
+    async function createTempPasswordPrompt() {
+      // Get current time (internet preferred, offline fallback)
+      const timeResult = await getCurrentTime();
+
+      if (timeResult.source === 'tampered') {
+        alert('❌ Clock manipulation detected.\nCannot create temporary password.');
+        return;
+      }
+
+      if (timeResult.time === null) {
+        alert('❌ Cannot create temporary password.\n\nNo time reference available.\nConnect to internet at least once first.');
+        return;
+      }
+
+      const tempPwd = await showPromptModal('Enter a temporary password:', true);
       if (tempPwd) {
+        const expiryTime = timeResult.time + THIRTY_DAYS_MS;
         localStorage.setItem(TEMP_PASSWORD_KEY, tempPwd);
-        localStorage.setItem(TEMP_PASSWORD_EXPIRY_KEY, String(Date.now() + THIRTY_DAYS_MS));
-        alert('Temporary password created!');
+        localStorage.setItem(TEMP_PASSWORD_EXPIRY_KEY, String(expiryTime));
+
+        const expiryDate = new Date(expiryTime).toLocaleDateString('en-US', {
+          year: 'numeric', month: 'long', day: 'numeric'
+        });
+
+        const sourceNote = timeResult.source === 'internet'
+          ? '(verified by internet clock)'
+          : '(based on last synced time — will recalibrate when online)';
+
+        alert(`✅ Temporary password created!\n\nExpires: ${expiryDate}\n${sourceNote}`);
       }
     }
 
@@ -466,13 +744,24 @@
     // RESTORE DEFAULTS
     // ============================================================
     function restoreDefaults() {
-      if (!confirm('Restore all settings to default? This cannot be undone.')) return;
+      if (!confirm('⚠️ This will reset ALL settings, delete ALL customers, and delete ALL billing history.\n\nOnly the master password will be preserved.\n\nThis cannot be undone. Continue?')) return;
+
+      const masterPwd = localStorage.getItem(MASTER_PASSWORD_KEY);
+      // Preserve time sync data so offline timer keeps working
+      const syncInternet = localStorage.getItem(TIME_SYNC_INTERNET_KEY);
+      const syncDevice = localStorage.getItem(TIME_SYNC_DEVICE_KEY);
 
       localStorage.removeItem(STORAGE.settings);
+      localStorage.removeItem(STORAGE.customers);
+      localStorage.removeItem(STORAGE.bills);
       localStorage.removeItem(TEMP_PASSWORD_KEY);
       localStorage.removeItem(TEMP_PASSWORD_EXPIRY_KEY);
 
-      alert('All settings restored to default.');
+      if (masterPwd) localStorage.setItem(MASTER_PASSWORD_KEY, masterPwd);
+      if (syncInternet) localStorage.setItem(TIME_SYNC_INTERNET_KEY, syncInternet);
+      if (syncDevice) localStorage.setItem(TIME_SYNC_DEVICE_KEY, syncDevice);
+
+      alert('All data and settings restored to default. Master password preserved.');
       location.reload();
     }
 
@@ -487,13 +776,12 @@
     }
 
     function confirmWithClear(confirmFunction) {
-      return function (...args) {
-        confirmFunction(...args);
+      return async function (...args) {
+        await confirmFunction(...args);
         clearPasswordFields();
       };
     }
 
-    // Wrap confirm functions to auto-clear password fields after execution
     confirmMasterPassword = confirmWithClear(confirmMasterPassword);
     saveSettings = confirmWithClear(saveSettings);
 
@@ -641,7 +929,7 @@
       const settings = getSettings();
       const prev = parseFloat(document.getElementById('prevReading').value) || 0;
       const pres = parseFloat(document.getElementById('presReading').value) || 0;
-      const used = prev - pres;
+      const used = pres - prev;
 
       const totalDue = (used <= 0) ? settings.minCharge : used * settings.pricePerCubic;
       document.getElementById('displayTotal').textContent = totalDue.toFixed(2);
@@ -800,11 +1088,11 @@
           <p><strong>Customer:</strong> ${customerName}</p>
           <p><strong>Date:</strong> ${new Date(bill.date).toLocaleDateString()}</p>
           <hr style="border: 1px dashed #000; margin: 10px 0;">
-          <table style="width:100%; font-size:14px;">
-            <tr><td>Previous Reading:</td><td style="text-align:right;">${bill.prevReading} m³</td></tr>
-            <tr><td>Present Reading:</td><td style="text-align:right;">${bill.presReading} m³</td></tr>
-            <tr><td>Total Used:</td><td style="text-align:right;">${bill.totalUsed} m³</td></tr>
-            <tr><td>Rate:</td><td style="text-align:right;">${currencyFormatter.format(settings.pricePerCubic)}/m³</td></tr>
+          <table style="width:100%; font-size:14px; border-collapse:collapse;">
+            <tr><td style="padding:4px 0;">Previous Reading:</td><td style="text-align:right; padding:4px 0;">${bill.prevReading} m³</td></tr>
+            <tr><td style="padding:4px 0;">Present Reading:</td><td style="text-align:right; padding:4px 0;">${bill.presReading} m³</td></tr>
+            <tr><td style="padding:4px 0;">Total Used:</td><td style="text-align:right; padding:4px 0;">${bill.totalUsed} m³</td></tr>
+            <tr><td style="padding:4px 0;">Rate:</td><td style="text-align:right; padding:4px 0;">${currencyFormatter.format(settings.pricePerCubic)}/m³</td></tr>
           </table>
           <hr style="border: 1px dashed #000; margin: 10px 0;">
           <div style="text-align:center; font-size:18px; font-weight:bold; margin:10px 0;">
@@ -819,6 +1107,7 @@
 
       document.getElementById('printReceipt').innerHTML = receiptHTML;
       window.print();
+      document.getElementById('printReceipt').innerHTML = '';
     }
 
     // ============================================================
@@ -870,7 +1159,6 @@
     // EVENT LISTENERS
     // ============================================================
 
-    // Login password visibility toggle
     document.getElementById('toggleLoginPassword').addEventListener('click', () => {
       const pwd = document.getElementById('loginPassword');
       const icon = document.getElementById('toggleLoginPassword');
@@ -883,62 +1171,97 @@
       }
     });
 
-    // Admin password visibility toggle
     document.getElementById('eyeIcon').addEventListener('click', () => {
       const pwd = document.getElementById('adminPassword');
       pwd.type = pwd.type === 'password' ? 'text' : 'password';
     });
 
-    // Master password visibility toggle
     document.getElementById('eyeIconMaster').addEventListener('click', () => {
       const pwd = document.getElementById('masterPassword');
       pwd.type = pwd.type === 'password' ? 'text' : 'password';
     });
 
-    // Login button
-    document.getElementById('loginBtn').addEventListener('click', () => {
+    // Login button — async with hybrid time
+    document.getElementById('loginBtn').addEventListener('click', async () => {
       const pwd = document.getElementById('loginPassword').value.trim();
       if (!pwd) return;
 
-      if (checkLogin(pwd)) {
+      const msgEl = document.getElementById('loginMessage');
+      msgEl.textContent = '⏳ Verifying...';
+      msgEl.style.color = '#666';
+
+      const result = await checkLogin(pwd);
+
+      if (result === true) {
+        // Master or admin password — instant access
         hideLoginModal();
         alert('✅ Access granted');
+      } else if (result && result.valid === true) {
+        // Temp password valid
+        hideLoginModal();
+        const sourceLabel = result.source === 'internet' ? '🌐 Internet verified' : '📡 Offline verified';
+        alert(`✅ Access granted (temp password)\n${sourceLabel} — ${result.daysLeft} day(s) remaining`);
+      } else if (result === 'tampered') {
+        msgEl.style.color = 'red';
+        msgEl.textContent = '🚨 Clock manipulation detected. Access denied.';
+      } else if (result === 'no-sync') {
+        msgEl.style.color = 'orange';
+        msgEl.textContent = '⚠️ Never synced with internet. Cannot verify temp password. Use admin/master password.';
+      } else if (result === 'expired') {
+        msgEl.style.color = 'red';
+        msgEl.textContent = '⏰ Temporary password has expired.';
+        document.getElementById('loginPassword').value = '';
       } else {
-        document.getElementById('loginMessage').textContent = '❌ Incorrect password, try again';
+        msgEl.style.color = 'red';
+        msgEl.textContent = '❌ Incorrect password, try again';
         document.getElementById('loginPassword').value = '';
         document.getElementById('loginPassword').focus();
       }
     });
 
-    // Enter key on login field
     document.getElementById('loginPassword').addEventListener('keydown', (e) => {
       if (e.key === 'Enter') document.getElementById('loginBtn').click();
     });
 
-    // Universal Enter key for password fields with auto-clear
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') {
-        const active = document.activeElement;
-        if (active && active.type === 'password' && active.dataset.clearOnConfirm === 'true') {
-          const section = active.closest('.section');
-          if (section) {
-            const confirmBtn = section.querySelector('button');
-            if (confirmBtn) confirmBtn.click();
-          }
-          setTimeout(clearPasswordFields, 10);
-        }
-      }
+    document.getElementById('adminPassword').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') saveSettings();
+    });
+
+    document.getElementById('masterPassword').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') confirmMasterPassword();
+    });
+
+    document.getElementById('newCustomerName').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') addCustomer();
+    });
+
+    document.getElementById('customerSearch').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); filterCustomers(); }
+    });
+
+    document.getElementById('billCustomerSearch').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); filterBillCustomers(); }
+    });
+
+    document.getElementById('historySearch').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); filterHistory(); }
     });
 
     // ============================================================
     // INITIALIZATION
     // ============================================================
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
       showLoginModal();
       document.getElementById('billDate').value = new Date().toISOString().split('T')[0];
       loadCustomerDropdowns();
       updateCurrencyDisplay();
       showSection('menuSection');
+
+      // Initial time sync — calibrate on every app load
+      await backgroundTimeSync();
+
+      // Periodic background sync every 5 minutes while app is open
+      setInterval(backgroundTimeSync, 5 * 60 * 1000);
     });
   </script>
 </body>
