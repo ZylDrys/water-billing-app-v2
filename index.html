@@ -49,11 +49,21 @@
     .theme-swatch:hover{transform:scale(1.05)}.theme-swatch.active{border-color:var(--bg-accent);box-shadow:0 0 0 2px var(--bg-accent)}
     .theme-swatch span{font-size:18px;margin-bottom:2px}
     .preset-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:10px 0}
-    .preset-card{height:80px;border-radius:10px;cursor:pointer;border:3px solid transparent;transition:all .2s;display:flex;align-items:flex-end;justify-content:center;padding:8px;font-size:11px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+    .preset-card{height:80px;border-radius:10px;cursor:pointer;border:3px solid transparent;transition:all .2s;display:flex;align-items:flex-end;justify-content:center;padding:8px;font-size:11px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.5);position:relative;overflow:hidden}
     .preset-card:hover{transform:scale(1.03)}.preset-card.active{border-color:var(--bg-accent);box-shadow:0 0 0 2px var(--bg-accent)}
+    .preset-card .delete-preset{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;background:rgba(220,53,69,.85);color:#fff;border:none;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;margin:0;min-width:22px;opacity:0;transition:opacity .2s;line-height:1}
+    .preset-card:hover .delete-preset{opacity:1}
     .logo-preview{width:100px;height:100px;border-radius:12px;border:2px dashed var(--border-color);display:flex;align-items:center;justify-content:center;margin:10px auto;overflow:hidden;background:var(--bg-table-even)}
     .logo-preview img{max-width:100%;max-height:100%;object-fit:contain}
     .bg-preview{width:100%;height:100px;border-radius:10px;border:2px dashed var(--border-color);margin:10px 0;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:13px;overflow:hidden}
+    .saved-bg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+    .saved-bg-item{height:70px;border-radius:8px;cursor:pointer;border:3px solid transparent;transition:all .2s;background-size:cover;background-position:center;position:relative;overflow:hidden}
+    .saved-bg-item:hover{transform:scale(1.03)}
+    .saved-bg-item.active{border-color:var(--bg-accent);box-shadow:0 0 0 2px var(--bg-accent)}
+    .saved-bg-item .delete-bg{position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:rgba(220,53,69,.85);color:#fff;border:none;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;margin:0;min-width:20px;opacity:0;transition:opacity .2s;line-height:1}
+    .saved-bg-item:hover .delete-bg{opacity:1}
+    .import-info{background:rgba(0,123,255,.08);border:1px solid rgba(0,123,255,.2);border-radius:8px;padding:12px;margin:10px 0;font-size:13px;color:var(--text-secondary);line-height:1.5}
+    .import-info strong{color:var(--text-primary)}
     .timer-widget{position:fixed;bottom:15px;right:15px;z-index:9000;font-family:'Segoe UI',Roboto,monospace;transition:all .3s}
     .timer-toggle{width:36px;height:36px;border-radius:50%;background:rgba(0,123,255,.15);border:1px solid rgba(0,123,255,.3);color:var(--bg-accent);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-left:auto;margin-bottom:6px;padding:0;min-width:36px;transition:all .2s;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
     .timer-toggle:hover{background:rgba(0,123,255,.25);transform:scale(1.05)}
@@ -64,7 +74,10 @@
     .timer-countdown.active{color:#28a745}.timer-countdown.warning{color:#ffc107}.timer-countdown.critical{color:#dc3545}
     .timer-countdown.inactive{color:#999;font-size:13px;font-weight:500}
     .timer-subtext{font-size:9px;color:#aaa;margin-top:3px;font-weight:500}
-    @media(max-width:380px){body{padding:8px}.container{padding:14px;border-radius:8px}.sort-controls{gap:5px}.sort-controls button{min-width:60px;padding:6px 4px}.currency-switcher button{padding:8px 10px;min-width:65px;font-size:13px}.form-row{flex-direction:column;gap:0}.theme-grid{grid-template-columns:repeat(3,1fr)}.timer-widget{bottom:10px;right:10px}.timer-display{min-width:150px;padding:8px 10px}.timer-countdown{font-size:15px}}
+    .upload-progress{width:100%;height:4px;background:var(--bg-card-border);border-radius:2px;margin:8px 0;overflow:hidden;display:none}
+    .upload-progress.active{display:block}
+    .upload-progress-bar{height:100%;background:var(--bg-accent);border-radius:2px;transition:width .3s;width:0}
+    @media(max-width:380px){body{padding:8px}.container{padding:14px;border-radius:8px}.sort-controls{gap:5px}.sort-controls button{min-width:60px;padding:6px 4px}.currency-switcher button{padding:8px 10px;min-width:65px;font-size:13px}.form-row{flex-direction:column;gap:0}.theme-grid{grid-template-columns:repeat(3,1fr)}.timer-widget{bottom:10px;right:10px}.timer-display{min-width:150px;padding:8px 10px}.timer-countdown{font-size:15px}.saved-bg-grid{grid-template-columns:repeat(2,1fr)}}
     @media(min-width:381px)and(max-width:480px){body{padding:10px}.container{padding:16px}.form-row{flex-direction:column;gap:0}}
     @media(min-width:601px)and(max-width:1024px){.container{max-width:700px;padding:28px}.sort-controls button{padding:10px 14px;font-size:13px}}
     @media(min-width:1025px){body{padding:30px}.container{max-width:720px;padding:32px;border-radius:16px}button{padding:14px}.timer-widget{bottom:25px;right:25px}.timer-display{min-width:200px;padding:12px 18px}.timer-countdown{font-size:20px}}
@@ -127,14 +140,25 @@
       <button onclick="showSection('menuSection')" class="no-print">← Back</button>
       <h2>🎨 Customize</h2>
       <h3>🏢 Company Branding</h3>
-      <div class="form-group"><label>Company Logo</label><div class="logo-preview" id="logoPreview"><span style="font-size:32px;color:var(--text-muted)">📷</span></div><input type="file" id="logoUpload" accept="image/*" onchange="handleLogoUpload(event)" style="font-size:14px"><button onclick="removeLogo()" style="background:var(--bg-danger);margin-top:5px;font-size:13px;padding:8px">✕ Remove Logo</button></div>
+      <div class="form-group"><label>Company Logo</label><div class="logo-preview" id="logoPreview"><span style="font-size:32px;color:var(--text-muted)">📷</span></div><input type="file" id="logoUpload" accept="image/*" onchange="handleLogoUpload(event)" style="font-size:14px"><div class="upload-progress" id="logoProgress"><div class="upload-progress-bar" id="logoProgressBar"></div></div><button onclick="removeLogo()" style="background:var(--bg-danger);margin-top:5px;font-size:13px;padding:8px">✕ Remove Logo</button></div>
       <div class="form-group"><label>Company Name</label><input type="text" id="companyName" placeholder="e.g. AquaPure Water Services"></div>
       <div class="form-group"><label>Company Address</label><input type="text" id="companyAddress" placeholder="e.g. 123 Main St, City"></div>
       <div class="form-group"><label>Phone / Mobile</label><input type="text" id="companyPhone" placeholder="e.g. 0917-123-4567"></div>
       <div class="form-group"><label>Email</label><input type="email" id="companyEmail" placeholder="e.g. info@aquapure.com"></div>
       <h3>🎭 Themes</h3><div class="theme-grid" id="themeGrid"></div>
       <h3>🖼 Background</h3>
-      <div class="form-group"><label>Upload Background Image</label><div class="bg-preview" id="bgPreview">No background set</div><input type="file" id="bgUpload" accept="image/*" onchange="handleBgUpload(event)" style="font-size:14px"><button onclick="removeBackground()" style="background:var(--bg-danger);margin-top:5px;font-size:13px;padding:8px">✕ Remove Background</button></div>
+      <div class="form-group">
+        <label>Upload Background Image</label>
+        <div class="bg-preview" id="bgPreview">No background set</div>
+        <input type="file" id="bgUpload" accept="image/*" onchange="handleBgUpload(event)" style="font-size:14px">
+        <div class="upload-progress" id="bgProgress"><div class="upload-progress-bar" id="bgProgressBar"></div></div>
+        <div style="display:flex;gap:8px;margin-top:5px">
+          <button onclick="saveCurrentBgAsPreset()" style="background:var(--bg-success);font-size:13px;padding:8px;flex:1">💾 Save as Preset</button>
+          <button onclick="removeBackground()" style="background:var(--bg-danger);font-size:13px;padding:8px;flex:1">✕ Remove</button>
+        </div>
+      </div>
+      <h3>🖼 Saved Backgrounds</h3>
+      <div class="saved-bg-grid" id="savedBgGrid"><p style="grid-column:1/-1;text-align:center;color:var(--text-muted);font-size:13px">No saved backgrounds</p></div>
       <h3>✨ Presets</h3><div class="preset-grid" id="presetGrid"></div>
       <button onclick="saveCustomization()" style="margin-top:20px;font-size:16px;padding:14px">💾 Save All Customizations</button>
     </div>
@@ -158,6 +182,17 @@
       <input type="text" id="customerSearch" class="search-box" placeholder="Search customer..." oninput="filterCustomers()">
       <div class="sort-controls"><button onclick="sortCustomers('name','asc')">A→Z</button><button onclick="sortCustomers('name','desc')">Z→A</button><button onclick="sortCustomers('date','desc')">Newest</button><button onclick="sortCustomers('date','asc')">Oldest</button></div>
       <div class="form-group"><input type="text" id="newCustomerName" placeholder="Enter customer name"><button onclick="addCustomer()">➕ Add Customer</button></div>
+      <div class="form-group" style="margin-top:10px">
+        <button onclick="document.getElementById('importCustomerFile').click()" style="background:#17a2b8">📥 Import Customers from Excel</button>
+        <input type="file" id="importCustomerFile" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleImportCustomers(event)">
+        <button onclick="downloadCustomerTemplate()" style="background:#6c757d;font-size:13px;padding:8px">📄 Download Template</button>
+        <div class="import-info">
+          <strong>Excel Import Format:</strong><br>
+          Column A: Customer Name (required)<br>
+          First row should be header (will be skipped)<br>
+          Duplicates will be automatically skipped.
+        </div>
+      </div>
       <div id="customersList"></div>
     </div>
 
@@ -214,6 +249,8 @@
     var TIME_SYNC_DEVICE_KEY='timeSync_device';
     var TIMER_VISIBLE_KEY='timerVisible';
     var CUSTOMIZE_KEY='water_customize_v2';
+    var IMAGES_KEY='water_images_v2';
+    var SAVED_BGS_KEY='water_saved_bgs';
     var LAST_SYNC_KEY='water_lastSync';
     var SYNC_TIMESTAMP_KEY='water_syncTimestamp';
     var THIRTY_DAYS_MS=30*24*60*60*1000;
@@ -258,11 +295,15 @@
     function getMasterPassword(){return localStorage.getItem(MASTER_PASSWORD_KEY)||DEFAULT_MASTER_PASSWORD}
     function getCustomization(){try{return JSON.parse(localStorage.getItem(CUSTOMIZE_KEY))||{}}catch(e){return{}}}
     function saveCustomizationData(d){localStorage.setItem(CUSTOMIZE_KEY,JSON.stringify(d));scheduleSync()}
+    function getImages(){try{return JSON.parse(localStorage.getItem(IMAGES_KEY))||{}}catch(e){return{}}}
+    function saveImages(d){localStorage.setItem(IMAGES_KEY,JSON.stringify(d))}
+    function getSavedBgs(){try{return JSON.parse(localStorage.getItem(SAVED_BGS_KEY))||[]}catch(e){return[]}}
+    function saveSavedBgs(arr){localStorage.setItem(SAVED_BGS_KEY,JSON.stringify(arr))}
     function formatMoney(a){var s=getSettings();return new Intl.NumberFormat('en-US',{style:'currency',currency:s.currency==='PHP'?'PHP':s.currency==='EUR'?'EUR':'USD',minimumFractionDigits:2}).format(a)}
     function getCurrencyFormatter(){var s=getSettings();return new Intl.NumberFormat('en-US',{style:'currency',currency:s.currency==='PHP'?'PHP':s.currency==='EUR'?'EUR':'USD'})}
 
     // ============================================================
-    // CLOUD SYNC (FIXED: timestamp-based merge)
+    // CLOUD SYNC (FIXED: images + passwords stored properly)
     // ============================================================
     function updateSyncIndicator(status,text){
       var el=document.getElementById('syncIndicator'),icon=document.getElementById('syncIcon'),txt=document.getElementById('syncText');
@@ -289,23 +330,43 @@
       return ts;
     }
 
+    // Split images into chunks for cloud storage (avoid URL length limits)
+    function chunkString(str, size) {
+      var chunks = [];
+      for (var i = 0; i < str.length; i += size) {
+        chunks.push(str.substring(i, i + size));
+      }
+      return chunks;
+    }
+
     function buildPayload(){
       var cust=getCustomization();
-      // Don't sync large images to avoid quota issues
-      var custNoImages=Object.assign({},cust);
-      delete custNoImages.backgroundImage;
-      delete custNoImages.companyLogo;
+      var images=getImages();
+      var savedBgs=getSavedBgs();
 
       return{
         Customers:getData('customers'),
         Bills:getData('bills'),
         Settings:[getSettings()],
-        Customization:[custNoImages],
+        Customization:[{
+          theme: cust.theme || 'light',
+          backgroundPreset: cust.backgroundPreset || '',
+          activePreset: cust.activePreset,
+          companyName: cust.companyName || '',
+          companyAddress: cust.companyAddress || '',
+          companyPhone: cust.companyPhone || '',
+          companyEmail: cust.companyEmail || ''
+        }],
+        Images:[{
+          companyLogo: images.companyLogo || cust.companyLogo || '',
+          backgroundImage: images.backgroundImage || cust.backgroundImage || '',
+          savedBackgrounds: JSON.stringify(savedBgs)
+        }],
         Meta:[{
-          timestamp:Date.now(),
-          masterPassword:localStorage.getItem(MASTER_PASSWORD_KEY)||'',
-          tempPassword:localStorage.getItem(TEMP_PASSWORD_KEY)||'',
-          tempPasswordExpiry:localStorage.getItem(TEMP_PASSWORD_EXPIRY_KEY)||''
+          timestamp: Date.now(),
+          masterPassword: localStorage.getItem(MASTER_PASSWORD_KEY) || DEFAULT_MASTER_PASSWORD,
+          tempPassword: localStorage.getItem(TEMP_PASSWORD_KEY) || '',
+          tempPasswordExpiry: localStorage.getItem(TEMP_PASSWORD_EXPIRY_KEY) || ''
         }]
       };
     }
@@ -317,7 +378,7 @@
       }
       isSyncing=true;
       pendingSync=false;
-      updateSyncIndicator('syncing');
+      updateSyncIndicator('syncing','Uploading...');
 
       var payload=buildPayload();
       setLocalTimestamp();
@@ -332,10 +393,12 @@
           localStorage.setItem(LAST_SYNC_KEY,String(lastSyncTime));
           updateSyncIndicator('synced','Synced just now');
         }else{
+          console.error('Sync failed:', d);
           updateSyncIndicator('error','Sync failed');
         }
         isSyncing=false;
       }).catch(function(e){
+        console.error('Sync error:', e);
         updateSyncIndicator('error','Sync error');
         isSyncing=false;
       });
@@ -352,20 +415,21 @@
         var localTs=getLocalTimestamp();
         var cloudTs=0;
 
-        // Get cloud timestamp from Meta sheet
+        // Get cloud timestamp and sync passwords from Meta
         if(cloud.Meta&&cloud.Meta.length>0){
-          cloudTs=parseInt(cloud.Meta[0].timestamp||'0');
+          var meta=cloud.Meta[0];
+          cloudTs=parseInt(meta.timestamp||'0');
 
-          // Sync master password from cloud
-          if(cloud.Meta[0].masterPassword){
-            localStorage.setItem(MASTER_PASSWORD_KEY,cloud.Meta[0].masterPassword);
+          // Always sync master password from cloud if present
+          if(meta.masterPassword){
+            localStorage.setItem(MASTER_PASSWORD_KEY,meta.masterPassword);
           }
-          // Sync temp password from cloud
-          if(cloud.Meta[0].tempPassword){
-            localStorage.setItem(TEMP_PASSWORD_KEY,cloud.Meta[0].tempPassword);
-            localStorage.setItem(TEMP_PASSWORD_EXPIRY_KEY,cloud.Meta[0].tempPasswordExpiry||'0');
+          // Always sync temp password from cloud
+          if(meta.tempPassword){
+            localStorage.setItem(TEMP_PASSWORD_KEY,meta.tempPassword);
+            localStorage.setItem(TEMP_PASSWORD_EXPIRY_KEY,meta.tempPasswordExpiry||'0');
           }else{
-            // Cloud has no temp password — remove local if cloud is newer
+            // If cloud has no temp password and cloud is authoritative
             if(cloudTs>localTs){
               localStorage.removeItem(TEMP_PASSWORD_KEY);
               localStorage.removeItem(TEMP_PASSWORD_EXPIRY_KEY);
@@ -373,8 +437,6 @@
           }
         }
 
-        // Merge strategy: newer timestamp wins
-        // If local is empty OR cloud is newer → use cloud data
         var localCusts=getData('customers');
         var localBills=getData('bills');
         var localEmpty=localCusts.length===0&&localBills.length===0;
@@ -392,16 +454,49 @@
             localStorage.setItem(STORAGE.settings,JSON.stringify(cloud.Settings[0]));
           }
           if(cloud.Customization&&cloud.Customization.length>0){
-            // Merge: keep local images, take cloud text fields
-            var localCust=getCustomization();
             var cloudCust=cloud.Customization[0];
-            cloudCust.backgroundImage=localCust.backgroundImage||'';
-            cloudCust.companyLogo=localCust.companyLogo||'';
-            localStorage.setItem(CUSTOMIZE_KEY,JSON.stringify(cloudCust));
+            var localCust=getCustomization();
+            // Merge: cloud text fields, keep local images if cloud doesn't have them
+            var merged={
+              theme: cloudCust.theme || localCust.theme || 'light',
+              backgroundPreset: cloudCust.backgroundPreset || localCust.backgroundPreset || '',
+              activePreset: cloudCust.activePreset !== undefined ? cloudCust.activePreset : localCust.activePreset,
+              companyName: cloudCust.companyName || localCust.companyName || '',
+              companyAddress: cloudCust.companyAddress || localCust.companyAddress || '',
+              companyPhone: cloudCust.companyPhone || localCust.companyPhone || '',
+              companyEmail: cloudCust.companyEmail || localCust.companyEmail || ''
+            };
+            localStorage.setItem(CUSTOMIZE_KEY,JSON.stringify(merged));
+          }
+          // Sync images from cloud
+          if(cloud.Images&&cloud.Images.length>0){
+            var cloudImg=cloud.Images[0];
+            var localImg=getImages();
+            var mergedImg={
+              companyLogo: cloudImg.companyLogo || localImg.companyLogo || '',
+              backgroundImage: cloudImg.backgroundImage || localImg.backgroundImage || ''
+            };
+            saveImages(mergedImg);
+
+            // Sync saved backgrounds
+            if(cloudImg.savedBackgrounds){
+              try{
+                var cloudSavedBgs=JSON.parse(cloudImg.savedBackgrounds);
+                if(Array.isArray(cloudSavedBgs)&&cloudSavedBgs.length>0){
+                  // Merge with local saved bgs (avoid duplicates by checking data)
+                  var localSavedBgs=getSavedBgs();
+                  var merged=localSavedBgs.slice();
+                  cloudSavedBgs.forEach(function(cbg){
+                    var exists=merged.some(function(lb){return lb.data===cbg.data});
+                    if(!exists)merged.push(cbg);
+                  });
+                  saveSavedBgs(merged);
+                }
+              }catch(e){}
+            }
           }
           setLocalTimestamp();
         }else if(!localEmpty&&!cloudNewer){
-          // Local is newer — push to cloud
           scheduleSync();
         }
 
@@ -411,6 +506,7 @@
         return true;
 
       }).catch(function(e){
+        console.error('Pull error:', e);
         updateSyncIndicator('error','Connection failed');
         return false;
       });
@@ -425,8 +521,10 @@
         loadCustomersList();
         applyVisuals();
         updateCurrencyDisplay();
+        updateTimerDisplay();
         var activeSection=document.querySelector('.section.active');
         if(activeSection&&activeSection.id==='historySection')loadFilteredHistory();
+        if(activeSection&&activeSection.id==='customizeSection')loadCustomizationForm();
       });
     }
 
@@ -435,12 +533,14 @@
     // ============================================================
     function backupToFile(){
       var data={
-        version:2,
+        version:3,
         date:new Date().toISOString(),
         customers:getData('customers'),
         bills:getData('bills'),
         settings:getSettings(),
         customization:getCustomization(),
+        images:getImages(),
+        savedBackgrounds:getSavedBgs(),
         masterPassword:localStorage.getItem(MASTER_PASSWORD_KEY),
         tempPassword:localStorage.getItem(TEMP_PASSWORD_KEY),
         tempPasswordExpiry:localStorage.getItem(TEMP_PASSWORD_EXPIRY_KEY)
@@ -467,7 +567,19 @@
           if(data.customers)saveDataLocal('customers',data.customers);
           if(data.bills)saveDataLocal('bills',data.bills);
           if(data.settings)localStorage.setItem(STORAGE.settings,JSON.stringify(data.settings));
-          if(data.customization)localStorage.setItem(CUSTOMIZE_KEY,JSON.stringify(data.customization));
+          if(data.customization){
+            var cust=data.customization;
+            // Migrate old format: move images to separate storage
+            var imgs=data.images||{};
+            if(cust.companyLogo&&!imgs.companyLogo){imgs.companyLogo=cust.companyLogo}
+            if(cust.backgroundImage&&!imgs.backgroundImage){imgs.backgroundImage=cust.backgroundImage}
+            delete cust.companyLogo;
+            delete cust.backgroundImage;
+            localStorage.setItem(CUSTOMIZE_KEY,JSON.stringify(cust));
+            saveImages(imgs);
+          }
+          if(data.images)saveImages(data.images);
+          if(data.savedBackgrounds)saveSavedBgs(data.savedBackgrounds);
           if(data.masterPassword)localStorage.setItem(MASTER_PASSWORD_KEY,data.masterPassword);
           if(data.tempPassword){
             localStorage.setItem(TEMP_PASSWORD_KEY,data.tempPassword);
@@ -477,7 +589,6 @@
           setLocalTimestamp();
           alert('✅ Data restored! Syncing to cloud...');
 
-          // Push to cloud THEN reload
           pushToCloud().then(function(){
             location.reload();
           }).catch(function(){
@@ -505,21 +616,186 @@
     // THEME & VISUALS
     // ============================================================
     function applyTheme(id){var t=THEMES[id]||THEMES.light,r=document.documentElement.style;r.setProperty('--bg-body',t.body);r.setProperty('--bg-container',t.container);r.setProperty('--bg-accent',t.accent);r.setProperty('--bg-accent-hover',t.accentHover);r.setProperty('--bg-success',t.success);r.setProperty('--bg-warning',t.warning);r.setProperty('--bg-danger','#dc3545');r.setProperty('--bg-input',t.input);r.setProperty('--bg-table-even',t.tableEven);r.setProperty('--bg-card-border',t.cardBorder);r.setProperty('--text-primary',t.text);r.setProperty('--text-secondary',t.textSec);r.setProperty('--text-muted',t.textSec);r.setProperty('--text-on-accent','#fff');r.setProperty('--text-on-warning',t.warnText);r.setProperty('--border-color',t.border);r.setProperty('--border-focus',t.accent);r.setProperty('--shadow-color',t.shadow);document.querySelector('meta[name="theme-color"]').content=t.accent}
-    function applyVisuals(){var c=getCustomization();applyTheme(c.theme||'light');if(c.backgroundImage)document.body.style.backgroundImage='url('+c.backgroundImage+')';else if(c.backgroundPreset&&c.backgroundPreset!=='none')document.body.style.backgroundImage=c.backgroundPreset;else document.body.style.backgroundImage='none';renderThemeGrid();renderPresetGrid()}
+
+    function applyVisuals(){
+      var c=getCustomization();
+      var imgs=getImages();
+      applyTheme(c.theme||'light');
+      if(imgs.backgroundImage)document.body.style.backgroundImage='url('+imgs.backgroundImage+')';
+      else if(c.backgroundPreset&&c.backgroundPreset!=='none')document.body.style.backgroundImage=c.backgroundPreset;
+      else document.body.style.backgroundImage='none';
+      renderThemeGrid();renderPresetGrid();renderSavedBgs();
+    }
+
     function renderThemeGrid(){var g=document.getElementById('themeGrid');if(!g)return;var c=getCustomization();g.innerHTML=Object.keys(THEMES).map(function(id){var t=THEMES[id];return'<div class="theme-swatch '+((c.theme||'light')===id?'active':'')+'" onclick="previewTheme(\''+id+'\')" style="background:'+t.container+';border-color:'+((c.theme||'light')===id?t.accent:'transparent')+'" title="'+t.name+'"><span>'+t.icon+'</span><small style="color:'+t.text+'">'+t.name+'</small><div style="position:absolute;bottom:0;left:0;right:0;height:6px;background:'+t.accent+';border-radius:0 0 9px 9px"></div></div>'}).join('')}
     function renderPresetGrid(){var g=document.getElementById('presetGrid');if(!g)return;var c=getCustomization();g.innerHTML=PRESETS.map(function(p,i){return'<div class="preset-card '+(c.activePreset===i?'active':'')+'" onclick="applyPreset('+i+')" style="background:'+(p.gradient==='none'?THEMES[p.theme].body:p.gradient)+'">'+p.name+'</div>'}).join('')}
     function previewTheme(id){applyTheme(id);var c=getCustomization();c.theme=id;c.activePreset=undefined;saveCustomizationData(c);renderThemeGrid();renderPresetGrid()}
-    function applyPreset(i){var p=PRESETS[i],c=getCustomization();c.theme=p.theme;c.activePreset=i;c.backgroundImage='';c.backgroundPreset=p.gradient;saveCustomizationData(c);applyVisuals();var bp=document.getElementById('bgPreview');if(bp){bp.style.backgroundImage=p.gradient!=='none'?p.gradient:'none';bp.textContent=p.gradient!=='none'?'':'No background set'}}
+    function applyPreset(i){var p=PRESETS[i],c=getCustomization();c.theme=p.theme;c.activePreset=i;c.backgroundPreset=p.gradient;var imgs=getImages();imgs.backgroundImage='';saveImages(imgs);saveCustomizationData(c);applyVisuals();var bp=document.getElementById('bgPreview');if(bp){bp.style.backgroundImage=p.gradient!=='none'?p.gradient:'none';bp.textContent=p.gradient!=='none'?'':'No background set'}}
+
+    // ============================================================
+    // SAVED BACKGROUNDS
+    // ============================================================
+    function saveCurrentBgAsPreset(){
+      var imgs=getImages();
+      if(!imgs.backgroundImage){
+        alert('No background image to save. Upload one first.');
+        return;
+      }
+      var saved=getSavedBgs();
+      // Check if already saved
+      var exists=saved.some(function(bg){return bg.data===imgs.backgroundImage});
+      if(exists){
+        alert('This background is already saved.');
+        return;
+      }
+      var name='BG '+(saved.length+1);
+      saved.push({id:Date.now(),name:name,data:imgs.backgroundImage});
+      saveSavedBgs(saved);
+      scheduleSync();
+      renderSavedBgs();
+      alert('✅ Background saved as preset!');
+    }
+
+    function renderSavedBgs(){
+      var grid=document.getElementById('savedBgGrid');
+      if(!grid)return;
+      var saved=getSavedBgs();
+      var imgs=getImages();
+      if(!saved.length){
+        grid.innerHTML='<p style="grid-column:1/-1;text-align:center;color:var(--text-muted);font-size:13px">No saved backgrounds</p>';
+        return;
+      }
+      grid.innerHTML=saved.map(function(bg){
+        var isActive=imgs.backgroundImage===bg.data;
+        return'<div class="saved-bg-item '+(isActive?'active':'')+'" style="background-image:url('+bg.data+')" onclick="applySavedBg('+bg.id+')" title="'+bg.name+'"><button class="delete-bg" onclick="event.stopPropagation();deleteSavedBg('+bg.id+')" title="Delete">✕</button></div>';
+      }).join('');
+    }
+
+    function applySavedBg(id){
+      var saved=getSavedBgs();
+      var bg=saved.find(function(b){return b.id===id});
+      if(!bg)return;
+      var imgs=getImages();
+      imgs.backgroundImage=bg.data;
+      saveImages(imgs);
+      var c=getCustomization();
+      c.backgroundPreset='';
+      c.activePreset=undefined;
+      saveCustomizationData(c);
+      document.body.style.backgroundImage='url('+bg.data+')';
+      var bp=document.getElementById('bgPreview');
+      if(bp){bp.style.backgroundImage='url('+bg.data+')';bp.textContent=''}
+      renderSavedBgs();
+      renderPresetGrid();
+      scheduleSync();
+    }
+
+    function deleteSavedBg(id){
+      if(!confirm('Delete this saved background?'))return;
+      var saved=getSavedBgs().filter(function(b){return b.id!==id});
+      saveSavedBgs(saved);
+      scheduleSync();
+      renderSavedBgs();
+    }
 
     // ============================================================
     // CUSTOMIZATION
     // ============================================================
-    function handleLogoUpload(e){var f=e.target.files[0];if(!f)return;resizeImage(f,200,200,.85).then(function(d){var c=getCustomization();c.companyLogo=d;saveCustomizationData(c);document.getElementById('logoPreview').innerHTML='<img src="'+d+'" alt="Logo">'}).catch(function(){alert('Error uploading logo')})}
-    function removeLogo(){var c=getCustomization();c.companyLogo='';saveCustomizationData(c);document.getElementById('logoPreview').innerHTML='<span style="font-size:32px;color:var(--text-muted)">📷</span>';document.getElementById('logoUpload').value=''}
-    function handleBgUpload(e){var f=e.target.files[0];if(!f)return;resizeImage(f,1920,1080,.7).then(function(d){var c=getCustomization();c.backgroundImage=d;c.backgroundPreset='';c.activePreset=undefined;saveCustomizationData(c);document.body.style.backgroundImage='url('+d+')';var bp=document.getElementById('bgPreview');bp.style.backgroundImage='url('+d+')';bp.textContent='';renderPresetGrid()}).catch(function(){alert('Error uploading background')})}
-    function removeBackground(){var c=getCustomization();c.backgroundImage='';c.backgroundPreset='';c.activePreset=undefined;saveCustomizationData(c);document.body.style.backgroundImage='none';var bp=document.getElementById('bgPreview');bp.style.backgroundImage='none';bp.textContent='No background set';document.getElementById('bgUpload').value='';renderPresetGrid()}
-    function loadCustomizationForm(){var c=getCustomization();document.getElementById('companyName').value=c.companyName||'';document.getElementById('companyAddress').value=c.companyAddress||'';document.getElementById('companyPhone').value=c.companyPhone||'';document.getElementById('companyEmail').value=c.companyEmail||'';if(c.companyLogo)document.getElementById('logoPreview').innerHTML='<img src="'+c.companyLogo+'" alt="Logo">';var bp=document.getElementById('bgPreview');if(c.backgroundImage){bp.style.backgroundImage='url('+c.backgroundImage+')';bp.textContent=''}else if(c.backgroundPreset&&c.backgroundPreset!=='none'){bp.style.backgroundImage=c.backgroundPreset;bp.textContent=''}renderThemeGrid();renderPresetGrid()}
-    function saveCustomization(){var c=getCustomization();c.companyName=document.getElementById('companyName').value.trim();c.companyAddress=document.getElementById('companyAddress').value.trim();c.companyPhone=document.getElementById('companyPhone').value.trim();c.companyEmail=document.getElementById('companyEmail').value.trim();saveCustomizationData(c);alert('✅ Customizations saved!')}
+    function handleLogoUpload(e){
+      var f=e.target.files[0];if(!f)return;
+      var prog=document.getElementById('logoProgress'),bar=document.getElementById('logoProgressBar');
+      prog.classList.add('active');bar.style.width='30%';
+      resizeImage(f,200,200,.85).then(function(d){
+        bar.style.width='80%';
+        var imgs=getImages();
+        imgs.companyLogo=d;
+        saveImages(imgs);
+        scheduleSync();
+        document.getElementById('logoPreview').innerHTML='<img src="'+d+'" alt="Logo">';
+        bar.style.width='100%';
+        setTimeout(function(){prog.classList.remove('active');bar.style.width='0'},500);
+      }).catch(function(){
+        alert('Error uploading logo');
+        prog.classList.remove('active');bar.style.width='0';
+      });
+    }
+
+    function removeLogo(){
+      var imgs=getImages();
+      imgs.companyLogo='';
+      saveImages(imgs);
+      scheduleSync();
+      document.getElementById('logoPreview').innerHTML='<span style="font-size:32px;color:var(--text-muted)">📷</span>';
+      document.getElementById('logoUpload').value='';
+    }
+
+    function handleBgUpload(e){
+      var f=e.target.files[0];if(!f)return;
+      var prog=document.getElementById('bgProgress'),bar=document.getElementById('bgProgressBar');
+      prog.classList.add('active');bar.style.width='20%';
+      resizeImage(f,1920,1080,.7).then(function(d){
+        bar.style.width='70%';
+        var imgs=getImages();
+        imgs.backgroundImage=d;
+        saveImages(imgs);
+        var c=getCustomization();
+        c.backgroundPreset='';
+        c.activePreset=undefined;
+        saveCustomizationData(c);
+        document.body.style.backgroundImage='url('+d+')';
+        var bp=document.getElementById('bgPreview');
+        bp.style.backgroundImage='url('+d+')';bp.textContent='';
+        renderPresetGrid();
+        bar.style.width='100%';
+        scheduleSync();
+        setTimeout(function(){prog.classList.remove('active');bar.style.width='0'},500);
+      }).catch(function(){
+        alert('Error uploading background');
+        prog.classList.remove('active');bar.style.width='0';
+      });
+    }
+
+    function removeBackground(){
+      var imgs=getImages();
+      imgs.backgroundImage='';
+      saveImages(imgs);
+      var c=getCustomization();
+      c.backgroundPreset='';
+      c.activePreset=undefined;
+      saveCustomizationData(c);
+      document.body.style.backgroundImage='none';
+      var bp=document.getElementById('bgPreview');
+      bp.style.backgroundImage='none';bp.textContent='No background set';
+      document.getElementById('bgUpload').value='';
+      renderPresetGrid();renderSavedBgs();
+      scheduleSync();
+    }
+
+    function loadCustomizationForm(){
+      var c=getCustomization();
+      var imgs=getImages();
+      document.getElementById('companyName').value=c.companyName||'';
+      document.getElementById('companyAddress').value=c.companyAddress||'';
+      document.getElementById('companyPhone').value=c.companyPhone||'';
+      document.getElementById('companyEmail').value=c.companyEmail||'';
+      if(imgs.companyLogo)document.getElementById('logoPreview').innerHTML='<img src="'+imgs.companyLogo+'" alt="Logo">';
+      else document.getElementById('logoPreview').innerHTML='<span style="font-size:32px;color:var(--text-muted)">📷</span>';
+      var bp=document.getElementById('bgPreview');
+      if(imgs.backgroundImage){bp.style.backgroundImage='url('+imgs.backgroundImage+')';bp.textContent=''}
+      else if(c.backgroundPreset&&c.backgroundPreset!=='none'){bp.style.backgroundImage=c.backgroundPreset;bp.textContent=''}
+      else{bp.style.backgroundImage='none';bp.textContent='No background set'}
+      renderThemeGrid();renderPresetGrid();renderSavedBgs();
+    }
+
+    function saveCustomization(){
+      var c=getCustomization();
+      c.companyName=document.getElementById('companyName').value.trim();
+      c.companyAddress=document.getElementById('companyAddress').value.trim();
+      c.companyPhone=document.getElementById('companyPhone').value.trim();
+      c.companyEmail=document.getElementById('companyEmail').value.trim();
+      saveCustomizationData(c);
+      alert('✅ Customizations saved!');
+    }
 
     // ============================================================
     // INTERNET TIME
@@ -584,22 +860,21 @@
       var si=localStorage.getItem(TIME_SYNC_INTERNET_KEY);
       var sd=localStorage.getItem(TIME_SYNC_DEVICE_KEY);
 
-      // Clear local
       localStorage.removeItem(STORAGE.settings);
       localStorage.removeItem(STORAGE.customers);
       localStorage.removeItem(STORAGE.bills);
       localStorage.removeItem(TEMP_PASSWORD_KEY);
       localStorage.removeItem(TEMP_PASSWORD_EXPIRY_KEY);
       localStorage.removeItem(CUSTOMIZE_KEY);
+      localStorage.removeItem(IMAGES_KEY);
+      localStorage.removeItem(SAVED_BGS_KEY);
 
-      // Preserve essentials
       if(mp)localStorage.setItem(MASTER_PASSWORD_KEY,mp);
       if(si)localStorage.setItem(TIME_SYNC_INTERNET_KEY,si);
       if(sd)localStorage.setItem(TIME_SYNC_DEVICE_KEY,sd);
 
       setLocalTimestamp();
 
-      // Push empty state to cloud, then reload
       pushToCloud().then(function(){
         alert('Restored to default.');
         location.reload();
@@ -621,13 +896,103 @@
     // CUSTOMERS
     // ============================================================
     function addCustomer(){var n=document.getElementById('newCustomerName').value.trim();if(!n)return alert('Enter customer name');var custs=getData('customers');if(custs.find(function(c){return c.name.toLowerCase()===n.toLowerCase()}))return alert('Already exists!');custs.push({id:Date.now(),name:n,createdAt:new Date().toISOString()});saveData('customers',custs);document.getElementById('newCustomerName').value='';loadCustomersList();loadCustomerDropdowns();alert('✅ Added!')}
-    function deleteCustomer(id){if(!confirm('Delete customer and all their bills?'))return;var custs=getData('customers').filter(function(c){return c.id!==id});var bills=getData('bills').filter(function(b){return b.customerId!==id});saveDataLocal('customers',JSON.stringify(custs));saveDataLocal('bills',JSON.stringify(bills));localStorage.setItem(STORAGE.customers,JSON.stringify(custs));localStorage.setItem(STORAGE.bills,JSON.stringify(bills));scheduleSync();loadCustomersList();loadCustomerDropdowns()}
+
+    function deleteCustomer(id){
+      if(!confirm('Delete customer and all their bills?'))return;
+      var custs=getData('customers').filter(function(c){return c.id!==id});
+      var bills=getData('bills').filter(function(b){return b.customerId!==id});
+      saveData('customers',custs);
+      saveData('bills',bills);
+      loadCustomersList();
+      loadCustomerDropdowns();
+    }
+
     function loadCustomersList(sortBy,order){sortBy=sortBy||'name';order=order||'asc';var custs=getData('customers'),el=document.getElementById('customerSearch'),st=el?el.value.toLowerCase():'';if(st)custs=custs.filter(function(c){return c.name.toLowerCase().indexOf(st)!==-1});custs.sort(function(a,b){if(sortBy==='name')return order==='asc'?a.name.localeCompare(b.name):b.name.localeCompare(a.name);if(sortBy==='date')return order==='asc'?new Date(a.createdAt)-new Date(b.createdAt):new Date(b.createdAt)-new Date(a.createdAt);return 0});var ct=document.getElementById('customersList');if(!custs.length){ct.innerHTML='<p style="padding:20px;text-align:center;color:var(--text-muted)">No customers found.</p>';return}ct.innerHTML=custs.map(function(c){return'<div style="padding:15px;border:1px solid var(--bg-card-border);margin:10px 0;border-radius:8px;background:var(--bg-container)"><strong style="color:var(--text-primary)">'+c.name+'</strong><br><small style="color:var(--text-secondary)">Added: '+new Date(c.createdAt).toLocaleDateString()+'</small><div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap"><button onclick="viewCustomerHistory('+c.id+')" style="padding:8px 12px;font-size:12px;width:auto;flex:1;min-width:80px">View Bills</button><button onclick="deleteCustomer('+c.id+')" style="padding:8px 12px;font-size:12px;background:var(--bg-danger);width:auto;flex:1;min-width:80px">Delete</button></div></div>'}).join('')}
     function sortCustomers(b,o){loadCustomersList(b,o)}
     function filterCustomers(){loadCustomersList()}
     function viewCustomerHistory(cid){showSection('historySection');document.getElementById('historyFilter').value=cid;loadFilteredHistory()}
     function loadCustomerDropdowns(){var custs=getData('customers');document.getElementById('billCustomer').innerHTML='<option value="">-- Select Customer --</option>'+custs.map(function(c){return'<option value="'+c.id+'">'+c.name+'</option>'}).join('');document.getElementById('historyFilter').innerHTML='<option value="all">All Customers</option>'+custs.map(function(c){return'<option value="'+c.id+'">'+c.name+'</option>'}).join('')}
     function filterBillCustomers(){var st=document.getElementById('billCustomerSearch').value.toLowerCase(),custs=getData('customers'),sel=document.getElementById('billCustomer');sel.innerHTML='<option value="">-- Select Customer --</option>';custs.forEach(function(c){if(c.name.toLowerCase().indexOf(st)!==-1){var o=document.createElement('option');o.value=c.id;o.textContent=c.name;sel.appendChild(o)}})}
+
+    // ============================================================
+    // IMPORT CUSTOMERS FROM EXCEL
+    // ============================================================
+    function downloadCustomerTemplate(){
+      var ws=XLSX.utils.aoa_to_sheet([['Customer Name'],['Juan Dela Cruz'],['Maria Santos'],['Pedro Reyes']]);
+      var wb=XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb,ws,'Customers');
+      ws['!cols']=[{wch:30}];
+      XLSX.writeFile(wb,'customer-import-template.xlsx');
+    }
+
+    function handleImportCustomers(e){
+      var file=e.target.files[0];
+      if(!file)return;
+
+      var reader=new FileReader();
+      reader.onload=function(ev){
+        try{
+          var data=new Uint8Array(ev.target.result);
+          var workbook=XLSX.read(data,{type:'array'});
+          var firstSheet=workbook.Sheets[workbook.SheetNames[0]];
+          var rows=XLSX.utils.sheet_to_json(firstSheet,{header:1});
+
+          if(!rows||rows.length<2){
+            alert('❌ File is empty or has no data rows.\nFirst row should be header, data starts from row 2.');
+            e.target.value='';
+            return;
+          }
+
+          var custs=getData('customers');
+          var existingNames=custs.map(function(c){return c.name.toLowerCase()});
+          var added=0;
+          var skipped=0;
+          var errors=[];
+
+          // Skip header row (index 0)
+          for(var i=1;i<rows.length;i++){
+            var row=rows[i];
+            if(!row||!row[0])continue;
+
+            var name=String(row[0]).trim();
+            if(!name){
+              skipped++;
+              continue;
+            }
+
+            if(existingNames.indexOf(name.toLowerCase())!==-1){
+              skipped++;
+              continue;
+            }
+
+            custs.push({
+              id:Date.now()+i,
+              name:name,
+              createdAt:new Date().toISOString()
+            });
+            existingNames.push(name.toLowerCase());
+            added++;
+          }
+
+          if(added>0){
+            saveData('customers',custs);
+            loadCustomersList();
+            loadCustomerDropdowns();
+          }
+
+          var msg='✅ Import Complete!\n\n';
+          msg+='Added: '+added+' customer'+(added!==1?'s':'')+'\n';
+          if(skipped>0)msg+='Skipped (duplicates/empty): '+skipped+'\n';
+          msg+='Total customers now: '+custs.length;
+          alert(msg);
+
+        }catch(err){
+          alert('❌ Error reading file: '+err.message+'\n\nMake sure the file is a valid Excel (.xlsx/.xls) or CSV file.');
+        }
+        e.target.value='';
+      };
+      reader.readAsArrayBuffer(file);
+    }
 
     // ============================================================
     // BILLING
@@ -651,7 +1016,18 @@
     // ============================================================
     // RECEIPT
     // ============================================================
-    function buildReceiptHeader(){var c=getCustomization(),h='';if(c.companyLogo)h+='<div style="text-align:center;margin-bottom:8px"><img src="'+c.companyLogo+'" style="max-width:80px;max-height:80px;border-radius:8px" alt="Logo"></div>';if(c.companyName)h+='<div style="text-align:center;font-size:18px;font-weight:900;margin-bottom:2px">'+c.companyName+'</div>';else h+='<div style="text-align:center;font-size:18px;font-weight:900;margin-bottom:2px">💧 WATER BILL</div>';if(c.companyAddress)h+='<div style="text-align:center;font-size:11px;color:#555;margin-bottom:1px">'+c.companyAddress+'</div>';var contacts=[c.companyPhone,c.companyEmail].filter(Boolean).join(' • ');if(contacts)h+='<div style="text-align:center;font-size:10px;color:#666">'+contacts+'</div>';return h}
+    function buildReceiptHeader(){
+      var c=getCustomization();
+      var imgs=getImages();
+      var h='';
+      if(imgs.companyLogo)h+='<div style="text-align:center;margin-bottom:8px"><img src="'+imgs.companyLogo+'" style="max-width:80px;max-height:80px;border-radius:8px" alt="Logo"></div>';
+      if(c.companyName)h+='<div style="text-align:center;font-size:18px;font-weight:900;margin-bottom:2px">'+c.companyName+'</div>';
+      else h+='<div style="text-align:center;font-size:18px;font-weight:900;margin-bottom:2px">💧 WATER BILL</div>';
+      if(c.companyAddress)h+='<div style="text-align:center;font-size:11px;color:#555;margin-bottom:1px">'+c.companyAddress+'</div>';
+      var contacts=[c.companyPhone,c.companyEmail].filter(Boolean).join(' • ');
+      if(contacts)h+='<div style="text-align:center;font-size:10px;color:#666">'+contacts+'</div>';
+      return h;
+    }
 
     function printBill(bill){var custs=getData('customers'),c=custs.find(function(x){return x.id===bill.customerId}),cn=c?c.name:'Unknown',s=getSettings(),cf=getCurrencyFormatter(),isMin=bill.totalUsed<=0||(bill.totalUsed*s.pricePerCubic)<s.minCharge;var html='<div style="font-family:\'Segoe UI\',Arial,sans-serif;padding:12px;width:80mm;color:#222">'+buildReceiptHeader()+'<div style="text-align:center;margin:8px 0;padding:6px;background:#f0f0f0;border-radius:4px"><div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:2px">Official Billing</div></div><hr style="border:none;border-top:1px solid #ddd;margin:8px 0"><table style="width:100%;font-size:12px;border-collapse:collapse;border:none;margin:6px 0"><tr><td style="padding:3px 0;color:#666;border:none">Customer</td><td style="text-align:right;font-weight:700;padding:3px 0;border:none">'+cn+'</td></tr><tr><td style="padding:3px 0;color:#666;border:none">Bill Date</td><td style="text-align:right;padding:3px 0;border:none">'+new Date(bill.date).toLocaleDateString()+'</td></tr><tr><td style="padding:3px 0;color:#666;border:none">Billing Period</td><td style="text-align:right;padding:3px 0;border:none">'+new Date(bill.date).toLocaleDateString('en-US',{month:'long',year:'numeric'})+'</td></tr></table><hr style="border:none;border-top:1px solid #ddd;margin:8px 0"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#444;margin-bottom:6px">Meter Reading</div><table style="width:100%;font-size:12px;border-collapse:collapse;border:none"><tr style="background:#f8f8f8"><td style="padding:5px 8px;border:none">Previous</td><td style="text-align:right;padding:5px 8px;font-weight:600;border:none">'+bill.prevReading+' m³</td></tr><tr><td style="padding:5px 8px;border:none">Present</td><td style="text-align:right;padding:5px 8px;font-weight:600;border:none">'+bill.presReading+' m³</td></tr><tr style="background:#f8f8f8"><td style="padding:5px 8px;font-weight:700;border:none">Consumption</td><td style="text-align:right;padding:5px 8px;font-weight:700;border:none">'+bill.totalUsed+' m³</td></tr></table><hr style="border:none;border-top:1px solid #ddd;margin:8px 0"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#444;margin-bottom:6px">Charges</div><table style="width:100%;font-size:12px;border-collapse:collapse;border:none"><tr><td style="padding:4px 0;color:#555;border:none">Rate per m³</td><td style="text-align:right;padding:4px 0;border:none">'+cf.format(s.pricePerCubic)+'</td></tr><tr><td style="padding:4px 0;color:#555;border:none">Computed Amount</td><td style="text-align:right;padding:4px 0;border:none">'+cf.format(bill.totalUsed*s.pricePerCubic)+'</td></tr><tr><td style="padding:4px 0;color:#555;border:none">Minimum Charge</td><td style="text-align:right;padding:4px 0;border:none">'+cf.format(s.minCharge)+'</td></tr>'+(isMin?'<tr><td colspan="2" style="padding:4px 0;font-size:10px;color:#e65100;text-align:center;border:none">* Minimum charge applied</td></tr>':'')+'</table><div style="margin:12px 0;padding:12px;background:#1a1a1a;color:#fff;border-radius:6px;text-align:center"><div style="font-size:10px;text-transform:uppercase;letter-spacing:2px;opacity:.7;margin-bottom:4px">Total Amount Due</div><div style="font-size:22px;font-weight:900;letter-spacing:1px">'+cf.format(bill.totalDue)+'</div></div><hr style="border:none;border-top:1px dashed #ccc;margin:8px 0"><div style="text-align:center;font-size:10px;color:#999;line-height:1.6">Thank you for your prompt payment!<br>Printed: '+new Date().toLocaleString()+'<br>'+(getCustomization().companyName?getCustomization().companyName+' • ':'')+(getCustomization().companyPhone||'')+'</div></div>';document.getElementById('printReceipt').innerHTML=html;window.print();document.getElementById('printReceipt').innerHTML=''}
 
@@ -690,6 +1066,21 @@
     // INITIALIZATION
     // ============================================================
     document.addEventListener('DOMContentLoaded',function(){
+      // Migrate old format: move images from customization to separate storage
+      (function migrateImages(){
+        var c=getCustomization();
+        var imgs=getImages();
+        var changed=false;
+        if(c.companyLogo&&!imgs.companyLogo){imgs.companyLogo=c.companyLogo;changed=true}
+        if(c.backgroundImage&&!imgs.backgroundImage){imgs.backgroundImage=c.backgroundImage;changed=true}
+        if(changed){
+          saveImages(imgs);
+          delete c.companyLogo;
+          delete c.backgroundImage;
+          localStorage.setItem(CUSTOMIZE_KEY,JSON.stringify(c));
+        }
+      })();
+
       showLoginModal();
       document.getElementById('billDate').value=new Date().toISOString().split('T')[0];
 
