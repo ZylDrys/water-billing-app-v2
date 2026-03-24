@@ -64,6 +64,32 @@
     .saved-bg-item:hover .delete-bg{opacity:1}
     .import-info{background:rgba(0,123,255,.08);border:1px solid rgba(0,123,255,.2);border-radius:8px;padding:12px;margin:10px 0;font-size:13px;color:var(--text-secondary);line-height:1.5}
     .import-info strong{color:var(--text-primary)}
+    .upload-progress{width:100%;height:4px;background:var(--bg-card-border);border-radius:2px;margin:8px 0;overflow:hidden;display:none}
+    .upload-progress.active{display:block}
+    .upload-progress-bar{height:100%;background:var(--bg-accent);border-radius:2px;transition:width .3s;width:0}
+    .payment-badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+    .payment-badge.paid{background:rgba(40,167,69,.15);color:#28a745}
+    .payment-badge.unpaid{background:rgba(220,53,69,.15);color:#dc3545}
+    .payment-badge.partial{background:rgba(255,193,7,.15);color:#856404}
+    .stat-card{background:var(--bg-container);border:1px solid var(--bg-card-border);border-radius:10px;padding:15px;text-align:center;transition:transform .2s}
+    .stat-card:hover{transform:translateY(-2px)}
+    .stat-card .stat-value{font-size:clamp(20px,5vw,28px);font-weight:900;color:var(--bg-accent)}
+    .stat-card .stat-label{font-size:clamp(10px,2.5vw,12px);color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+    .stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:15px 0}
+    .analysis-chart{background:var(--bg-container);border:1px solid var(--bg-card-border);border-radius:10px;padding:15px;margin:15px 0}
+    .chart-bar-container{display:flex;align-items:flex-end;gap:4px;height:150px;padding:10px 0;border-bottom:2px solid var(--bg-card-border)}
+    .chart-bar-wrapper{flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end}
+    .chart-bar{width:100%;min-width:8px;max-width:40px;background:var(--bg-accent);border-radius:4px 4px 0 0;transition:height .5s ease;cursor:pointer;position:relative}
+    .chart-bar:hover{opacity:.8}
+    .chart-bar-label{font-size:9px;color:var(--text-muted);margin-top:6px;text-align:center;transform:rotate(-45deg);white-space:nowrap}
+    .chart-bar-value{font-size:8px;color:var(--text-secondary);margin-bottom:3px;text-align:center;white-space:nowrap}
+    .analysis-summary{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0;font-size:13px}
+    .analysis-summary div{padding:8px;background:var(--bg-table-even);border-radius:6px}
+    .analysis-summary .label{color:var(--text-muted);font-size:11px}
+    .analysis-summary .value{color:var(--text-primary);font-weight:700}
+    .month-selector{display:flex;align-items:center;justify-content:center;gap:10px;margin:15px 0}
+    .month-selector button{width:auto;min-width:40px;padding:8px 12px}
+    .month-selector .current-month{font-size:clamp(14px,4vw,18px);font-weight:700;color:var(--text-primary);min-width:180px;text-align:center}
     .timer-widget{position:fixed;bottom:15px;right:15px;z-index:9000;font-family:'Segoe UI',Roboto,monospace;transition:all .3s}
     .timer-toggle{width:36px;height:36px;border-radius:50%;background:rgba(0,123,255,.15);border:1px solid rgba(0,123,255,.3);color:var(--bg-accent);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-left:auto;margin-bottom:6px;padding:0;min-width:36px;transition:all .2s;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
     .timer-toggle:hover{background:rgba(0,123,255,.25);transform:scale(1.05)}
@@ -74,10 +100,7 @@
     .timer-countdown.active{color:#28a745}.timer-countdown.warning{color:#ffc107}.timer-countdown.critical{color:#dc3545}
     .timer-countdown.inactive{color:#999;font-size:13px;font-weight:500}
     .timer-subtext{font-size:9px;color:#aaa;margin-top:3px;font-weight:500}
-    .upload-progress{width:100%;height:4px;background:var(--bg-card-border);border-radius:2px;margin:8px 0;overflow:hidden;display:none}
-    .upload-progress.active{display:block}
-    .upload-progress-bar{height:100%;background:var(--bg-accent);border-radius:2px;transition:width .3s;width:0}
-    @media(max-width:380px){body{padding:8px}.container{padding:14px;border-radius:8px}.sort-controls{gap:5px}.sort-controls button{min-width:60px;padding:6px 4px}.currency-switcher button{padding:8px 10px;min-width:65px;font-size:13px}.form-row{flex-direction:column;gap:0}.theme-grid{grid-template-columns:repeat(3,1fr)}.timer-widget{bottom:10px;right:10px}.timer-display{min-width:150px;padding:8px 10px}.timer-countdown{font-size:15px}.saved-bg-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:380px){body{padding:8px}.container{padding:14px;border-radius:8px}.sort-controls{gap:5px}.sort-controls button{min-width:60px;padding:6px 4px}.currency-switcher button{padding:8px 10px;min-width:65px;font-size:13px}.form-row{flex-direction:column;gap:0}.theme-grid{grid-template-columns:repeat(3,1fr)}.timer-widget{bottom:10px;right:10px}.timer-display{min-width:150px;padding:8px 10px}.timer-countdown{font-size:15px}.saved-bg-grid{grid-template-columns:repeat(2,1fr)}.stat-grid{grid-template-columns:1fr}}
     @media(min-width:381px)and(max-width:480px){body{padding:10px}.container{padding:16px}.form-row{flex-direction:column;gap:0}}
     @media(min-width:601px)and(max-width:1024px){.container{max-width:700px;padding:28px}.sort-controls button{padding:10px 14px;font-size:13px}}
     @media(min-width:1025px){body{padding:30px}.container{max-width:720px;padding:32px;border-radius:16px}button{padding:14px}.timer-widget{bottom:25px;right:25px}.timer-display{min-width:200px;padding:12px 18px}.timer-countdown{font-size:20px}}
@@ -125,10 +148,12 @@
       <button class="customize-btn" onclick="showSection('customizeSection')" title="Customize">🎨</button>
     </div>
 
+    <!-- MENU -->
     <div id="menuSection" class="section active">
       <button onclick="showSection('newBillSection')">➕ New Bill</button>
       <button onclick="showSection('customersSection')">👥 Customers</button>
       <button onclick="showSection('historySection')">📋 History</button>
+      <button onclick="showSection('analysisSection')" style="background:#17a2b8">📊 Monthly Analysis</button>
       <button onclick="showSection('settingsSection')" class="settings-btn">⚙ Settings</button>
       <button onclick="exportToExcel()" class="no-print">📊 Export to Excel</button>
       <button onclick="backupToFile()" class="no-print" style="background:#6c757d">💾 Backup to File</button>
@@ -136,6 +161,7 @@
       <input type="file" id="restoreFileInput" accept=".json" style="display:none" onchange="handleRestoreFile(event)">
     </div>
 
+    <!-- CUSTOMIZE -->
     <div id="customizeSection" class="section">
       <button onclick="showSection('menuSection')" class="no-print">← Back</button>
       <h2>🎨 Customize</h2>
@@ -163,6 +189,7 @@
       <button onclick="saveCustomization()" style="margin-top:20px;font-size:16px;padding:14px">💾 Save All Customizations</button>
     </div>
 
+    <!-- SETTINGS -->
     <div id="settingsSection" class="section">
       <button onclick="showSection('menuSection')" class="no-print">← Back</button>
       <h2>⚙ System Settings</h2>
@@ -176,6 +203,7 @@
       <div id="masterPasswordActions" style="margin-top:10px;display:none"><button onclick="changeMasterPassword()">🔑 Change Master Password</button><button onclick="showDefaultMasterPassword()">👁 Show Default Master Password</button><button onclick="restoreDefaultMasterPassword()">♻ Restore Default</button></div>
     </div>
 
+    <!-- CUSTOMERS -->
     <div id="customersSection" class="section">
       <button onclick="showSection('menuSection')" class="no-print">← Back</button>
       <h2>👥 Manage Customers</h2>
@@ -196,6 +224,7 @@
       <div id="customersList"></div>
     </div>
 
+    <!-- NEW BILL -->
     <div id="newBillSection" class="section">
       <button onclick="showSection('menuSection')" class="no-print">← Back</button>
       <h2>📝 Create New Bill</h2>
@@ -208,14 +237,53 @@
       <button onclick="saveBill(true)" class="no-print">🖨 Save &amp; Print</button>
     </div>
 
+    <!-- HISTORY -->
     <div id="historySection" class="section">
       <button onclick="showSection('menuSection')" class="no-print">← Back</button>
       <h2>📋 Transaction History</h2>
       <input type="text" id="historySearch" class="search-box" placeholder="Search by customer or date..." oninput="filterHistory()">
-      <div class="sort-controls"><button onclick="sortHistory('date','desc')">Newest</button><button onclick="sortHistory('date','asc')">Oldest</button><button onclick="sortHistory('amount','desc')">Highest</button><button onclick="sortHistory('amount','asc')">Lowest</button></div>
+      <div class="sort-controls">
+        <button onclick="sortHistory('date','desc')">Newest</button>
+        <button onclick="sortHistory('date','asc')">Oldest</button>
+        <button onclick="sortHistory('amount','desc')">Highest</button>
+        <button onclick="sortHistory('amount','asc')">Lowest</button>
+      </div>
       <select id="historyFilter" onchange="loadFilteredHistory()"><option value="all">All Customers</option></select>
-      <button onclick="printAllShownBills()" class="no-print" style="background:#17a2b8;margin:10px 0">🖨 Print All Shown Bills</button>
+      <select id="historyPaymentFilter" onchange="loadFilteredHistory()" style="margin-top:5px">
+        <option value="all">All Status</option>
+        <option value="paid">✅ Paid Only</option>
+        <option value="unpaid">❌ Unpaid Only</option>
+        <option value="partial">⚠️ Partial Only</option>
+      </select>
+      <div style="display:flex;gap:8px;margin:10px 0;flex-wrap:wrap">
+        <button onclick="printAllShownBills()" class="no-print" style="background:#17a2b8;flex:1;min-width:120px">🖨 Print All Shown</button>
+        <button onclick="deleteAllShownBills()" class="no-print" style="background:var(--bg-danger);flex:1;min-width:120px">🗑 Delete All Shown</button>
+      </div>
+      <div id="historySummary" style="margin:10px 0"></div>
       <div id="historyList"></div>
+    </div>
+
+    <!-- MONTHLY ANALYSIS -->
+    <div id="analysisSection" class="section">
+      <button onclick="showSection('menuSection')" class="no-print">← Back</button>
+      <h2>📊 Monthly Analysis</h2>
+      <div class="month-selector">
+        <button onclick="changeAnalysisMonth(-1)">◀</button>
+        <div class="current-month" id="analysisMonthLabel">January 2025</div>
+        <button onclick="changeAnalysisMonth(1)">▶</button>
+      </div>
+      <div class="stat-grid" id="analysisStats"></div>
+      <div class="analysis-chart" id="analysisChart">
+        <h3 style="border:none;margin:0 0 10px;padding:0;font-size:14px">📈 Daily Revenue</h3>
+        <div class="chart-bar-container" id="chartBars"></div>
+      </div>
+      <div id="analysisCustomerBreakdown"></div>
+      <div id="analysisPaymentSummary"></div>
+      <h3>📅 Year Overview</h3>
+      <div class="analysis-chart" id="yearlyChart">
+        <div class="chart-bar-container" id="yearlyChartBars"></div>
+      </div>
+      <button onclick="exportAnalysisToExcel()" style="background:#17a2b8;margin-top:10px">📊 Export Analysis to Excel</button>
     </div>
 
     <div id="printReceipt" class="print-only"></div>
@@ -257,6 +325,10 @@
     var CLOCK_DRIFT_TOLERANCE=2*60*1000;
     var STORAGE={customers:'water_customers_v2',bills:'water_bills_v2',settings:'water_settings_v2'};
     var DEFAULT_SETTINGS={pricePerCubic:1.50,minCharge:5.00,currency:'USD',adminPassword:'admin123'};
+
+    // Analysis state
+    var analysisYear=new Date().getFullYear();
+    var analysisMonth=new Date().getMonth();
 
     // ============================================================
     // THEMES & PRESETS
@@ -303,228 +375,86 @@
     function getCurrencyFormatter(){var s=getSettings();return new Intl.NumberFormat('en-US',{style:'currency',currency:s.currency==='PHP'?'PHP':s.currency==='EUR'?'EUR':'USD'})}
 
     // ============================================================
-    // CLOUD SYNC (FIXED: images + passwords stored properly)
+    // CLOUD SYNC
     // ============================================================
     function updateSyncIndicator(status,text){
       var el=document.getElementById('syncIndicator'),icon=document.getElementById('syncIcon'),txt=document.getElementById('syncText');
-      if(!el)return;
-      el.className='sync-indicator '+status;
+      if(!el)return;el.className='sync-indicator '+status;
       var icons={syncing:'🔄',synced:'☁️',error:'⚠️',offline:'📴'};
-      icon.textContent=icons[status]||'☁️';
-      txt.textContent=text||status;
+      icon.textContent=icons[status]||'☁️';txt.textContent=text||status;
     }
 
     var syncTimer=null;
-    function scheduleSync(){
-      pendingSync=true;
-      if(syncTimer)clearTimeout(syncTimer);
-      syncTimer=setTimeout(function(){pushToCloud()},3000);
-    }
-
-    function getLocalTimestamp(){
-      return parseInt(localStorage.getItem(SYNC_TIMESTAMP_KEY)||'0');
-    }
-    function setLocalTimestamp(){
-      var ts=Date.now();
-      localStorage.setItem(SYNC_TIMESTAMP_KEY,String(ts));
-      return ts;
-    }
-
-    // Split images into chunks for cloud storage (avoid URL length limits)
-    function chunkString(str, size) {
-      var chunks = [];
-      for (var i = 0; i < str.length; i += size) {
-        chunks.push(str.substring(i, i + size));
-      }
-      return chunks;
-    }
+    function scheduleSync(){pendingSync=true;if(syncTimer)clearTimeout(syncTimer);syncTimer=setTimeout(function(){pushToCloud()},3000)}
+    function getLocalTimestamp(){return parseInt(localStorage.getItem(SYNC_TIMESTAMP_KEY)||'0')}
+    function setLocalTimestamp(){var ts=Date.now();localStorage.setItem(SYNC_TIMESTAMP_KEY,String(ts));return ts}
 
     function buildPayload(){
-      var cust=getCustomization();
-      var images=getImages();
-      var savedBgs=getSavedBgs();
-
+      var cust=getCustomization();var images=getImages();var savedBgs=getSavedBgs();
       return{
         Customers:getData('customers'),
         Bills:getData('bills'),
         Settings:[getSettings()],
-        Customization:[{
-          theme: cust.theme || 'light',
-          backgroundPreset: cust.backgroundPreset || '',
-          activePreset: cust.activePreset,
-          companyName: cust.companyName || '',
-          companyAddress: cust.companyAddress || '',
-          companyPhone: cust.companyPhone || '',
-          companyEmail: cust.companyEmail || ''
-        }],
-        Images:[{
-          companyLogo: images.companyLogo || cust.companyLogo || '',
-          backgroundImage: images.backgroundImage || cust.backgroundImage || '',
-          savedBackgrounds: JSON.stringify(savedBgs)
-        }],
-        Meta:[{
-          timestamp: Date.now(),
-          masterPassword: localStorage.getItem(MASTER_PASSWORD_KEY) || DEFAULT_MASTER_PASSWORD,
-          tempPassword: localStorage.getItem(TEMP_PASSWORD_KEY) || '',
-          tempPasswordExpiry: localStorage.getItem(TEMP_PASSWORD_EXPIRY_KEY) || ''
-        }]
+        Customization:[{theme:cust.theme||'light',backgroundPreset:cust.backgroundPreset||'',activePreset:cust.activePreset,companyName:cust.companyName||'',companyAddress:cust.companyAddress||'',companyPhone:cust.companyPhone||'',companyEmail:cust.companyEmail||''}],
+        Images:[{companyLogo:images.companyLogo||'',backgroundImage:images.backgroundImage||'',savedBackgrounds:JSON.stringify(savedBgs)}],
+        Meta:[{timestamp:Date.now(),masterPassword:localStorage.getItem(MASTER_PASSWORD_KEY)||DEFAULT_MASTER_PASSWORD,tempPassword:localStorage.getItem(TEMP_PASSWORD_KEY)||'',tempPasswordExpiry:localStorage.getItem(TEMP_PASSWORD_EXPIRY_KEY)||''}]
       };
     }
 
     function pushToCloud(){
-      if(isSyncing||!navigator.onLine){
-        if(!navigator.onLine)updateSyncIndicator('offline');
-        return Promise.resolve();
-      }
-      isSyncing=true;
-      pendingSync=false;
-      updateSyncIndicator('syncing','Uploading...');
-
-      var payload=buildPayload();
-      setLocalTimestamp();
-
-      return fetch(API_URL+'?action=writeAll',{
-        method:'POST',
-        headers:{'Content-Type':'text/plain'},
-        body:JSON.stringify(payload)
-      }).then(function(r){return r.json()}).then(function(d){
-        if(d.success){
-          lastSyncTime=Date.now();
-          localStorage.setItem(LAST_SYNC_KEY,String(lastSyncTime));
-          updateSyncIndicator('synced','Synced just now');
-        }else{
-          console.error('Sync failed:', d);
-          updateSyncIndicator('error','Sync failed');
-        }
-        isSyncing=false;
-      }).catch(function(e){
-        console.error('Sync error:', e);
-        updateSyncIndicator('error','Sync error');
-        isSyncing=false;
-      });
+      if(isSyncing||!navigator.onLine){if(!navigator.onLine)updateSyncIndicator('offline');return Promise.resolve()}
+      isSyncing=true;pendingSync=false;updateSyncIndicator('syncing','Uploading...');
+      var payload=buildPayload();setLocalTimestamp();
+      return fetch(API_URL+'?action=writeAll',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)})
+      .then(function(r){return r.json()}).then(function(d){
+        if(d.success){lastSyncTime=Date.now();localStorage.setItem(LAST_SYNC_KEY,String(lastSyncTime));updateSyncIndicator('synced','Synced just now')}
+        else{updateSyncIndicator('error','Sync failed')}isSyncing=false;
+      }).catch(function(e){updateSyncIndicator('error','Sync error');isSyncing=false});
     }
 
     function pullFromCloud(){
       if(!navigator.onLine){updateSyncIndicator('offline');return Promise.resolve(false)}
       updateSyncIndicator('syncing','Loading...');
-
       return fetch(API_URL+'?action=readAll').then(function(r){return r.json()}).then(function(d){
-        if(!d.success||!d.data)throw new Error('Invalid response');
-
-        var cloud=d.data;
-        var localTs=getLocalTimestamp();
-        var cloudTs=0;
-
-        // Get cloud timestamp and sync passwords from Meta
+        if(!d.success||!d.data)throw new Error('Invalid');
+        var cloud=d.data;var localTs=getLocalTimestamp();var cloudTs=0;
         if(cloud.Meta&&cloud.Meta.length>0){
-          var meta=cloud.Meta[0];
-          cloudTs=parseInt(meta.timestamp||'0');
-
-          // Always sync master password from cloud if present
-          if(meta.masterPassword){
-            localStorage.setItem(MASTER_PASSWORD_KEY,meta.masterPassword);
-          }
-          // Always sync temp password from cloud
-          if(meta.tempPassword){
-            localStorage.setItem(TEMP_PASSWORD_KEY,meta.tempPassword);
-            localStorage.setItem(TEMP_PASSWORD_EXPIRY_KEY,meta.tempPasswordExpiry||'0');
-          }else{
-            // If cloud has no temp password and cloud is authoritative
-            if(cloudTs>localTs){
-              localStorage.removeItem(TEMP_PASSWORD_KEY);
-              localStorage.removeItem(TEMP_PASSWORD_EXPIRY_KEY);
-            }
-          }
+          var meta=cloud.Meta[0];cloudTs=parseInt(meta.timestamp||'0');
+          if(meta.masterPassword)localStorage.setItem(MASTER_PASSWORD_KEY,meta.masterPassword);
+          if(meta.tempPassword){localStorage.setItem(TEMP_PASSWORD_KEY,meta.tempPassword);localStorage.setItem(TEMP_PASSWORD_EXPIRY_KEY,meta.tempPasswordExpiry||'0')}
+          else if(cloudTs>localTs){localStorage.removeItem(TEMP_PASSWORD_KEY);localStorage.removeItem(TEMP_PASSWORD_EXPIRY_KEY)}
         }
-
-        var localCusts=getData('customers');
-        var localBills=getData('bills');
+        var localCusts=getData('customers'),localBills=getData('bills');
         var localEmpty=localCusts.length===0&&localBills.length===0;
-        var cloudNewer=cloudTs>localTs;
-        var useCloud=localEmpty||cloudNewer;
-
+        var cloudNewer=cloudTs>localTs;var useCloud=localEmpty||cloudNewer;
         if(useCloud){
-          if(cloud.Customers&&cloud.Customers.length>0){
-            saveDataLocal('customers',cloud.Customers);
-          }
-          if(cloud.Bills&&cloud.Bills.length>0){
-            saveDataLocal('bills',cloud.Bills);
-          }
-          if(cloud.Settings&&cloud.Settings.length>0){
-            localStorage.setItem(STORAGE.settings,JSON.stringify(cloud.Settings[0]));
-          }
+          if(cloud.Customers)saveDataLocal('customers',cloud.Customers);
+          if(cloud.Bills)saveDataLocal('bills',cloud.Bills);
+          if(cloud.Settings&&cloud.Settings.length>0)localStorage.setItem(STORAGE.settings,JSON.stringify(cloud.Settings[0]));
           if(cloud.Customization&&cloud.Customization.length>0){
-            var cloudCust=cloud.Customization[0];
-            var localCust=getCustomization();
-            // Merge: cloud text fields, keep local images if cloud doesn't have them
-            var merged={
-              theme: cloudCust.theme || localCust.theme || 'light',
-              backgroundPreset: cloudCust.backgroundPreset || localCust.backgroundPreset || '',
-              activePreset: cloudCust.activePreset !== undefined ? cloudCust.activePreset : localCust.activePreset,
-              companyName: cloudCust.companyName || localCust.companyName || '',
-              companyAddress: cloudCust.companyAddress || localCust.companyAddress || '',
-              companyPhone: cloudCust.companyPhone || localCust.companyPhone || '',
-              companyEmail: cloudCust.companyEmail || localCust.companyEmail || ''
-            };
+            var localC=getCustomization(),cloudC=cloud.Customization[0];
+            var merged={theme:cloudC.theme||localC.theme||'light',backgroundPreset:cloudC.backgroundPreset||localC.backgroundPreset||'',activePreset:cloudC.activePreset!==undefined?cloudC.activePreset:localC.activePreset,companyName:cloudC.companyName||localC.companyName||'',companyAddress:cloudC.companyAddress||localC.companyAddress||'',companyPhone:cloudC.companyPhone||localC.companyPhone||'',companyEmail:cloudC.companyEmail||localC.companyEmail||''};
             localStorage.setItem(CUSTOMIZE_KEY,JSON.stringify(merged));
           }
-          // Sync images from cloud
           if(cloud.Images&&cloud.Images.length>0){
-            var cloudImg=cloud.Images[0];
-            var localImg=getImages();
-            var mergedImg={
-              companyLogo: cloudImg.companyLogo || localImg.companyLogo || '',
-              backgroundImage: cloudImg.backgroundImage || localImg.backgroundImage || ''
-            };
-            saveImages(mergedImg);
-
-            // Sync saved backgrounds
-            if(cloudImg.savedBackgrounds){
-              try{
-                var cloudSavedBgs=JSON.parse(cloudImg.savedBackgrounds);
-                if(Array.isArray(cloudSavedBgs)&&cloudSavedBgs.length>0){
-                  // Merge with local saved bgs (avoid duplicates by checking data)
-                  var localSavedBgs=getSavedBgs();
-                  var merged=localSavedBgs.slice();
-                  cloudSavedBgs.forEach(function(cbg){
-                    var exists=merged.some(function(lb){return lb.data===cbg.data});
-                    if(!exists)merged.push(cbg);
-                  });
-                  saveSavedBgs(merged);
-                }
-              }catch(e){}
-            }
+            var cloudImg=cloud.Images[0],localImg=getImages();
+            saveImages({companyLogo:cloudImg.companyLogo||localImg.companyLogo||'',backgroundImage:cloudImg.backgroundImage||localImg.backgroundImage||''});
+            if(cloudImg.savedBackgrounds){try{var csb=JSON.parse(cloudImg.savedBackgrounds);if(Array.isArray(csb)){var lsb=getSavedBgs(),m=lsb.slice();csb.forEach(function(c){if(!m.some(function(l){return l.data===c.data}))m.push(c)});saveSavedBgs(m)}}catch(e){}}
           }
           setLocalTimestamp();
-        }else if(!localEmpty&&!cloudNewer){
-          scheduleSync();
-        }
-
-        lastSyncTime=Date.now();
-        localStorage.setItem(LAST_SYNC_KEY,String(lastSyncTime));
-        updateSyncIndicator('synced');
-        return true;
-
-      }).catch(function(e){
-        console.error('Pull error:', e);
-        updateSyncIndicator('error','Connection failed');
-        return false;
-      });
+        }else if(!localEmpty&&!cloudNewer){scheduleSync()}
+        lastSyncTime=Date.now();localStorage.setItem(LAST_SYNC_KEY,String(lastSyncTime));updateSyncIndicator('synced');return true;
+      }).catch(function(e){updateSyncIndicator('error','Connection failed');return false});
     }
 
     function manualSync(){
       if(isSyncing)return;
-      pushToCloud().then(function(){
-        return pullFromCloud();
-      }).then(function(){
-        loadCustomerDropdowns();
-        loadCustomersList();
-        applyVisuals();
-        updateCurrencyDisplay();
-        updateTimerDisplay();
-        var activeSection=document.querySelector('.section.active');
-        if(activeSection&&activeSection.id==='historySection')loadFilteredHistory();
-        if(activeSection&&activeSection.id==='customizeSection')loadCustomizationForm();
+      pushToCloud().then(function(){return pullFromCloud()}).then(function(){
+        loadCustomerDropdowns();loadCustomersList();applyVisuals();updateCurrencyDisplay();updateTimerDisplay();
+        var as=document.querySelector('.section.active');
+        if(as&&as.id==='historySection')loadFilteredHistory();
+        if(as&&as.id==='customizeSection')loadCustomizationForm();
+        if(as&&as.id==='analysisSection')renderAnalysis();
       });
     }
 
@@ -532,101 +462,32 @@
     // BACKUP / RESTORE
     // ============================================================
     function backupToFile(){
-      var data={
-        version:3,
-        date:new Date().toISOString(),
-        customers:getData('customers'),
-        bills:getData('bills'),
-        settings:getSettings(),
-        customization:getCustomization(),
-        images:getImages(),
-        savedBackgrounds:getSavedBgs(),
-        masterPassword:localStorage.getItem(MASTER_PASSWORD_KEY),
-        tempPassword:localStorage.getItem(TEMP_PASSWORD_KEY),
-        tempPasswordExpiry:localStorage.getItem(TEMP_PASSWORD_EXPIRY_KEY)
-      };
-      var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-      var url=URL.createObjectURL(blob);
-      var a=document.createElement('a');
-      a.href=url;a.download='water-billing-backup-'+new Date().toISOString().split('T')[0]+'.json';
-      a.click();URL.revokeObjectURL(url);
-      alert('✅ Backup downloaded!');
+      var data={version:3,date:new Date().toISOString(),customers:getData('customers'),bills:getData('bills'),settings:getSettings(),customization:getCustomization(),images:getImages(),savedBackgrounds:getSavedBgs(),masterPassword:localStorage.getItem(MASTER_PASSWORD_KEY),tempPassword:localStorage.getItem(TEMP_PASSWORD_KEY),tempPasswordExpiry:localStorage.getItem(TEMP_PASSWORD_EXPIRY_KEY)};
+      var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='water-billing-backup-'+new Date().toISOString().split('T')[0]+'.json';a.click();URL.revokeObjectURL(url);alert('✅ Backup downloaded!')
     }
-
     function restoreFromFile(){document.getElementById('restoreFileInput').click()}
-
     function handleRestoreFile(e){
-      var file=e.target.files[0];if(!file)return;
-      var reader=new FileReader();
-      reader.onload=function(ev){
-        try{
-          var data=JSON.parse(ev.target.result);
-          if(!data.customers&&!data.bills){alert('Invalid backup file');return}
-          if(!confirm('⚠️ This will replace ALL current data.\n\nContinue?'))return;
-
-          if(data.customers)saveDataLocal('customers',data.customers);
-          if(data.bills)saveDataLocal('bills',data.bills);
-          if(data.settings)localStorage.setItem(STORAGE.settings,JSON.stringify(data.settings));
-          if(data.customization){
-            var cust=data.customization;
-            // Migrate old format: move images to separate storage
-            var imgs=data.images||{};
-            if(cust.companyLogo&&!imgs.companyLogo){imgs.companyLogo=cust.companyLogo}
-            if(cust.backgroundImage&&!imgs.backgroundImage){imgs.backgroundImage=cust.backgroundImage}
-            delete cust.companyLogo;
-            delete cust.backgroundImage;
-            localStorage.setItem(CUSTOMIZE_KEY,JSON.stringify(cust));
-            saveImages(imgs);
-          }
-          if(data.images)saveImages(data.images);
-          if(data.savedBackgrounds)saveSavedBgs(data.savedBackgrounds);
-          if(data.masterPassword)localStorage.setItem(MASTER_PASSWORD_KEY,data.masterPassword);
-          if(data.tempPassword){
-            localStorage.setItem(TEMP_PASSWORD_KEY,data.tempPassword);
-            if(data.tempPasswordExpiry)localStorage.setItem(TEMP_PASSWORD_EXPIRY_KEY,data.tempPasswordExpiry);
-          }
-
-          setLocalTimestamp();
-          alert('✅ Data restored! Syncing to cloud...');
-
-          pushToCloud().then(function(){
-            location.reload();
-          }).catch(function(){
-            location.reload();
-          });
-        }catch(err){alert('Error reading backup: '+err.message)}
-      };
-      reader.readAsText(file);
-      e.target.value='';
+      var file=e.target.files[0];if(!file)return;var reader=new FileReader();
+      reader.onload=function(ev){try{var data=JSON.parse(ev.target.result);if(!data.customers&&!data.bills){alert('Invalid backup');return}if(!confirm('⚠️ Replace ALL data?'))return;
+      if(data.customers)saveDataLocal('customers',data.customers);if(data.bills)saveDataLocal('bills',data.bills);if(data.settings)localStorage.setItem(STORAGE.settings,JSON.stringify(data.settings));
+      if(data.customization){var c=data.customization,im=data.images||{};if(c.companyLogo&&!im.companyLogo){im.companyLogo=c.companyLogo}if(c.backgroundImage&&!im.backgroundImage){im.backgroundImage=c.backgroundImage}delete c.companyLogo;delete c.backgroundImage;localStorage.setItem(CUSTOMIZE_KEY,JSON.stringify(c));saveImages(im)}
+      if(data.images)saveImages(data.images);if(data.savedBackgrounds)saveSavedBgs(data.savedBackgrounds);
+      if(data.masterPassword)localStorage.setItem(MASTER_PASSWORD_KEY,data.masterPassword);
+      if(data.tempPassword){localStorage.setItem(TEMP_PASSWORD_KEY,data.tempPassword);if(data.tempPasswordExpiry)localStorage.setItem(TEMP_PASSWORD_EXPIRY_KEY,data.tempPasswordExpiry)}
+      setLocalTimestamp();alert('✅ Restored! Syncing...');pushToCloud().then(function(){location.reload()}).catch(function(){location.reload()})}catch(err){alert('Error: '+err.message)}};
+      reader.readAsText(file);e.target.value='';
     }
 
     // ============================================================
     // IMAGE RESIZE
     // ============================================================
-    function resizeImage(file,maxW,maxH,quality){
-      quality=quality||0.8;
-      return new Promise(function(resolve,reject){
-        var reader=new FileReader();
-        reader.onload=function(e){var img=new Image();img.onload=function(){var w=img.width,h=img.height;if(w>maxW){h=h*maxW/w;w=maxW}if(h>maxH){w=w*maxH/h;h=maxH}var c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);resolve(c.toDataURL('image/jpeg',quality))};img.onerror=reject;img.src=e.target.result};
-        reader.onerror=reject;reader.readAsDataURL(file);
-      });
-    }
+    function resizeImage(file,maxW,maxH,quality){quality=quality||0.8;return new Promise(function(resolve,reject){var reader=new FileReader();reader.onload=function(e){var img=new Image();img.onload=function(){var w=img.width,h=img.height;if(w>maxW){h=h*maxW/w;w=maxW}if(h>maxH){w=w*maxH/h;h=maxH}var c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);resolve(c.toDataURL('image/jpeg',quality))};img.onerror=reject;img.src=e.target.result};reader.onerror=reject;reader.readAsDataURL(file)})}
 
     // ============================================================
     // THEME & VISUALS
     // ============================================================
     function applyTheme(id){var t=THEMES[id]||THEMES.light,r=document.documentElement.style;r.setProperty('--bg-body',t.body);r.setProperty('--bg-container',t.container);r.setProperty('--bg-accent',t.accent);r.setProperty('--bg-accent-hover',t.accentHover);r.setProperty('--bg-success',t.success);r.setProperty('--bg-warning',t.warning);r.setProperty('--bg-danger','#dc3545');r.setProperty('--bg-input',t.input);r.setProperty('--bg-table-even',t.tableEven);r.setProperty('--bg-card-border',t.cardBorder);r.setProperty('--text-primary',t.text);r.setProperty('--text-secondary',t.textSec);r.setProperty('--text-muted',t.textSec);r.setProperty('--text-on-accent','#fff');r.setProperty('--text-on-warning',t.warnText);r.setProperty('--border-color',t.border);r.setProperty('--border-focus',t.accent);r.setProperty('--shadow-color',t.shadow);document.querySelector('meta[name="theme-color"]').content=t.accent}
-
-    function applyVisuals(){
-      var c=getCustomization();
-      var imgs=getImages();
-      applyTheme(c.theme||'light');
-      if(imgs.backgroundImage)document.body.style.backgroundImage='url('+imgs.backgroundImage+')';
-      else if(c.backgroundPreset&&c.backgroundPreset!=='none')document.body.style.backgroundImage=c.backgroundPreset;
-      else document.body.style.backgroundImage='none';
-      renderThemeGrid();renderPresetGrid();renderSavedBgs();
-    }
-
+    function applyVisuals(){var c=getCustomization(),imgs=getImages();applyTheme(c.theme||'light');if(imgs.backgroundImage)document.body.style.backgroundImage='url('+imgs.backgroundImage+')';else if(c.backgroundPreset&&c.backgroundPreset!=='none')document.body.style.backgroundImage=c.backgroundPreset;else document.body.style.backgroundImage='none';renderThemeGrid();renderPresetGrid();renderSavedBgs()}
     function renderThemeGrid(){var g=document.getElementById('themeGrid');if(!g)return;var c=getCustomization();g.innerHTML=Object.keys(THEMES).map(function(id){var t=THEMES[id];return'<div class="theme-swatch '+((c.theme||'light')===id?'active':'')+'" onclick="previewTheme(\''+id+'\')" style="background:'+t.container+';border-color:'+((c.theme||'light')===id?t.accent:'transparent')+'" title="'+t.name+'"><span>'+t.icon+'</span><small style="color:'+t.text+'">'+t.name+'</small><div style="position:absolute;bottom:0;left:0;right:0;height:6px;background:'+t.accent+';border-radius:0 0 9px 9px"></div></div>'}).join('')}
     function renderPresetGrid(){var g=document.getElementById('presetGrid');if(!g)return;var c=getCustomization();g.innerHTML=PRESETS.map(function(p,i){return'<div class="preset-card '+(c.activePreset===i?'active':'')+'" onclick="applyPreset('+i+')" style="background:'+(p.gradient==='none'?THEMES[p.theme].body:p.gradient)+'">'+p.name+'</div>'}).join('')}
     function previewTheme(id){applyTheme(id);var c=getCustomization();c.theme=id;c.activePreset=undefined;saveCustomizationData(c);renderThemeGrid();renderPresetGrid()}
@@ -635,167 +496,20 @@
     // ============================================================
     // SAVED BACKGROUNDS
     // ============================================================
-    function saveCurrentBgAsPreset(){
-      var imgs=getImages();
-      if(!imgs.backgroundImage){
-        alert('No background image to save. Upload one first.');
-        return;
-      }
-      var saved=getSavedBgs();
-      // Check if already saved
-      var exists=saved.some(function(bg){return bg.data===imgs.backgroundImage});
-      if(exists){
-        alert('This background is already saved.');
-        return;
-      }
-      var name='BG '+(saved.length+1);
-      saved.push({id:Date.now(),name:name,data:imgs.backgroundImage});
-      saveSavedBgs(saved);
-      scheduleSync();
-      renderSavedBgs();
-      alert('✅ Background saved as preset!');
-    }
-
-    function renderSavedBgs(){
-      var grid=document.getElementById('savedBgGrid');
-      if(!grid)return;
-      var saved=getSavedBgs();
-      var imgs=getImages();
-      if(!saved.length){
-        grid.innerHTML='<p style="grid-column:1/-1;text-align:center;color:var(--text-muted);font-size:13px">No saved backgrounds</p>';
-        return;
-      }
-      grid.innerHTML=saved.map(function(bg){
-        var isActive=imgs.backgroundImage===bg.data;
-        return'<div class="saved-bg-item '+(isActive?'active':'')+'" style="background-image:url('+bg.data+')" onclick="applySavedBg('+bg.id+')" title="'+bg.name+'"><button class="delete-bg" onclick="event.stopPropagation();deleteSavedBg('+bg.id+')" title="Delete">✕</button></div>';
-      }).join('');
-    }
-
-    function applySavedBg(id){
-      var saved=getSavedBgs();
-      var bg=saved.find(function(b){return b.id===id});
-      if(!bg)return;
-      var imgs=getImages();
-      imgs.backgroundImage=bg.data;
-      saveImages(imgs);
-      var c=getCustomization();
-      c.backgroundPreset='';
-      c.activePreset=undefined;
-      saveCustomizationData(c);
-      document.body.style.backgroundImage='url('+bg.data+')';
-      var bp=document.getElementById('bgPreview');
-      if(bp){bp.style.backgroundImage='url('+bg.data+')';bp.textContent=''}
-      renderSavedBgs();
-      renderPresetGrid();
-      scheduleSync();
-    }
-
-    function deleteSavedBg(id){
-      if(!confirm('Delete this saved background?'))return;
-      var saved=getSavedBgs().filter(function(b){return b.id!==id});
-      saveSavedBgs(saved);
-      scheduleSync();
-      renderSavedBgs();
-    }
+    function saveCurrentBgAsPreset(){var imgs=getImages();if(!imgs.backgroundImage){alert('No background to save.');return}var saved=getSavedBgs();if(saved.some(function(bg){return bg.data===imgs.backgroundImage})){alert('Already saved.');return}saved.push({id:Date.now(),name:'BG '+(saved.length+1),data:imgs.backgroundImage});saveSavedBgs(saved);scheduleSync();renderSavedBgs();alert('✅ Saved!')}
+    function renderSavedBgs(){var grid=document.getElementById('savedBgGrid');if(!grid)return;var saved=getSavedBgs(),imgs=getImages();if(!saved.length){grid.innerHTML='<p style="grid-column:1/-1;text-align:center;color:var(--text-muted);font-size:13px">No saved backgrounds</p>';return}grid.innerHTML=saved.map(function(bg){var isActive=imgs.backgroundImage===bg.data;return'<div class="saved-bg-item '+(isActive?'active':'')+'" style="background-image:url('+bg.data+')" onclick="applySavedBg('+bg.id+')" title="'+bg.name+'"><button class="delete-bg" onclick="event.stopPropagation();deleteSavedBg('+bg.id+')" title="Delete">✕</button></div>'}).join('')}
+    function applySavedBg(id){var saved=getSavedBgs(),bg=saved.find(function(b){return b.id===id});if(!bg)return;var imgs=getImages();imgs.backgroundImage=bg.data;saveImages(imgs);var c=getCustomization();c.backgroundPreset='';c.activePreset=undefined;saveCustomizationData(c);document.body.style.backgroundImage='url('+bg.data+')';var bp=document.getElementById('bgPreview');if(bp){bp.style.backgroundImage='url('+bg.data+')';bp.textContent=''}renderSavedBgs();renderPresetGrid();scheduleSync()}
+    function deleteSavedBg(id){if(!confirm('Delete?'))return;saveSavedBgs(getSavedBgs().filter(function(b){return b.id!==id}));scheduleSync();renderSavedBgs()}
 
     // ============================================================
     // CUSTOMIZATION
     // ============================================================
-    function handleLogoUpload(e){
-      var f=e.target.files[0];if(!f)return;
-      var prog=document.getElementById('logoProgress'),bar=document.getElementById('logoProgressBar');
-      prog.classList.add('active');bar.style.width='30%';
-      resizeImage(f,200,200,.85).then(function(d){
-        bar.style.width='80%';
-        var imgs=getImages();
-        imgs.companyLogo=d;
-        saveImages(imgs);
-        scheduleSync();
-        document.getElementById('logoPreview').innerHTML='<img src="'+d+'" alt="Logo">';
-        bar.style.width='100%';
-        setTimeout(function(){prog.classList.remove('active');bar.style.width='0'},500);
-      }).catch(function(){
-        alert('Error uploading logo');
-        prog.classList.remove('active');bar.style.width='0';
-      });
-    }
-
-    function removeLogo(){
-      var imgs=getImages();
-      imgs.companyLogo='';
-      saveImages(imgs);
-      scheduleSync();
-      document.getElementById('logoPreview').innerHTML='<span style="font-size:32px;color:var(--text-muted)">📷</span>';
-      document.getElementById('logoUpload').value='';
-    }
-
-    function handleBgUpload(e){
-      var f=e.target.files[0];if(!f)return;
-      var prog=document.getElementById('bgProgress'),bar=document.getElementById('bgProgressBar');
-      prog.classList.add('active');bar.style.width='20%';
-      resizeImage(f,1920,1080,.7).then(function(d){
-        bar.style.width='70%';
-        var imgs=getImages();
-        imgs.backgroundImage=d;
-        saveImages(imgs);
-        var c=getCustomization();
-        c.backgroundPreset='';
-        c.activePreset=undefined;
-        saveCustomizationData(c);
-        document.body.style.backgroundImage='url('+d+')';
-        var bp=document.getElementById('bgPreview');
-        bp.style.backgroundImage='url('+d+')';bp.textContent='';
-        renderPresetGrid();
-        bar.style.width='100%';
-        scheduleSync();
-        setTimeout(function(){prog.classList.remove('active');bar.style.width='0'},500);
-      }).catch(function(){
-        alert('Error uploading background');
-        prog.classList.remove('active');bar.style.width='0';
-      });
-    }
-
-    function removeBackground(){
-      var imgs=getImages();
-      imgs.backgroundImage='';
-      saveImages(imgs);
-      var c=getCustomization();
-      c.backgroundPreset='';
-      c.activePreset=undefined;
-      saveCustomizationData(c);
-      document.body.style.backgroundImage='none';
-      var bp=document.getElementById('bgPreview');
-      bp.style.backgroundImage='none';bp.textContent='No background set';
-      document.getElementById('bgUpload').value='';
-      renderPresetGrid();renderSavedBgs();
-      scheduleSync();
-    }
-
-    function loadCustomizationForm(){
-      var c=getCustomization();
-      var imgs=getImages();
-      document.getElementById('companyName').value=c.companyName||'';
-      document.getElementById('companyAddress').value=c.companyAddress||'';
-      document.getElementById('companyPhone').value=c.companyPhone||'';
-      document.getElementById('companyEmail').value=c.companyEmail||'';
-      if(imgs.companyLogo)document.getElementById('logoPreview').innerHTML='<img src="'+imgs.companyLogo+'" alt="Logo">';
-      else document.getElementById('logoPreview').innerHTML='<span style="font-size:32px;color:var(--text-muted)">📷</span>';
-      var bp=document.getElementById('bgPreview');
-      if(imgs.backgroundImage){bp.style.backgroundImage='url('+imgs.backgroundImage+')';bp.textContent=''}
-      else if(c.backgroundPreset&&c.backgroundPreset!=='none'){bp.style.backgroundImage=c.backgroundPreset;bp.textContent=''}
-      else{bp.style.backgroundImage='none';bp.textContent='No background set'}
-      renderThemeGrid();renderPresetGrid();renderSavedBgs();
-    }
-
-    function saveCustomization(){
-      var c=getCustomization();
-      c.companyName=document.getElementById('companyName').value.trim();
-      c.companyAddress=document.getElementById('companyAddress').value.trim();
-      c.companyPhone=document.getElementById('companyPhone').value.trim();
-      c.companyEmail=document.getElementById('companyEmail').value.trim();
-      saveCustomizationData(c);
-      alert('✅ Customizations saved!');
-    }
+    function handleLogoUpload(e){var f=e.target.files[0];if(!f)return;var prog=document.getElementById('logoProgress'),bar=document.getElementById('logoProgressBar');prog.classList.add('active');bar.style.width='30%';resizeImage(f,200,200,.85).then(function(d){bar.style.width='80%';var imgs=getImages();imgs.companyLogo=d;saveImages(imgs);scheduleSync();document.getElementById('logoPreview').innerHTML='<img src="'+d+'" alt="Logo">';bar.style.width='100%';setTimeout(function(){prog.classList.remove('active');bar.style.width='0'},500)}).catch(function(){alert('Error');prog.classList.remove('active');bar.style.width='0'})}
+    function removeLogo(){var imgs=getImages();imgs.companyLogo='';saveImages(imgs);scheduleSync();document.getElementById('logoPreview').innerHTML='<span style="font-size:32px;color:var(--text-muted)">📷</span>';document.getElementById('logoUpload').value=''}
+    function handleBgUpload(e){var f=e.target.files[0];if(!f)return;var prog=document.getElementById('bgProgress'),bar=document.getElementById('bgProgressBar');prog.classList.add('active');bar.style.width='20%';resizeImage(f,1920,1080,.7).then(function(d){bar.style.width='70%';var imgs=getImages();imgs.backgroundImage=d;saveImages(imgs);var c=getCustomization();c.backgroundPreset='';c.activePreset=undefined;saveCustomizationData(c);document.body.style.backgroundImage='url('+d+')';var bp=document.getElementById('bgPreview');bp.style.backgroundImage='url('+d+')';bp.textContent='';renderPresetGrid();bar.style.width='100%';scheduleSync();setTimeout(function(){prog.classList.remove('active');bar.style.width='0'},500)}).catch(function(){alert('Error');prog.classList.remove('active');bar.style.width='0'})}
+    function removeBackground(){var imgs=getImages();imgs.backgroundImage='';saveImages(imgs);var c=getCustomization();c.backgroundPreset='';c.activePreset=undefined;saveCustomizationData(c);document.body.style.backgroundImage='none';var bp=document.getElementById('bgPreview');bp.style.backgroundImage='none';bp.textContent='No background set';document.getElementById('bgUpload').value='';renderPresetGrid();renderSavedBgs();scheduleSync()}
+    function loadCustomizationForm(){var c=getCustomization(),imgs=getImages();document.getElementById('companyName').value=c.companyName||'';document.getElementById('companyAddress').value=c.companyAddress||'';document.getElementById('companyPhone').value=c.companyPhone||'';document.getElementById('companyEmail').value=c.companyEmail||'';if(imgs.companyLogo)document.getElementById('logoPreview').innerHTML='<img src="'+imgs.companyLogo+'" alt="Logo">';else document.getElementById('logoPreview').innerHTML='<span style="font-size:32px;color:var(--text-muted)">📷</span>';var bp=document.getElementById('bgPreview');if(imgs.backgroundImage){bp.style.backgroundImage='url('+imgs.backgroundImage+')';bp.textContent=''}else if(c.backgroundPreset&&c.backgroundPreset!=='none'){bp.style.backgroundImage=c.backgroundPreset;bp.textContent=''}else{bp.style.backgroundImage='none';bp.textContent='No background set'}renderThemeGrid();renderPresetGrid();renderSavedBgs()}
+    function saveCustomization(){var c=getCustomization();c.companyName=document.getElementById('companyName').value.trim();c.companyAddress=document.getElementById('companyAddress').value.trim();c.companyPhone=document.getElementById('companyPhone').value.trim();c.companyEmail=document.getElementById('companyEmail').value.trim();saveCustomizationData(c);alert('✅ Saved!')}
 
     // ============================================================
     // INTERNET TIME
@@ -827,39 +541,42 @@
     // ============================================================
     // NAVIGATION
     // ============================================================
-    function showSection(id){document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active')});document.getElementById(id).classList.add('active');if(id==='newBillSection'){loadCustomerDropdowns();clearBillForm()}else if(id==='historySection'){loadCustomerDropdowns();loadFilteredHistory()}else if(id==='customersSection'){loadCustomersList()}else if(id==='settingsSection'){loadSettings()}else if(id==='customizeSection'){loadCustomizationForm()}}
+    function showSection(id){document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active')});document.getElementById(id).classList.add('active');if(id==='newBillSection'){loadCustomerDropdowns();clearBillForm()}else if(id==='historySection'){loadCustomerDropdowns();loadFilteredHistory()}else if(id==='customersSection'){loadCustomersList()}else if(id==='settingsSection'){loadSettings()}else if(id==='customizeSection'){loadCustomizationForm()}else if(id==='analysisSection'){renderAnalysis()}}
 
     // ============================================================
     // SETTINGS
     // ============================================================
     function loadSettings(){var s=getSettings();document.getElementById('adminPricePerCubic').value=s.pricePerCubic;document.getElementById('adminMinCharge').value=s.minCharge;document.getElementById('adminPassword').value=''}
-    function setCurrency(c){var s=getSettings();s.currency=c;saveSettingsData(s);updateCurrencyDisplay();alert('Currency changed to '+c)}
+    function setCurrency(c){var s=getSettings();s.currency=c;saveSettingsData(s);updateCurrencyDisplay();alert('Currency → '+c)}
     function updateCurrencyDisplay(){var s=getSettings(),sym='$';if(s.currency==='PHP')sym='₱';if(s.currency==='EUR')sym='€';document.getElementById('displayCurrencySymbol').textContent=sym}
-    function saveSettings(){var pw=document.getElementById('adminPassword').value;return isValidAdminAccess(pw).then(function(r){if(r==='tampered'){alert('⚠️ Clock manipulation detected.');return}if(r==='no-sync'){alert('⚠️ No time reference.');return}if(r!==true&&!(r&&r.valid===true)){alert('Invalid password');return}var s=getSettings();s.pricePerCubic=parseFloat(document.getElementById('adminPricePerCubic').value)||DEFAULT_SETTINGS.pricePerCubic;s.minCharge=parseFloat(document.getElementById('adminMinCharge').value)||DEFAULT_SETTINGS.minCharge;saveSettingsData(s);alert('✅ Settings saved!')})}
+    function saveSettings(){var pw=document.getElementById('adminPassword').value;return isValidAdminAccess(pw).then(function(r){if(r==='tampered'){alert('⚠️ Clock manipulation.');return}if(r==='no-sync'){alert('⚠️ No time reference.');return}if(r!==true&&!(r&&r.valid===true)){alert('Invalid password');return}var s=getSettings();s.pricePerCubic=parseFloat(document.getElementById('adminPricePerCubic').value)||DEFAULT_SETTINGS.pricePerCubic;s.minCharge=parseFloat(document.getElementById('adminMinCharge').value)||DEFAULT_SETTINGS.minCharge;saveSettingsData(s);alert('✅ Saved!')})}
 
     // ============================================================
     // MASTER PASSWORD
     // ============================================================
-    function confirmMasterPassword(){var inp=document.getElementById('masterPassword').value.trim();if(inp===getMasterPassword()){document.getElementById('masterPasswordActions').style.display='block';document.getElementById('temporaryPasswordButtonContainer').style.display='block';alert('Master access granted')}else{alert('Incorrect master password')}}
-    function changeMasterPassword(){return showPromptModal('Enter current master password:',true).then(function(cur){if(!cur)return;if(cur!==getMasterPassword()){alert('Incorrect');return}return showPromptModal('Enter new master password:',true).then(function(np){if(!np){alert('Cannot be empty');return}localStorage.setItem(MASTER_PASSWORD_KEY,np);scheduleSync();alert('Changed successfully');document.getElementById('masterPasswordActions').style.display='none';document.getElementById('temporaryPasswordButtonContainer').style.display='none';showSection('menuSection')})})}
+    function confirmMasterPassword(){var inp=document.getElementById('masterPassword').value.trim();if(inp===getMasterPassword()){document.getElementById('masterPasswordActions').style.display='block';document.getElementById('temporaryPasswordButtonContainer').style.display='block';alert('Master access granted')}else{alert('Incorrect')}}
+    function changeMasterPassword(){return showPromptModal('Current master password:',true).then(function(cur){if(!cur)return;if(cur!==getMasterPassword()){alert('Incorrect');return}return showPromptModal('New master password:',true).then(function(np){if(!np){alert('Cannot be empty');return}localStorage.setItem(MASTER_PASSWORD_KEY,np);scheduleSync();alert('Changed!');document.getElementById('masterPasswordActions').style.display='none';document.getElementById('temporaryPasswordButtonContainer').style.display='none';showSection('menuSection')})})}
     function showDefaultMasterPassword(){alert('Default: '+DEFAULT_MASTER_PASSWORD)}
     function restoreDefaultMasterPassword(){if(!confirm('Restore default?'))return;localStorage.removeItem(MASTER_PASSWORD_KEY);scheduleSync();alert('Restored to admin123')}
 
     // ============================================================
     // TEMPORARY PASSWORD
     // ============================================================
-    function createTempPasswordPrompt(){return getCurrentTime().then(function(tr){if(tr.source==='tampered'){alert('❌ Clock manipulation.');return}if(tr.time===null){alert('❌ No time reference.');return}return showPromptModal('Enter a temporary password:',true).then(function(tp){if(tp){var exp=tr.time+THIRTY_DAYS_MS;localStorage.setItem(TEMP_PASSWORD_KEY,tp);localStorage.setItem(TEMP_PASSWORD_EXPIRY_KEY,String(exp));scheduleSync();var ed=new Date(exp).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});alert('✅ Created!\nExpires: '+ed);updateTimerDisplay()}})})}
-    function deleteTempPassword(){if(!confirm('Delete temporary password?'))return;localStorage.removeItem(TEMP_PASSWORD_KEY);localStorage.removeItem(TEMP_PASSWORD_EXPIRY_KEY);scheduleSync();alert('Deleted.');updateTimerDisplay()}
+    function createTempPasswordPrompt(){return getCurrentTime().then(function(tr){if(tr.source==='tampered'){alert('❌ Clock manipulation.');return}if(tr.time===null){alert('❌ No time reference.');return}return showPromptModal('Enter temporary password:',true).then(function(tp){if(tp){var exp=tr.time+THIRTY_DAYS_MS;localStorage.setItem(TEMP_PASSWORD_KEY,tp);localStorage.setItem(TEMP_PASSWORD_EXPIRY_KEY,String(exp));scheduleSync();alert('✅ Created!\nExpires: '+new Date(exp).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}));updateTimerDisplay()}})})}
+    function deleteTempPassword(){if(!confirm('Delete temp password?'))return;localStorage.removeItem(TEMP_PASSWORD_KEY);localStorage.removeItem(TEMP_PASSWORD_EXPIRY_KEY);scheduleSync();alert('Deleted.');updateTimerDisplay()}
 
     // ============================================================
-    // RESTORE DEFAULTS
+    // RESTORE DEFAULTS (FIXED)
     // ============================================================
     function restoreDefaults(){
-      if(!confirm('⚠️ Reset ALL settings, customers, history?\nMaster password preserved.'))return;
+      if(!confirm('⚠️ Reset ALL settings, customers, history, customizations?\n\nMaster password will be preserved.\n\nThis CANNOT be undone!'))return;
+      if(!confirm('🚨 FINAL WARNING!\n\nAll data will be permanently deleted from both this device AND the cloud.\n\nProceed?'))return;
+
       var mp=localStorage.getItem(MASTER_PASSWORD_KEY);
       var si=localStorage.getItem(TIME_SYNC_INTERNET_KEY);
       var sd=localStorage.getItem(TIME_SYNC_DEVICE_KEY);
 
+      // Clear all local data
       localStorage.removeItem(STORAGE.settings);
       localStorage.removeItem(STORAGE.customers);
       localStorage.removeItem(STORAGE.bills);
@@ -869,17 +586,38 @@
       localStorage.removeItem(IMAGES_KEY);
       localStorage.removeItem(SAVED_BGS_KEY);
 
+      // Preserve essentials
       if(mp)localStorage.setItem(MASTER_PASSWORD_KEY,mp);
       if(si)localStorage.setItem(TIME_SYNC_INTERNET_KEY,si);
       if(sd)localStorage.setItem(TIME_SYNC_DEVICE_KEY,sd);
 
       setLocalTimestamp();
 
-      pushToCloud().then(function(){
-        alert('Restored to default.');
+      // Force push EMPTY data to cloud immediately
+      var emptyPayload={
+        Customers:[],
+        Bills:[],
+        Settings:[Object.assign({},DEFAULT_SETTINGS)],
+        Customization:[{theme:'light',backgroundPreset:'',activePreset:'',companyName:'',companyAddress:'',companyPhone:'',companyEmail:''}],
+        Images:[{companyLogo:'',backgroundImage:'',savedBackgrounds:'[]'}],
+        Meta:[{timestamp:Date.now(),masterPassword:mp||DEFAULT_MASTER_PASSWORD,tempPassword:'',tempPasswordExpiry:''}]
+      };
+
+      updateSyncIndicator('syncing','Resetting cloud...');
+
+      fetch(API_URL+'?action=writeAll',{
+        method:'POST',
+        headers:{'Content-Type':'text/plain'},
+        body:JSON.stringify(emptyPayload)
+      }).then(function(r){return r.json()}).then(function(d){
+        if(d.success){
+          alert('✅ All data cleared from device AND cloud.');
+        }else{
+          alert('⚠️ Local data cleared. Cloud sync failed — will retry.');
+        }
         location.reload();
-      }).catch(function(){
-        alert('Restored locally. Cloud sync will happen next time online.');
+      }).catch(function(e){
+        alert('⚠️ Local data cleared. Cloud sync failed — will retry when online.');
         location.reload();
       });
     }
@@ -895,19 +633,9 @@
     // ============================================================
     // CUSTOMERS
     // ============================================================
-    function addCustomer(){var n=document.getElementById('newCustomerName').value.trim();if(!n)return alert('Enter customer name');var custs=getData('customers');if(custs.find(function(c){return c.name.toLowerCase()===n.toLowerCase()}))return alert('Already exists!');custs.push({id:Date.now(),name:n,createdAt:new Date().toISOString()});saveData('customers',custs);document.getElementById('newCustomerName').value='';loadCustomersList();loadCustomerDropdowns();alert('✅ Added!')}
-
-    function deleteCustomer(id){
-      if(!confirm('Delete customer and all their bills?'))return;
-      var custs=getData('customers').filter(function(c){return c.id!==id});
-      var bills=getData('bills').filter(function(b){return b.customerId!==id});
-      saveData('customers',custs);
-      saveData('bills',bills);
-      loadCustomersList();
-      loadCustomerDropdowns();
-    }
-
-    function loadCustomersList(sortBy,order){sortBy=sortBy||'name';order=order||'asc';var custs=getData('customers'),el=document.getElementById('customerSearch'),st=el?el.value.toLowerCase():'';if(st)custs=custs.filter(function(c){return c.name.toLowerCase().indexOf(st)!==-1});custs.sort(function(a,b){if(sortBy==='name')return order==='asc'?a.name.localeCompare(b.name):b.name.localeCompare(a.name);if(sortBy==='date')return order==='asc'?new Date(a.createdAt)-new Date(b.createdAt):new Date(b.createdAt)-new Date(a.createdAt);return 0});var ct=document.getElementById('customersList');if(!custs.length){ct.innerHTML='<p style="padding:20px;text-align:center;color:var(--text-muted)">No customers found.</p>';return}ct.innerHTML=custs.map(function(c){return'<div style="padding:15px;border:1px solid var(--bg-card-border);margin:10px 0;border-radius:8px;background:var(--bg-container)"><strong style="color:var(--text-primary)">'+c.name+'</strong><br><small style="color:var(--text-secondary)">Added: '+new Date(c.createdAt).toLocaleDateString()+'</small><div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap"><button onclick="viewCustomerHistory('+c.id+')" style="padding:8px 12px;font-size:12px;width:auto;flex:1;min-width:80px">View Bills</button><button onclick="deleteCustomer('+c.id+')" style="padding:8px 12px;font-size:12px;background:var(--bg-danger);width:auto;flex:1;min-width:80px">Delete</button></div></div>'}).join('')}
+    function addCustomer(){var n=document.getElementById('newCustomerName').value.trim();if(!n)return alert('Enter name');var custs=getData('customers');if(custs.find(function(c){return c.name.toLowerCase()===n.toLowerCase()}))return alert('Already exists!');custs.push({id:Date.now(),name:n,createdAt:new Date().toISOString()});saveData('customers',custs);document.getElementById('newCustomerName').value='';loadCustomersList();loadCustomerDropdowns();alert('✅ Added!')}
+    function deleteCustomer(id){if(!confirm('Delete customer and all their bills?'))return;saveData('customers',getData('customers').filter(function(c){return c.id!==id}));saveData('bills',getData('bills').filter(function(b){return b.customerId!==id}));loadCustomersList();loadCustomerDropdowns()}
+    function loadCustomersList(sortBy,order){sortBy=sortBy||'name';order=order||'asc';var custs=getData('customers'),el=document.getElementById('customerSearch'),st=el?el.value.toLowerCase():'';if(st)custs=custs.filter(function(c){return c.name.toLowerCase().indexOf(st)!==-1});custs.sort(function(a,b){if(sortBy==='name')return order==='asc'?a.name.localeCompare(b.name):b.name.localeCompare(a.name);if(sortBy==='date')return order==='asc'?new Date(a.createdAt)-new Date(b.createdAt):new Date(b.createdAt)-new Date(a.createdAt);return 0});var ct=document.getElementById('customersList');if(!custs.length){ct.innerHTML='<p style="padding:20px;text-align:center;color:var(--text-muted)">No customers found.</p>';return}ct.innerHTML=custs.map(function(c){var bills=getData('bills').filter(function(b){return b.customerId===c.id});var unpaid=bills.filter(function(b){return b.paymentStatus!=='paid'}).length;return'<div style="padding:15px;border:1px solid var(--bg-card-border);margin:10px 0;border-radius:8px;background:var(--bg-container)"><strong style="color:var(--text-primary)">'+c.name+'</strong>'+(unpaid>0?' <span class="payment-badge unpaid">'+unpaid+' unpaid</span>':'')+'<br><small style="color:var(--text-secondary)">Added: '+new Date(c.createdAt).toLocaleDateString()+' • Bills: '+bills.length+'</small><div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap"><button onclick="viewCustomerHistory('+c.id+')" style="padding:8px 12px;font-size:12px;width:auto;flex:1;min-width:80px">View Bills</button><button onclick="deleteCustomer('+c.id+')" style="padding:8px 12px;font-size:12px;background:var(--bg-danger);width:auto;flex:1;min-width:80px">Delete</button></div></div>'}).join('')}
     function sortCustomers(b,o){loadCustomersList(b,o)}
     function filterCustomers(){loadCustomersList()}
     function viewCustomerHistory(cid){showSection('historySection');document.getElementById('historyFilter').value=cid;loadFilteredHistory()}
@@ -917,126 +645,252 @@
     // ============================================================
     // IMPORT CUSTOMERS FROM EXCEL
     // ============================================================
-    function downloadCustomerTemplate(){
-      var ws=XLSX.utils.aoa_to_sheet([['Customer Name'],['Juan Dela Cruz'],['Maria Santos'],['Pedro Reyes']]);
-      var wb=XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb,ws,'Customers');
-      ws['!cols']=[{wch:30}];
-      XLSX.writeFile(wb,'customer-import-template.xlsx');
-    }
-
+    function downloadCustomerTemplate(){var ws=XLSX.utils.aoa_to_sheet([['Customer Name'],['Juan Dela Cruz'],['Maria Santos'],['Pedro Reyes']]);var wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Customers');ws['!cols']=[{wch:30}];XLSX.writeFile(wb,'customer-import-template.xlsx')}
     function handleImportCustomers(e){
-      var file=e.target.files[0];
-      if(!file)return;
-
-      var reader=new FileReader();
-      reader.onload=function(ev){
-        try{
-          var data=new Uint8Array(ev.target.result);
-          var workbook=XLSX.read(data,{type:'array'});
-          var firstSheet=workbook.Sheets[workbook.SheetNames[0]];
-          var rows=XLSX.utils.sheet_to_json(firstSheet,{header:1});
-
-          if(!rows||rows.length<2){
-            alert('❌ File is empty or has no data rows.\nFirst row should be header, data starts from row 2.');
-            e.target.value='';
-            return;
-          }
-
-          var custs=getData('customers');
-          var existingNames=custs.map(function(c){return c.name.toLowerCase()});
-          var added=0;
-          var skipped=0;
-          var errors=[];
-
-          // Skip header row (index 0)
-          for(var i=1;i<rows.length;i++){
-            var row=rows[i];
-            if(!row||!row[0])continue;
-
-            var name=String(row[0]).trim();
-            if(!name){
-              skipped++;
-              continue;
-            }
-
-            if(existingNames.indexOf(name.toLowerCase())!==-1){
-              skipped++;
-              continue;
-            }
-
-            custs.push({
-              id:Date.now()+i,
-              name:name,
-              createdAt:new Date().toISOString()
-            });
-            existingNames.push(name.toLowerCase());
-            added++;
-          }
-
-          if(added>0){
-            saveData('customers',custs);
-            loadCustomersList();
-            loadCustomerDropdowns();
-          }
-
-          var msg='✅ Import Complete!\n\n';
-          msg+='Added: '+added+' customer'+(added!==1?'s':'')+'\n';
-          if(skipped>0)msg+='Skipped (duplicates/empty): '+skipped+'\n';
-          msg+='Total customers now: '+custs.length;
-          alert(msg);
-
-        }catch(err){
-          alert('❌ Error reading file: '+err.message+'\n\nMake sure the file is a valid Excel (.xlsx/.xls) or CSV file.');
-        }
-        e.target.value='';
-      };
-      reader.readAsArrayBuffer(file);
-    }
+      var file=e.target.files[0];if(!file)return;var reader=new FileReader();
+      reader.onload=function(ev){try{var data=new Uint8Array(ev.target.result);var wb=XLSX.read(data,{type:'array'});var rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1});if(!rows||rows.length<2){alert('❌ Empty file');e.target.value='';return}var custs=getData('customers'),existing=custs.map(function(c){return c.name.toLowerCase()}),added=0,skipped=0;
+      for(var i=1;i<rows.length;i++){var row=rows[i];if(!row||!row[0])continue;var name=String(row[0]).trim();if(!name||existing.indexOf(name.toLowerCase())!==-1){skipped++;continue}custs.push({id:Date.now()+i,name:name,createdAt:new Date().toISOString()});existing.push(name.toLowerCase());added++}
+      if(added>0){saveData('customers',custs);loadCustomersList();loadCustomerDropdowns()}alert('✅ Import Complete!\n\nAdded: '+added+'\nSkipped: '+skipped+'\nTotal: '+custs.length)}catch(err){alert('❌ Error: '+err.message)}e.target.value=''};reader.readAsArrayBuffer(file)}
 
     // ============================================================
-    // BILLING
+    // BILLING (with payment tracking)
     // ============================================================
     function loadLastReading(){var cid=parseInt(document.getElementById('billCustomer').value);if(!cid){document.getElementById('prevReading').value=0;return}var bills=getData('bills').filter(function(b){return b.customerId===cid});document.getElementById('prevReading').value=bills.length>0?bills.sort(function(a,b){return new Date(b.date)-new Date(a.date)})[0].presReading:0;calculateTotal()}
-    function calculateTotal(){var s=getSettings(),prev=parseFloat(document.getElementById('prevReading').value)||0,pres=parseFloat(document.getElementById('presReading').value)||0,used=pres-prev,totalUsed=Math.max(0,used),computedAmount=totalUsed*s.pricePerCubic,totalDue=Math.max(computedAmount,s.minCharge);document.getElementById('displayTotal').textContent=totalDue.toFixed(2)}
+    function calculateTotal(){var s=getSettings(),prev=parseFloat(document.getElementById('prevReading').value)||0,pres=parseFloat(document.getElementById('presReading').value)||0,used=Math.max(0,pres-prev),computed=used*s.pricePerCubic,total=Math.max(computed,s.minCharge);document.getElementById('displayTotal').textContent=total.toFixed(2)}
     function clearBillForm(){document.getElementById('billCustomer').value='';document.getElementById('prevReading').value=0;document.getElementById('presReading').value='';document.getElementById('displayTotal').textContent='0.00';document.getElementById('billDate').value=new Date().toISOString().split('T')[0]}
-    function saveBill(shouldPrint){var cid=parseInt(document.getElementById('billCustomer').value);if(!cid)return alert('Select a customer');var pres=parseFloat(document.getElementById('presReading').value);if(isNaN(pres))return alert('Enter present reading');var s=getSettings(),prev=parseFloat(document.getElementById('prevReading').value)||0,used=pres-prev,totalUsed=Math.max(0,used),computedAmount=totalUsed*s.pricePerCubic,totalDue=Math.max(computedAmount,s.minCharge);var bill={id:Date.now(),customerId:cid,date:document.getElementById('billDate').value,prevReading:prev,presReading:pres,totalUsed:totalUsed,pricePerCubic:s.pricePerCubic,totalDue:totalDue,createdAt:new Date().toISOString()};var bills=getData('bills');bills.push(bill);saveData('bills',bills);if(shouldPrint)printBill(bill);else alert('✅ Saved!');clearBillForm()}
+    function saveBill(shouldPrint){
+      var cid=parseInt(document.getElementById('billCustomer').value);if(!cid)return alert('Select a customer');
+      var pres=parseFloat(document.getElementById('presReading').value);if(isNaN(pres))return alert('Enter present reading');
+      var s=getSettings(),prev=parseFloat(document.getElementById('prevReading').value)||0,used=Math.max(0,pres-prev),computed=used*s.pricePerCubic,total=Math.max(computed,s.minCharge);
+      var bill={id:Date.now(),customerId:cid,date:document.getElementById('billDate').value,prevReading:prev,presReading:pres,totalUsed:used,pricePerCubic:s.pricePerCubic,totalDue:total,amountPaid:0,paymentStatus:'unpaid',paymentDate:'',paymentNotes:'',createdAt:new Date().toISOString()};
+      var bills=getData('bills');bills.push(bill);saveData('bills',bills);
+      if(shouldPrint)printBill(bill);else alert('✅ Saved!');clearBillForm();
+    }
+
+    // ============================================================
+    // PAYMENT TRACKING
+    // ============================================================
+    function markAsPaid(billId){
+      var bills=getData('bills');var bill=bills.find(function(b){return b.id===billId});
+      if(!bill)return;bill.paymentStatus='paid';bill.amountPaid=bill.totalDue;bill.paymentDate=new Date().toISOString();
+      saveData('bills',bills);loadFilteredHistory();
+    }
+    function markAsPartial(billId){
+      showPromptModal('Enter amount paid:',false).then(function(val){
+        if(!val)return;var amount=parseFloat(val);if(isNaN(amount)||amount<=0){alert('Invalid amount');return}
+        var bills=getData('bills');var bill=bills.find(function(b){return b.id===billId});if(!bill)return;
+        bill.amountPaid=(bill.amountPaid||0)+amount;
+        if(bill.amountPaid>=bill.totalDue){bill.paymentStatus='paid';bill.amountPaid=bill.totalDue}
+        else{bill.paymentStatus='partial'}
+        bill.paymentDate=new Date().toISOString();
+        saveData('bills',bills);loadFilteredHistory();
+      });
+    }
+    function markAsUnpaid(billId){
+      var bills=getData('bills');var bill=bills.find(function(b){return b.id===billId});
+      if(!bill)return;bill.paymentStatus='unpaid';bill.amountPaid=0;bill.paymentDate='';
+      saveData('bills',bills);loadFilteredHistory();
+    }
 
     // ============================================================
     // HISTORY
     // ============================================================
     var lastFilteredBills=[];
-    function loadHistory(s,o){loadFilteredHistory(s||'date',o||'desc')}
-    function loadFilteredHistory(sortBy,order){sortBy=sortBy||'date';order=order||'desc';var bills=getData('bills'),custs=getData('customers'),f=document.getElementById('historyFilter').value;if(f!=='all')bills=bills.filter(function(b){return b.customerId===parseInt(f)});var el=document.getElementById('historySearch'),st=el?el.value.toLowerCase():'';if(st)bills=bills.filter(function(b){var c=custs.find(function(x){return x.id===b.customerId});return(c?c.name.toLowerCase():'').indexOf(st)!==-1||new Date(b.date).toLocaleDateString().toLowerCase().indexOf(st)!==-1});bills.sort(function(a,b){if(sortBy==='date')return order==='asc'?new Date(a.date)-new Date(b.date):new Date(b.date)-new Date(a.date);if(sortBy==='amount')return order==='asc'?a.totalDue-b.totalDue:b.totalDue-a.totalDue;return 0});lastFilteredBills=bills;var ct=document.getElementById('historyList');if(!bills.length){ct.innerHTML='<p style="padding:20px;text-align:center;color:var(--text-muted)">No bills found.</p>';return}ct.innerHTML=bills.map(function(b){var c=custs.find(function(x){return x.id===b.customerId});return'<div style="padding:15px;border:1px solid var(--bg-card-border);margin:10px 0;border-radius:8px;background:var(--bg-container)"><strong style="color:var(--text-primary)">'+(c?c.name:'Unknown')+'</strong> • <span style="color:var(--text-secondary)">'+new Date(b.date).toLocaleDateString()+'</span><br><span style="font-size:clamp(12px,3vw,14px);color:var(--text-secondary)">Prev: '+b.prevReading+' → Pres: '+b.presReading+' = '+b.totalUsed+' m³</span><br><strong style="color:var(--text-primary)">Total: '+formatMoney(b.totalDue)+'</strong><br><div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap"><button onclick="printBillById('+b.id+')" style="padding:8px 12px;font-size:12px;width:auto;flex:1;min-width:70px">🖨 Print</button><button onclick="deleteBill('+b.id+')" style="padding:8px 12px;font-size:12px;background:var(--bg-danger);width:auto;flex:1;min-width:70px">🗑 Delete</button></div></div>'}).join('')}
+    function loadFilteredHistory(sortBy,order){
+      sortBy=sortBy||'date';order=order||'desc';
+      var bills=getData('bills'),custs=getData('customers');
+      var f=document.getElementById('historyFilter').value;
+      if(f!=='all')bills=bills.filter(function(b){return b.customerId===parseInt(f)});
+      var pf=document.getElementById('historyPaymentFilter').value;
+      if(pf!=='all')bills=bills.filter(function(b){return(b.paymentStatus||'unpaid')===pf});
+      var el=document.getElementById('historySearch'),st=el?el.value.toLowerCase():'';
+      if(st)bills=bills.filter(function(b){var c=custs.find(function(x){return x.id===b.customerId});return(c?c.name.toLowerCase():'').indexOf(st)!==-1||new Date(b.date).toLocaleDateString().toLowerCase().indexOf(st)!==-1});
+      bills.sort(function(a,b){if(sortBy==='date')return order==='asc'?new Date(a.date)-new Date(b.date):new Date(b.date)-new Date(a.date);if(sortBy==='amount')return order==='asc'?a.totalDue-b.totalDue:b.totalDue-a.totalDue;return 0});
+      lastFilteredBills=bills;
+
+      // Summary
+      var totalDue=0,totalPaid=0,unpaidCount=0;
+      bills.forEach(function(b){totalDue+=b.totalDue;totalPaid+=(b.amountPaid||0);if((b.paymentStatus||'unpaid')!=='paid')unpaidCount++});
+      var sumEl=document.getElementById('historySummary');
+      sumEl.innerHTML='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center"><div style="padding:8px;background:rgba(0,123,255,.08);border-radius:6px"><div style="font-size:11px;color:var(--text-muted)">Total Due</div><div style="font-weight:700;color:var(--text-primary)">'+formatMoney(totalDue)+'</div></div><div style="padding:8px;background:rgba(40,167,69,.08);border-radius:6px"><div style="font-size:11px;color:var(--text-muted)">Collected</div><div style="font-weight:700;color:#28a745">'+formatMoney(totalPaid)+'</div></div><div style="padding:8px;background:rgba(220,53,69,.08);border-radius:6px"><div style="font-size:11px;color:var(--text-muted)">Outstanding</div><div style="font-weight:700;color:#dc3545">'+formatMoney(totalDue-totalPaid)+'</div></div></div>';
+
+      var ct=document.getElementById('historyList');
+      if(!bills.length){ct.innerHTML='<p style="padding:20px;text-align:center;color:var(--text-muted)">No bills found.</p>';return}
+      ct.innerHTML=bills.map(function(b){
+        var c=custs.find(function(x){return x.id===b.customerId});
+        var status=b.paymentStatus||'unpaid';
+        var badge=status==='paid'?'<span class="payment-badge paid">✅ Paid</span>':status==='partial'?'<span class="payment-badge partial">⚠️ Partial ('+formatMoney(b.amountPaid||0)+')</span>':'<span class="payment-badge unpaid">❌ Unpaid</span>';
+        var paymentBtns='';
+        if(status==='unpaid')paymentBtns='<button onclick="markAsPaid('+b.id+')" style="padding:6px 8px;font-size:11px;width:auto;flex:1;min-width:60px;background:var(--bg-success)">✅ Paid</button><button onclick="markAsPartial('+b.id+')" style="padding:6px 8px;font-size:11px;width:auto;flex:1;min-width:60px;background:var(--bg-warning);color:#333">⚠️ Partial</button>';
+        else if(status==='partial')paymentBtns='<button onclick="markAsPaid('+b.id+')" style="padding:6px 8px;font-size:11px;width:auto;flex:1;min-width:60px;background:var(--bg-success)">✅ Full</button><button onclick="markAsPartial('+b.id+')" style="padding:6px 8px;font-size:11px;width:auto;flex:1;min-width:60px;background:var(--bg-warning);color:#333">➕ Add</button>';
+        else paymentBtns='<button onclick="markAsUnpaid('+b.id+')" style="padding:6px 8px;font-size:11px;width:auto;flex:1;min-width:60px;background:#6c757d">↩ Unpaid</button>';
+        return'<div style="padding:15px;border:1px solid var(--bg-card-border);margin:10px 0;border-radius:8px;background:var(--bg-container);border-left:4px solid '+(status==='paid'?'#28a745':status==='partial'?'#ffc107':'#dc3545')+'"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:5px"><strong style="color:var(--text-primary)">'+(c?c.name:'Unknown')+'</strong>'+badge+'</div><span style="color:var(--text-secondary);font-size:13px">'+new Date(b.date).toLocaleDateString()+'</span><br><span style="font-size:clamp(12px,3vw,14px);color:var(--text-secondary)">Prev: '+b.prevReading+' → Pres: '+b.presReading+' = '+b.totalUsed+' m³</span><br><strong style="color:var(--text-primary)">Total: '+formatMoney(b.totalDue)+'</strong>'+(b.paymentDate&&status!=='unpaid'?'<br><small style="color:var(--text-muted)">Payment: '+new Date(b.paymentDate).toLocaleDateString()+'</small>':'')+'<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">'+paymentBtns+'<button onclick="printBillById('+b.id+')" style="padding:6px 8px;font-size:11px;width:auto;flex:1;min-width:50px">🖨</button><button onclick="deleteBill('+b.id+')" style="padding:6px 8px;font-size:11px;background:var(--bg-danger);width:auto;flex:1;min-width:50px">🗑</button></div></div>';
+      }).join('');
+    }
     function sortHistory(b,o){loadFilteredHistory(b,o)}
     function filterHistory(){loadFilteredHistory()}
     function deleteBill(id){if(!confirm('Delete bill?'))return;saveData('bills',getData('bills').filter(function(b){return b.id!==id}));loadFilteredHistory()}
     function printBillById(id){var b=getData('bills').find(function(x){return x.id===id});if(b)printBill(b)}
 
     // ============================================================
-    // RECEIPT
+    // DELETE ALL SHOWN BILLS
     // ============================================================
-    function buildReceiptHeader(){
-      var c=getCustomization();
-      var imgs=getImages();
-      var h='';
-      if(imgs.companyLogo)h+='<div style="text-align:center;margin-bottom:8px"><img src="'+imgs.companyLogo+'" style="max-width:80px;max-height:80px;border-radius:8px" alt="Logo"></div>';
-      if(c.companyName)h+='<div style="text-align:center;font-size:18px;font-weight:900;margin-bottom:2px">'+c.companyName+'</div>';
-      else h+='<div style="text-align:center;font-size:18px;font-weight:900;margin-bottom:2px">💧 WATER BILL</div>';
-      if(c.companyAddress)h+='<div style="text-align:center;font-size:11px;color:#555;margin-bottom:1px">'+c.companyAddress+'</div>';
-      var contacts=[c.companyPhone,c.companyEmail].filter(Boolean).join(' • ');
-      if(contacts)h+='<div style="text-align:center;font-size:10px;color:#666">'+contacts+'</div>';
-      return h;
+    function deleteAllShownBills(){
+      if(!lastFilteredBills.length){alert('No bills to delete.');return}
+      var count=lastFilteredBills.length;
+      if(!confirm('⚠️ Delete '+count+' shown bill'+(count!==1?'s':'')+'?\n\nThis cannot be undone!'))return;
+      if(!confirm('🚨 FINAL CONFIRMATION\n\nPermanently delete '+count+' bill'+(count!==1?'s':'')+'?'))return;
+
+      var idsToDelete={};
+      lastFilteredBills.forEach(function(b){idsToDelete[b.id]=true});
+      var remaining=getData('bills').filter(function(b){return!idsToDelete[b.id]});
+      saveData('bills',remaining);
+      alert('✅ Deleted '+count+' bill'+(count!==1?'s':'')+'.');
+      loadFilteredHistory();
     }
 
-    function printBill(bill){var custs=getData('customers'),c=custs.find(function(x){return x.id===bill.customerId}),cn=c?c.name:'Unknown',s=getSettings(),cf=getCurrencyFormatter(),isMin=bill.totalUsed<=0||(bill.totalUsed*s.pricePerCubic)<s.minCharge;var html='<div style="font-family:\'Segoe UI\',Arial,sans-serif;padding:12px;width:80mm;color:#222">'+buildReceiptHeader()+'<div style="text-align:center;margin:8px 0;padding:6px;background:#f0f0f0;border-radius:4px"><div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:2px">Official Billing</div></div><hr style="border:none;border-top:1px solid #ddd;margin:8px 0"><table style="width:100%;font-size:12px;border-collapse:collapse;border:none;margin:6px 0"><tr><td style="padding:3px 0;color:#666;border:none">Customer</td><td style="text-align:right;font-weight:700;padding:3px 0;border:none">'+cn+'</td></tr><tr><td style="padding:3px 0;color:#666;border:none">Bill Date</td><td style="text-align:right;padding:3px 0;border:none">'+new Date(bill.date).toLocaleDateString()+'</td></tr><tr><td style="padding:3px 0;color:#666;border:none">Billing Period</td><td style="text-align:right;padding:3px 0;border:none">'+new Date(bill.date).toLocaleDateString('en-US',{month:'long',year:'numeric'})+'</td></tr></table><hr style="border:none;border-top:1px solid #ddd;margin:8px 0"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#444;margin-bottom:6px">Meter Reading</div><table style="width:100%;font-size:12px;border-collapse:collapse;border:none"><tr style="background:#f8f8f8"><td style="padding:5px 8px;border:none">Previous</td><td style="text-align:right;padding:5px 8px;font-weight:600;border:none">'+bill.prevReading+' m³</td></tr><tr><td style="padding:5px 8px;border:none">Present</td><td style="text-align:right;padding:5px 8px;font-weight:600;border:none">'+bill.presReading+' m³</td></tr><tr style="background:#f8f8f8"><td style="padding:5px 8px;font-weight:700;border:none">Consumption</td><td style="text-align:right;padding:5px 8px;font-weight:700;border:none">'+bill.totalUsed+' m³</td></tr></table><hr style="border:none;border-top:1px solid #ddd;margin:8px 0"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#444;margin-bottom:6px">Charges</div><table style="width:100%;font-size:12px;border-collapse:collapse;border:none"><tr><td style="padding:4px 0;color:#555;border:none">Rate per m³</td><td style="text-align:right;padding:4px 0;border:none">'+cf.format(s.pricePerCubic)+'</td></tr><tr><td style="padding:4px 0;color:#555;border:none">Computed Amount</td><td style="text-align:right;padding:4px 0;border:none">'+cf.format(bill.totalUsed*s.pricePerCubic)+'</td></tr><tr><td style="padding:4px 0;color:#555;border:none">Minimum Charge</td><td style="text-align:right;padding:4px 0;border:none">'+cf.format(s.minCharge)+'</td></tr>'+(isMin?'<tr><td colspan="2" style="padding:4px 0;font-size:10px;color:#e65100;text-align:center;border:none">* Minimum charge applied</td></tr>':'')+'</table><div style="margin:12px 0;padding:12px;background:#1a1a1a;color:#fff;border-radius:6px;text-align:center"><div style="font-size:10px;text-transform:uppercase;letter-spacing:2px;opacity:.7;margin-bottom:4px">Total Amount Due</div><div style="font-size:22px;font-weight:900;letter-spacing:1px">'+cf.format(bill.totalDue)+'</div></div><hr style="border:none;border-top:1px dashed #ccc;margin:8px 0"><div style="text-align:center;font-size:10px;color:#999;line-height:1.6">Thank you for your prompt payment!<br>Printed: '+new Date().toLocaleString()+'<br>'+(getCustomization().companyName?getCustomization().companyName+' • ':'')+(getCustomization().companyPhone||'')+'</div></div>';document.getElementById('printReceipt').innerHTML=html;window.print();document.getElementById('printReceipt').innerHTML=''}
+    // ============================================================
+    // MONTHLY ANALYSIS
+    // ============================================================
+    function changeAnalysisMonth(delta){
+      analysisMonth+=delta;
+      if(analysisMonth>11){analysisMonth=0;analysisYear++}
+      if(analysisMonth<0){analysisMonth=11;analysisYear--}
+      renderAnalysis();
+    }
 
-    function printAllShownBills(){if(!lastFilteredBills.length){alert('No bills to print');return}var custs=getData('customers'),s=getSettings(),cf=getCurrencyFormatter(),totalSum=0;var rows=lastFilteredBills.map(function(b,i){var c=custs.find(function(x){return x.id===b.customerId});totalSum+=b.totalDue;return'<tr'+(i%2===0?' style="background:#f8f8f8"':'')+'><td style="padding:5px 4px;font-size:11px;border:none">'+(i+1)+'</td><td style="padding:5px 4px;font-size:11px;border:none">'+(c?c.name:'Unknown')+'</td><td style="padding:5px 4px;font-size:11px;border:none">'+new Date(b.date).toLocaleDateString()+'</td><td style="padding:5px 4px;font-size:11px;text-align:right;border:none">'+b.totalUsed+' m³</td><td style="padding:5px 4px;font-size:11px;text-align:right;border:none">'+cf.format(b.totalDue)+'</td></tr>'}).join('');var fv=document.getElementById('historyFilter').value,fn=fv!=='all'?((custs.find(function(c){return c.id===parseInt(fv)}))||{}).name||'':'All Customers';var html='<div style="font-family:\'Segoe UI\',Arial,sans-serif;padding:12px;width:80mm;color:#222">'+buildReceiptHeader()+'<div style="text-align:center;margin:10px 0;padding:6px;background:#f0f0f0;border-radius:4px"><div style="font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:2px">Billing Report</div><div style="font-size:10px;color:#777">Filter: '+fn+'</div></div><table style="width:100%;border-collapse:collapse;border:none;margin:8px 0"><thead><tr style="background:#333;color:#fff"><th style="padding:5px 4px;font-size:10px;text-align:left;border:none">#</th><th style="padding:5px 4px;font-size:10px;text-align:left;border:none">Customer</th><th style="padding:5px 4px;font-size:10px;text-align:left;border:none">Date</th><th style="padding:5px 4px;font-size:10px;text-align:right;border:none">Used</th><th style="padding:5px 4px;font-size:10px;text-align:right;border:none">Amount</th></tr></thead><tbody>'+rows+'</tbody></table><div style="margin:10px 0;padding:10px;background:#1a1a1a;color:#fff;border-radius:6px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>Total Bills:</span><strong>'+lastFilteredBills.length+'</strong></div><div style="display:flex;justify-content:space-between;font-size:14px;font-weight:900"><span>Grand Total:</span><span>'+cf.format(totalSum)+'</span></div></div><div style="text-align:center;font-size:9px;color:#999;margin-top:8px">Printed: '+new Date().toLocaleString()+'</div></div>';document.getElementById('printReceipt').innerHTML=html;window.print();document.getElementById('printReceipt').innerHTML=''}
+    function renderAnalysis(){
+      var bills=getData('bills'),custs=getData('customers'),s=getSettings();
+      var monthName=new Date(analysisYear,analysisMonth).toLocaleDateString('en-US',{month:'long',year:'numeric'});
+      document.getElementById('analysisMonthLabel').textContent=monthName;
+
+      // Filter bills for selected month
+      var monthBills=bills.filter(function(b){var d=new Date(b.date);return d.getFullYear()===analysisYear&&d.getMonth()===analysisMonth});
+
+      // Stats
+      var totalRevenue=0,totalCollected=0,totalUsage=0,paidCount=0,unpaidCount=0,partialCount=0;
+      monthBills.forEach(function(b){
+        totalRevenue+=b.totalDue;
+        totalCollected+=(b.amountPaid||0);
+        totalUsage+=b.totalUsed;
+        var st=b.paymentStatus||'unpaid';
+        if(st==='paid')paidCount++;
+        else if(st==='partial')partialCount++;
+        else unpaidCount++;
+      });
+      var collectionRate=totalRevenue>0?Math.round((totalCollected/totalRevenue)*100):0;
+
+      document.getElementById('analysisStats').innerHTML=
+        '<div class="stat-card"><div class="stat-value">'+formatMoney(totalRevenue)+'</div><div class="stat-label">Total Billed</div></div>'+
+        '<div class="stat-card"><div class="stat-value" style="color:#28a745">'+formatMoney(totalCollected)+'</div><div class="stat-label">Collected</div></div>'+
+        '<div class="stat-card"><div class="stat-value" style="color:#dc3545">'+formatMoney(totalRevenue-totalCollected)+'</div><div class="stat-label">Outstanding</div></div>'+
+        '<div class="stat-card"><div class="stat-value">'+monthBills.length+'</div><div class="stat-label">Total Bills</div></div>'+
+        '<div class="stat-card"><div class="stat-value">'+totalUsage.toFixed(1)+'</div><div class="stat-label">Total m³ Used</div></div>'+
+        '<div class="stat-card"><div class="stat-value" style="color:'+(collectionRate>=80?'#28a745':collectionRate>=50?'#ffc107':'#dc3545')+'">'+collectionRate+'%</div><div class="stat-label">Collection Rate</div></div>';
+
+      // Daily revenue chart
+      var daysInMonth=new Date(analysisYear,analysisMonth+1,0).getDate();
+      var dailyData={};
+      for(var i=1;i<=daysInMonth;i++)dailyData[i]=0;
+      monthBills.forEach(function(b){var day=new Date(b.date).getDate();dailyData[day]+=b.totalDue});
+      var maxVal=Math.max.apply(null,Object.values(dailyData))||1;
+
+      var chartHtml='';
+      for(var d=1;d<=daysInMonth;d++){
+        var h=dailyData[d]>0?Math.max(8,(dailyData[d]/maxVal)*120):0;
+        var barColor=dailyData[d]>0?'var(--bg-accent)':'var(--bg-card-border)';
+        chartHtml+='<div class="chart-bar-wrapper">'+(dailyData[d]>0?'<div class="chart-bar-value">'+formatMoney(dailyData[d])+'</div>':'')+'<div class="chart-bar" style="height:'+h+'px;background:'+barColor+'" title="Day '+d+': '+formatMoney(dailyData[d])+'"></div><div class="chart-bar-label">'+d+'</div></div>';
+      }
+      document.getElementById('chartBars').innerHTML=chartHtml;
+
+      // Customer breakdown
+      var customerData={};
+      monthBills.forEach(function(b){
+        if(!customerData[b.customerId])customerData[b.customerId]={name:'',totalDue:0,totalPaid:0,usage:0,count:0};
+        var c=custs.find(function(x){return x.id===b.customerId});
+        customerData[b.customerId].name=c?c.name:'Unknown';
+        customerData[b.customerId].totalDue+=b.totalDue;
+        customerData[b.customerId].totalPaid+=(b.amountPaid||0);
+        customerData[b.customerId].usage+=b.totalUsed;
+        customerData[b.customerId].count++;
+      });
+      var custArr=Object.values(customerData).sort(function(a,b){return b.totalDue-a.totalDue});
+
+      var breakdownHtml='<h3>👥 Customer Breakdown</h3>';
+      if(custArr.length===0){breakdownHtml+='<p style="text-align:center;color:var(--text-muted);padding:15px">No data for this month</p>'}
+      else{
+        breakdownHtml+='<table><thead><tr><th>Customer</th><th>Bills</th><th>Usage</th><th>Billed</th><th>Paid</th><th>Status</th></tr></thead><tbody>';
+        custArr.forEach(function(cd){
+          var st=cd.totalPaid>=cd.totalDue?'paid':cd.totalPaid>0?'partial':'unpaid';
+          breakdownHtml+='<tr><td>'+cd.name+'</td><td>'+cd.count+'</td><td>'+cd.usage.toFixed(1)+' m³</td><td>'+formatMoney(cd.totalDue)+'</td><td>'+formatMoney(cd.totalPaid)+'</td><td><span class="payment-badge '+st+'">'+(st==='paid'?'✅':st==='partial'?'⚠️':'❌')+'</span></td></tr>';
+        });
+        breakdownHtml+='</tbody></table>';
+      }
+      document.getElementById('analysisCustomerBreakdown').innerHTML=breakdownHtml;
+
+      // Payment summary
+      document.getElementById('analysisPaymentSummary').innerHTML=
+        '<h3>💰 Payment Summary</h3>'+
+        '<div class="analysis-summary">'+
+        '<div><div class="label">✅ Paid</div><div class="value">'+paidCount+' bills</div></div>'+
+        '<div><div class="label">⚠️ Partial</div><div class="value">'+partialCount+' bills</div></div>'+
+        '<div><div class="label">❌ Unpaid</div><div class="value">'+unpaidCount+' bills</div></div>'+
+        '<div><div class="label">📊 Rate</div><div class="value">'+collectionRate+'%</div></div></div>';
+
+      // Yearly overview chart
+      renderYearlyChart(bills);
+    }
+
+    function renderYearlyChart(allBills){
+      var monthlyTotals=[];
+      var monthNames=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      for(var m=0;m<12;m++){
+        var mb=allBills.filter(function(b){var d=new Date(b.date);return d.getFullYear()===analysisYear&&d.getMonth()===m});
+        var rev=0,col=0;
+        mb.forEach(function(b){rev+=b.totalDue;col+=(b.amountPaid||0)});
+        monthlyTotals.push({month:monthNames[m],revenue:rev,collected:col});
+      }
+      var maxY=Math.max.apply(null,monthlyTotals.map(function(m){return m.revenue}))||1;
+
+      var html='';
+      monthlyTotals.forEach(function(mt,i){
+        var h=mt.revenue>0?Math.max(8,(mt.revenue/maxY)*120):0;
+        var isCurrentMonth=i===analysisMonth;
+        html+='<div class="chart-bar-wrapper" onclick="analysisMonth='+i+';renderAnalysis()" style="cursor:pointer">'+(mt.revenue>0?'<div class="chart-bar-value">'+formatMoney(mt.revenue)+'</div>':'')+'<div class="chart-bar" style="height:'+h+'px;background:'+(isCurrentMonth?'var(--bg-accent)':'rgba(0,123,255,.3)')+'" title="'+mt.month+': '+formatMoney(mt.revenue)+'"></div><div class="chart-bar-label" style="'+(isCurrentMonth?'font-weight:700;color:var(--bg-accent)':'')+'">'+mt.month+'</div></div>';
+      });
+      document.getElementById('yearlyChartBars').innerHTML=html;
+    }
+
+    function exportAnalysisToExcel(){
+      var bills=getData('bills'),custs=getData('customers'),s=getSettings();
+      var monthBills=bills.filter(function(b){var d=new Date(b.date);return d.getFullYear()===analysisYear&&d.getMonth()===analysisMonth});
+      if(!monthBills.length){alert('No data');return}
+      var sym='$';if(s.currency==='PHP')sym='₱';if(s.currency==='EUR')sym='€';
+      var monthName=new Date(analysisYear,analysisMonth).toLocaleDateString('en-US',{month:'long',year:'numeric'});
+      var data=[['Monthly Analysis: '+monthName],[''],['Customer','Date','Usage (m³)','Billed ('+sym+')','Paid ('+sym+')','Status']];
+      monthBills.forEach(function(b){var c=custs.find(function(x){return x.id===b.customerId});data.push([c?c.name:'Unknown',b.date,b.totalUsed,b.totalDue,b.amountPaid||0,b.paymentStatus||'unpaid'])});
+      var totalRev=0,totalCol=0;monthBills.forEach(function(b){totalRev+=b.totalDue;totalCol+=(b.amountPaid||0)});
+      data.push([''],['TOTAL','','',totalRev,totalCol,Math.round((totalCol/totalRev)*100)+'% collected']);
+      var ws=XLSX.utils.aoa_to_sheet(data),wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Analysis');
+      ws['!cols']=[{wch:25},{wch:12},{wch:12},{wch:15},{wch:15},{wch:12}];
+      XLSX.writeFile(wb,'water-analysis-'+monthName.replace(' ','-')+'.xlsx');
+    }
+
+    // ============================================================
+    // RECEIPT
+    // ============================================================
+    function buildReceiptHeader(){var c=getCustomization(),imgs=getImages(),h='';if(imgs.companyLogo)h+='<div style="text-align:center;margin-bottom:8px"><img src="'+imgs.companyLogo+'" style="max-width:80px;max-height:80px;border-radius:8px" alt="Logo"></div>';if(c.companyName)h+='<div style="text-align:center;font-size:18px;font-weight:900;margin-bottom:2px">'+c.companyName+'</div>';else h+='<div style="text-align:center;font-size:18px;font-weight:900;margin-bottom:2px">💧 WATER BILL</div>';if(c.companyAddress)h+='<div style="text-align:center;font-size:11px;color:#555;margin-bottom:1px">'+c.companyAddress+'</div>';var contacts=[c.companyPhone,c.companyEmail].filter(Boolean).join(' • ');if(contacts)h+='<div style="text-align:center;font-size:10px;color:#666">'+contacts+'</div>';return h}
+
+    function printBill(bill){var custs=getData('customers'),c=custs.find(function(x){return x.id===bill.customerId}),cn=c?c.name:'Unknown',s=getSettings(),cf=getCurrencyFormatter(),isMin=bill.totalUsed<=0||(bill.totalUsed*s.pricePerCubic)<s.minCharge;var status=bill.paymentStatus||'unpaid';var statusText=status==='paid'?'PAID':status==='partial'?'PARTIALLY PAID':'UNPAID';var statusColor=status==='paid'?'#28a745':status==='partial'?'#ffc107':'#dc3545';
+    var html='<div style="font-family:\'Segoe UI\',Arial,sans-serif;padding:12px;width:80mm;color:#222">'+buildReceiptHeader()+'<div style="text-align:center;margin:8px 0;padding:6px;background:#f0f0f0;border-radius:4px"><div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:2px">Official Billing</div></div><hr style="border:none;border-top:1px solid #ddd;margin:8px 0"><table style="width:100%;font-size:12px;border-collapse:collapse;border:none;margin:6px 0"><tr><td style="padding:3px 0;color:#666;border:none">Customer</td><td style="text-align:right;font-weight:700;padding:3px 0;border:none">'+cn+'</td></tr><tr><td style="padding:3px 0;color:#666;border:none">Bill Date</td><td style="text-align:right;padding:3px 0;border:none">'+new Date(bill.date).toLocaleDateString()+'</td></tr><tr><td style="padding:3px 0;color:#666;border:none">Status</td><td style="text-align:right;padding:3px 0;border:none;color:'+statusColor+';font-weight:700">'+statusText+'</td></tr></table><hr style="border:none;border-top:1px solid #ddd;margin:8px 0"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#444;margin-bottom:6px">Meter Reading</div><table style="width:100%;font-size:12px;border-collapse:collapse;border:none"><tr style="background:#f8f8f8"><td style="padding:5px 8px;border:none">Previous</td><td style="text-align:right;padding:5px 8px;font-weight:600;border:none">'+bill.prevReading+' m³</td></tr><tr><td style="padding:5px 8px;border:none">Present</td><td style="text-align:right;padding:5px 8px;font-weight:600;border:none">'+bill.presReading+' m³</td></tr><tr style="background:#f8f8f8"><td style="padding:5px 8px;font-weight:700;border:none">Consumption</td><td style="text-align:right;padding:5px 8px;font-weight:700;border:none">'+bill.totalUsed+' m³</td></tr></table><hr style="border:none;border-top:1px solid #ddd;margin:8px 0"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#444;margin-bottom:6px">Charges</div><table style="width:100%;font-size:12px;border-collapse:collapse;border:none"><tr><td style="padding:4px 0;color:#555;border:none">Rate per m³</td><td style="text-align:right;padding:4px 0;border:none">'+cf.format(s.pricePerCubic)+'</td></tr><tr><td style="padding:4px 0;color:#555;border:none">Computed</td><td style="text-align:right;padding:4px 0;border:none">'+cf.format(bill.totalUsed*s.pricePerCubic)+'</td></tr><tr><td style="padding:4px 0;color:#555;border:none">Min Charge</td><td style="text-align:right;padding:4px 0;border:none">'+cf.format(s.minCharge)+'</td></tr>'+(isMin?'<tr><td colspan="2" style="padding:4px 0;font-size:10px;color:#e65100;text-align:center;border:none">* Minimum charge applied</td></tr>':'')+'</table><div style="margin:12px 0;padding:12px;background:#1a1a1a;color:#fff;border-radius:6px;text-align:center"><div style="font-size:10px;text-transform:uppercase;letter-spacing:2px;opacity:.7;margin-bottom:4px">Total Amount Due</div><div style="font-size:22px;font-weight:900;letter-spacing:1px">'+cf.format(bill.totalDue)+'</div></div>'+(status!=='unpaid'?'<div style="text-align:center;padding:8px;border:2px solid '+statusColor+';border-radius:6px;margin:8px 0"><div style="font-size:11px;color:#666">Amount Paid</div><div style="font-size:16px;font-weight:700;color:'+statusColor+'">'+cf.format(bill.amountPaid||0)+'</div>'+(status==='partial'?'<div style="font-size:11px;color:#dc3545;margin-top:4px">Remaining: '+cf.format(bill.totalDue-(bill.amountPaid||0))+'</div>':'')+'</div>':'')+'<hr style="border:none;border-top:1px dashed #ccc;margin:8px 0"><div style="text-align:center;font-size:10px;color:#999;line-height:1.6">Thank you for your prompt payment!<br>Printed: '+new Date().toLocaleString()+'</div></div>';
+    document.getElementById('printReceipt').innerHTML=html;window.print();document.getElementById('printReceipt').innerHTML=''}
+
+    function printAllShownBills(){if(!lastFilteredBills.length){alert('No bills');return}var custs=getData('customers'),s=getSettings(),cf=getCurrencyFormatter(),totalSum=0,totalCollected=0;var rows=lastFilteredBills.map(function(b,i){var c=custs.find(function(x){return x.id===b.customerId});totalSum+=b.totalDue;totalCollected+=(b.amountPaid||0);var st=b.paymentStatus||'unpaid';return'<tr'+(i%2===0?' style="background:#f8f8f8"':'')+'><td style="padding:5px 4px;font-size:11px;border:none">'+(i+1)+'</td><td style="padding:5px 4px;font-size:11px;border:none">'+(c?c.name:'?')+'</td><td style="padding:5px 4px;font-size:11px;border:none">'+new Date(b.date).toLocaleDateString()+'</td><td style="padding:5px 4px;font-size:11px;text-align:right;border:none">'+b.totalUsed+'</td><td style="padding:5px 4px;font-size:11px;text-align:right;border:none">'+cf.format(b.totalDue)+'</td><td style="padding:5px 4px;font-size:11px;text-align:center;border:none">'+(st==='paid'?'✅':st==='partial'?'⚠️':'❌')+'</td></tr>'}).join('');var fv=document.getElementById('historyFilter').value,fn=fv!=='all'?((getData('customers').find(function(c){return c.id===parseInt(fv)}))||{}).name||'':'All';var html='<div style="font-family:\'Segoe UI\',Arial,sans-serif;padding:12px;width:80mm;color:#222">'+buildReceiptHeader()+'<div style="text-align:center;margin:10px 0;padding:6px;background:#f0f0f0;border-radius:4px"><div style="font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:2px">Billing Report</div><div style="font-size:10px;color:#777">'+fn+'</div></div><table style="width:100%;border-collapse:collapse;border:none;margin:8px 0"><thead><tr style="background:#333;color:#fff"><th style="padding:5px 4px;font-size:10px;text-align:left;border:none">#</th><th style="padding:5px 4px;font-size:10px;text-align:left;border:none">Name</th><th style="padding:5px 4px;font-size:10px;text-align:left;border:none">Date</th><th style="padding:5px 4px;font-size:10px;text-align:right;border:none">m³</th><th style="padding:5px 4px;font-size:10px;text-align:right;border:none">Due</th><th style="padding:5px 4px;font-size:10px;text-align:center;border:none">St</th></tr></thead><tbody>'+rows+'</tbody></table><div style="margin:10px 0;padding:10px;background:#1a1a1a;color:#fff;border-radius:6px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>Bills:</span><strong>'+lastFilteredBills.length+'</strong></div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>Billed:</span><strong>'+cf.format(totalSum)+'</strong></div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>Collected:</span><strong style="color:#28a745">'+cf.format(totalCollected)+'</strong></div><div style="display:flex;justify-content:space-between;font-size:14px;font-weight:900"><span>Outstanding:</span><span style="color:#ff6b6b">'+cf.format(totalSum-totalCollected)+'</span></div></div><div style="text-align:center;font-size:9px;color:#999;margin-top:8px">Printed: '+new Date().toLocaleString()+'</div></div>';document.getElementById('printReceipt').innerHTML=html;window.print();document.getElementById('printReceipt').innerHTML=''}
 
     // ============================================================
     // EXPORT
     // ============================================================
-    function exportToExcel(){var bills=getData('bills'),custs=getData('customers'),s=getSettings();if(!bills.length){alert('No bills');return}var sym='$';if(s.currency==='PHP')sym='₱';if(s.currency==='EUR')sym='€';var data=[['Customer','Date','Prev (m³)','Pres (m³)','Used (m³)','Rate ('+sym+'/m³)','Total ('+sym+')']];bills.forEach(function(b){var c=custs.find(function(x){return x.id===b.customerId});data.push([c?c.name:'Unknown',b.date,b.prevReading,b.presReading,b.totalUsed,b.pricePerCubic,b.totalDue])});var ws=XLSX.utils.aoa_to_sheet(data),wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Water Bills');ws['!cols']=[{wch:25},{wch:12},{wch:12},{wch:12},{wch:10},{wch:15},{wch:15}];XLSX.writeFile(wb,'water-bills-'+s.currency+'-'+new Date().toISOString().split('T')[0]+'.xlsx')}
+    function exportToExcel(){var bills=getData('bills'),custs=getData('customers'),s=getSettings();if(!bills.length){alert('No bills');return}var sym='$';if(s.currency==='PHP')sym='₱';if(s.currency==='EUR')sym='€';var data=[['Customer','Date','Prev (m³)','Pres (m³)','Used (m³)','Rate ('+sym+')','Total ('+sym+')','Paid ('+sym+')','Status']];bills.forEach(function(b){var c=custs.find(function(x){return x.id===b.customerId});data.push([c?c.name:'Unknown',b.date,b.prevReading,b.presReading,b.totalUsed,b.pricePerCubic,b.totalDue,b.amountPaid||0,b.paymentStatus||'unpaid'])});var ws=XLSX.utils.aoa_to_sheet(data),wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Water Bills');ws['!cols']=[{wch:25},{wch:12},{wch:10},{wch:10},{wch:10},{wch:10},{wch:12},{wch:12},{wch:10}];XLSX.writeFile(wb,'water-bills-'+new Date().toISOString().split('T')[0]+'.xlsx')}
 
     // ============================================================
     // TIMER
@@ -1066,49 +920,19 @@
     // INITIALIZATION
     // ============================================================
     document.addEventListener('DOMContentLoaded',function(){
-      // Migrate old format: move images from customization to separate storage
-      (function migrateImages(){
-        var c=getCustomization();
-        var imgs=getImages();
-        var changed=false;
-        if(c.companyLogo&&!imgs.companyLogo){imgs.companyLogo=c.companyLogo;changed=true}
-        if(c.backgroundImage&&!imgs.backgroundImage){imgs.backgroundImage=c.backgroundImage;changed=true}
-        if(changed){
-          saveImages(imgs);
-          delete c.companyLogo;
-          delete c.backgroundImage;
-          localStorage.setItem(CUSTOMIZE_KEY,JSON.stringify(c));
-        }
-      })();
+      (function migrateImages(){var c=getCustomization(),imgs=getImages(),changed=false;if(c.companyLogo&&!imgs.companyLogo){imgs.companyLogo=c.companyLogo;changed=true}if(c.backgroundImage&&!imgs.backgroundImage){imgs.backgroundImage=c.backgroundImage;changed=true}if(changed){saveImages(imgs);delete c.companyLogo;delete c.backgroundImage;localStorage.setItem(CUSTOMIZE_KEY,JSON.stringify(c))}})();
+      // Migrate bills: add payment fields if missing
+      (function migrateBills(){var bills=getData('bills'),changed=false;bills.forEach(function(b){if(b.paymentStatus===undefined){b.paymentStatus='unpaid';b.amountPaid=0;b.paymentDate='';b.paymentNotes='';changed=true}});if(changed)saveDataLocal('bills',bills)})();
 
       showLoginModal();
       document.getElementById('billDate').value=new Date().toISOString().split('T')[0];
-
       pullFromCloud().then(function(pulled){
-        loadCustomerDropdowns();
-        updateCurrencyDisplay();
-        applyVisuals();
-        showSection('menuSection');
-        initTimer();
-
-        if(!pulled&&getData('customers').length===0){
-          updateSyncIndicator('synced','Ready');
-        }
-
+        loadCustomerDropdowns();updateCurrencyDisplay();applyVisuals();showSection('menuSection');initTimer();
+        if(!pulled&&getData('customers').length===0)updateSyncIndicator('synced','Ready');
         backgroundTimeSync();
         setInterval(function(){backgroundTimeSync()},5*60*1000);
         setInterval(function(){if(navigator.onLine&&!isSyncing&&pendingSync)pushToCloud()},SYNC_INTERVAL);
-        setInterval(function(){
-          if(!isSyncing){
-            var ls=parseInt(localStorage.getItem(LAST_SYNC_KEY)||'0');
-            if(ls){
-              var ago=Date.now()-ls;
-              if(ago<60000)updateSyncIndicator('synced','Synced just now');
-              else if(ago<3600000)updateSyncIndicator('synced','Synced '+Math.floor(ago/60000)+'m ago');
-              else updateSyncIndicator('synced','Synced '+Math.floor(ago/3600000)+'h ago');
-            }
-          }
-        },30000);
+        setInterval(function(){if(!isSyncing){var ls=parseInt(localStorage.getItem(LAST_SYNC_KEY)||'0');if(ls){var ago=Date.now()-ls;if(ago<60000)updateSyncIndicator('synced','Synced just now');else if(ago<3600000)updateSyncIndicator('synced','Synced '+Math.floor(ago/60000)+'m ago');else updateSyncIndicator('synced','Synced '+Math.floor(ago/3600000)+'h ago')}}},30000);
       });
     });
   </script>
