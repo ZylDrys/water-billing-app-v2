@@ -2,81 +2,159 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#007bff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Water Billing System</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: Arial, sans-serif; background: #f5f7fa; padding: 15px; }
-    .container {
-      max-width: 600px; margin: 0 auto; background: white;
-      padding: 20px; border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    :root {
+      --bg-body:#f5f7fa;--bg-container:#ffffff;--bg-accent:#007bff;--bg-accent-hover:#0056b3;
+      --bg-success:#28a745;--bg-warning:#ffc107;--bg-danger:#dc3545;--bg-input:#ffffff;
+      --bg-table-even:#f9f9f9;--bg-card-border:#eeeeee;--text-primary:#333333;--text-secondary:#666666;
+      --text-muted:#999999;--text-on-accent:#ffffff;--text-on-warning:#333333;--border-color:#cccccc;
+      --border-focus:#007bff;--shadow-color:rgba(0,0,0,0.1);
     }
-    h1, h2 { color: #333; margin-bottom: 15px; }
-    button {
-      background: #007bff; color: white; border: none;
-      padding: 12px; border-radius: 8px; cursor: pointer;
-      margin: 5px 0; width: 100%; font-weight: bold;
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+      background-color:var(--bg-body);background-size:cover;background-position:center;
+      background-attachment:fixed;background-repeat:no-repeat;padding:15px;min-height:100vh;
+      -webkit-text-size-adjust:100%;transition:background-color 0.3s ease;
+      -webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;
     }
-    button:hover { background: #0056b3; }
-    input, select {
-      width: 100%; padding: 12px; margin: 8px 0;
-      border: 1px solid #ccc; border-radius: 8px; font-size: 16px;
+    input,select,textarea{-webkit-user-select:text;-moz-user-select:text;-ms-user-select:text;user-select:text;}
+    .container{
+      max-width:600px;margin:0 auto;background:var(--bg-container);padding:20px;border-radius:12px;
+      box-shadow:0 4px 12px var(--shadow-color);transition:background 0.3s ease;
     }
-    table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 14px; }
-    th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-    th { background: #007bff; color: white; }
-    tr:nth-child(even) { background: #f9f9f9; }
-    .section { display: none; }
-    .section.active { display: block; }
-    .total-display {
-      background: #28a745; color: white; padding: 15px;
-      border-radius: 8px; text-align: center;
-      font-size: 20px; font-weight: bold; margin: 15px 0;
+    h1{color:var(--text-primary);margin-bottom:15px;font-size:clamp(20px,5vw,28px);}
+    h2{color:var(--text-primary);margin-bottom:15px;font-size:clamp(16px,4vw,22px);}
+    h3{color:var(--text-primary);margin:18px 0 10px;font-size:clamp(14px,3.5vw,18px);border-bottom:2px solid var(--bg-accent);padding-bottom:6px;}
+    button{
+      background:var(--bg-accent);color:var(--text-on-accent);border:none;padding:12px;border-radius:8px;
+      cursor:pointer;margin:5px 0;width:100%;font-weight:bold;font-size:clamp(14px,3.5vw,16px);
+      touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:background 0.2s ease,transform 0.1s ease;
     }
-    .settings-btn { background: #ffc107; color: #333; }
-    .search-box {
-      padding: 12px; margin: 15px 0;
-      border: 2px solid #007bff; border-radius: 8px; font-size: 16px;
+    button:hover{background:var(--bg-accent-hover);}
+    button:active{transform:scale(0.98);}
+    input,select{
+      width:100%;padding:12px;margin:8px 0;border:1px solid var(--border-color);border-radius:8px;
+      font-size:16px;background:var(--bg-input);color:var(--text-primary);-webkit-appearance:none;
+      appearance:none;transition:border-color 0.2s ease;
     }
-    .sort-controls { display: flex; gap: 10px; margin: 15px 0; }
-    .sort-controls button { width: auto; font-size: 12px; padding: 8px; }
-    .currency-switcher { margin: 15px 0; text-align: center; }
-    .currency-switcher button { width: auto; margin: 0 5px; }
-    @media print {
-      body { background: white; }
-      .container { width: 80mm; margin: 0; box-shadow: none; }
-      .no-print { display: none !important; }
+    input:focus,select:focus{outline:none;border-color:var(--border-focus);box-shadow:0 0 0 3px rgba(0,123,255,0.15);}
+    label{display:block;margin-bottom:4px;font-weight:bold;font-size:clamp(13px,3vw,15px);color:var(--text-secondary);}
+    table{width:100%;border-collapse:collapse;margin:15px 0;font-size:clamp(12px,3vw,14px);}
+    th,td{border:1px solid var(--bg-card-border);padding:10px;text-align:left;word-break:break-word;color:var(--text-primary);}
+    th{background:var(--bg-accent);color:var(--text-on-accent);}
+    tr:nth-child(even){background:var(--bg-table-even);}
+    .section{display:none;}.section.active{display:block;}
+    .total-display{background:var(--bg-success);color:white;padding:15px;border-radius:8px;text-align:center;font-size:clamp(18px,5vw,24px);font-weight:bold;margin:15px 0;}
+    .settings-btn{background:var(--bg-warning);color:var(--text-on-warning);}
+    .settings-btn:hover{background:#e0a800;}
+    .search-box{padding:12px;margin:15px 0;border:2px solid var(--bg-accent);border-radius:8px;font-size:16px;}
+    .sort-controls{display:flex;flex-wrap:wrap;gap:8px;margin:15px 0;}
+    .sort-controls button{width:auto;flex:1;min-width:80px;font-size:clamp(10px,2.5vw,12px);padding:8px 6px;}
+    .currency-switcher{margin:15px 0;text-align:center;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;}
+    .currency-switcher button{width:auto;margin:0;padding:10px 16px;min-width:80px;}
+    .form-group{margin-bottom:10px;}
+    .form-row{display:flex;gap:10px;}
+    .form-row .form-group{flex:1;}
+    .print-only{display:none;}
+    .app-header{display:flex;align-items:center;justify-content:center;position:relative;margin-bottom:15px;}
+    .app-header h1{margin-bottom:0;}
+    .customize-btn{
+      position:absolute;right:0;top:50%;transform:translateY(-50%);width:42px;height:42px;min-width:42px;
+      border-radius:50%;padding:0;font-size:20px;background:var(--bg-accent);display:flex;align-items:center;
+      justify-content:center;box-shadow:0 2px 8px var(--shadow-color);margin:0;
     }
+    .customize-btn:hover{transform:translateY(-50%) scale(1.1);}
+    .theme-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:10px 0;}
+    .theme-swatch{
+      width:100%;aspect-ratio:1;border-radius:12px;cursor:pointer;border:3px solid transparent;
+      transition:all 0.2s ease;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      font-size:10px;font-weight:600;padding:4px;text-align:center;position:relative;overflow:hidden;
+    }
+    .theme-swatch:hover{transform:scale(1.05);}
+    .theme-swatch.active{border-color:var(--bg-accent);box-shadow:0 0 0 2px var(--bg-accent);}
+    .theme-swatch span{font-size:18px;margin-bottom:2px;}
+    .preset-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:10px 0;}
+    .preset-card{
+      height:80px;border-radius:10px;cursor:pointer;border:3px solid transparent;transition:all 0.2s ease;
+      display:flex;align-items:flex-end;justify-content:center;padding:8px;font-size:11px;font-weight:700;
+      color:white;text-shadow:0 1px 3px rgba(0,0,0,0.5);
+    }
+    .preset-card:hover{transform:scale(1.03);}
+    .preset-card.active{border-color:var(--bg-accent);box-shadow:0 0 0 2px var(--bg-accent);}
+    .logo-preview{width:100px;height:100px;border-radius:12px;border:2px dashed var(--border-color);display:flex;align-items:center;justify-content:center;margin:10px auto;overflow:hidden;background:var(--bg-table-even);}
+    .logo-preview img{max-width:100%;max-height:100%;object-fit:contain;}
+    .bg-preview{width:100%;height:100px;border-radius:10px;border:2px dashed var(--border-color);margin:10px 0;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:13px;overflow:hidden;}
+    .timer-widget{position:fixed;bottom:15px;right:15px;z-index:9000;font-family:'Segoe UI',Roboto,monospace;transition:all 0.3s ease;}
+    .timer-toggle{width:36px;height:36px;border-radius:50%;background:rgba(0,123,255,0.15);border:1px solid rgba(0,123,255,0.3);color:var(--bg-accent);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-left:auto;margin-bottom:6px;padding:0;min-width:36px;transition:all 0.2s ease;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
+    .timer-toggle:hover{background:rgba(0,123,255,0.25);transform:scale(1.05);}
+    .timer-display{background:rgba(255,255,255,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(0,0,0,0.08);border-radius:10px;padding:10px 14px;box-shadow:0 2px 12px rgba(0,0,0,0.08);min-width:180px;text-align:center;transition:all 0.3s ease;}
+    .timer-display.hidden{opacity:0;transform:translateY(10px) scale(0.95);pointer-events:none;height:0;padding:0;margin:0;overflow:hidden;border:none;box-shadow:none;}
+    .timer-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:4px;font-weight:600;}
+    .timer-countdown{font-size:18px;font-weight:700;font-family:'SF Mono','Fira Code','Consolas',monospace;letter-spacing:1px;}
+    .timer-countdown.active{color:#28a745;}
+    .timer-countdown.warning{color:#ffc107;}
+    .timer-countdown.critical{color:#dc3545;}
+    .timer-countdown.inactive{color:#999;font-size:13px;font-weight:500;}
+    .timer-subtext{font-size:9px;color:#aaa;margin-top:3px;font-weight:500;}
+
+    @media(max-width:380px){body{padding:8px;}.container{padding:14px;border-radius:8px;}.sort-controls{gap:5px;}.sort-controls button{min-width:60px;padding:6px 4px;}.currency-switcher button{padding:8px 10px;min-width:65px;font-size:13px;}.form-row{flex-direction:column;gap:0;}.theme-grid{grid-template-columns:repeat(3,1fr);}.timer-widget{bottom:10px;right:10px;}.timer-display{min-width:150px;padding:8px 10px;}.timer-countdown{font-size:15px;}}
+    @media(min-width:381px) and (max-width:480px){body{padding:10px;}.container{padding:16px;}.form-row{flex-direction:column;gap:0;}}
+    @media(min-width:601px) and (max-width:1024px){.container{max-width:700px;padding:28px;}.sort-controls button{padding:10px 14px;font-size:13px;}}
+    @media(min-width:1025px){body{padding:30px;}.container{max-width:720px;padding:32px;border-radius:16px;}button{padding:14px;}.timer-widget{bottom:25px;right:25px;}.timer-display{min-width:200px;padding:12px 18px;}.timer-countdown{font-size:20px;}}
+    @media(min-width:1400px){.container{max-width:800px;padding:40px;}}
+    @media(max-height:500px) and (orientation:landscape){body{padding:8px;}.container{padding:12px;}button{padding:10px;margin:3px 0;}input,select{padding:10px;margin:5px 0;}.timer-widget{bottom:8px;right:8px;}.timer-display{padding:6px 10px;min-width:140px;}.timer-countdown{font-size:14px;}.timer-toggle{width:30px;height:30px;font-size:13px;min-width:30px;}}
+    @media print{*{visibility:hidden !important;}.print-only,.print-only *{display:block !important;visibility:visible !important;}.print-only{position:absolute;left:0;top:0;width:80mm;}.timer-widget{display:none !important;}}
   </style>
 </head>
 <body>
 
-  <!-- LOGIN MODAL -->
-  <div id="loginModal" style="
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.5); align-items: center; justify-content: center;
-    z-index: 9999; display: none;">
-    <div style="
-      background: white; padding: 25px; border-radius: 12px; width: 320px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2); text-align: center;">
+  <div id="loginModal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;z-index:9999;display:none;">
+    <div style="background:white;padding:25px;border-radius:12px;width:min(320px,90vw);box-shadow:0 4px 12px rgba(0,0,0,0.2);text-align:center;">
       <h2>🔒 Enter Password</h2>
-      <input id="loginPassword" type="password" placeholder="Password"
-        style="width: 100%; padding: 12px; margin: 15px 0; border-radius: 8px; border: 1px solid #ccc;">
-      <span id="toggleLoginPassword"
-        style="position: absolute; right: 40px; cursor: pointer; font-size: 18px;">👁</span>
-      <div id="loginMessage" style="color: red; font-size: 14px; min-height: 18px;"></div>
-      <button id="loginBtn" style="
-        width: 100%; padding: 12px; background: #007bff; color: white;
-        border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Login</button>
+      <div style="position:relative;">
+        <input id="loginPassword" type="password" placeholder="Password" style="width:100%;padding:12px;margin:15px 0;border-radius:8px;border:1px solid #ccc;" autocomplete="off">
+        <span id="toggleLoginPassword" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px;">👁</span>
+      </div>
+      <div id="loginMessage" style="color:red;font-size:14px;min-height:18px;"></div>
+      <button id="loginBtn" style="width:100%;padding:12px;background:#007bff;color:white;border:none;border-radius:8px;font-weight:bold;cursor:pointer;">Login</button>
+    </div>
+  </div>
+
+  <div id="promptModal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;z-index:10000;display:none;">
+    <div style="background:white;padding:25px;border-radius:12px;width:min(320px,90vw);box-shadow:0 4px 12px rgba(0,0,0,0.2);text-align:center;">
+      <h2 id="promptTitle"></h2>
+      <div style="position:relative;">
+        <input id="promptInput" type="text" style="width:100%;padding:12px;margin:15px 0;border-radius:8px;border:1px solid #ccc;font-size:16px;" autocomplete="off">
+        <span id="togglePromptPassword" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px;display:none;">👁</span>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button id="promptCancel" style="background:#dc3545;">Cancel</button>
+        <button id="promptConfirm">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="timer-widget" id="timerWidget">
+    <button class="timer-toggle" id="timerToggle" title="Toggle timer">⏱</button>
+    <div class="timer-display" id="timerDisplay">
+      <div class="timer-label">Temp Password Expires</div>
+      <div class="timer-countdown inactive" id="timerCountdown">No temp password</div>
+      <div class="timer-subtext" id="timerSubtext"></div>
     </div>
   </div>
 
   <div class="container">
-    <h1 style="text-align:center;">💧 Water Billing System</h1>
+    <div class="app-header">
+      <h1>💧 Water Billing System</h1>
+      <button class="customize-btn" onclick="showSection('customizeSection')" title="Customize">🎨</button>
+    </div>
 
-    <!-- Main Menu -->
     <div id="menuSection" class="section active">
       <button onclick="showSection('newBillSection')">➕ New Bill</button>
       <button onclick="showSection('customersSection')">👥 Customers</button>
@@ -85,860 +163,715 @@
       <button onclick="exportToExcel()" class="no-print">📊 Export to Excel</button>
     </div>
 
-    <!-- Settings Section -->
+    <div id="customizeSection" class="section">
+      <button onclick="showSection('menuSection')" class="no-print">← Back</button>
+      <h2>🎨 Customize</h2>
+      <h3>🏢 Company Branding</h3>
+      <div class="form-group">
+        <label>Company Logo</label>
+        <div class="logo-preview" id="logoPreview"><span style="font-size:32px;color:var(--text-muted);">📷</span></div>
+        <input type="file" id="logoUpload" accept="image/*" onchange="handleLogoUpload(event)" style="font-size:14px;">
+        <button onclick="removeLogo()" style="background:var(--bg-danger);margin-top:5px;font-size:13px;padding:8px;">✕ Remove Logo</button>
+      </div>
+      <div class="form-group"><label>Company Name</label><input type="text" id="companyName" placeholder="e.g. AquaPure Water Services"></div>
+      <div class="form-group"><label>Company Address</label><input type="text" id="companyAddress" placeholder="e.g. 123 Main St, Barangay, City"></div>
+      <div class="form-group"><label>Phone / Mobile</label><input type="text" id="companyPhone" placeholder="e.g. 0917-123-4567"></div>
+      <div class="form-group"><label>Email</label><input type="email" id="companyEmail" placeholder="e.g. info@aquapure.com"></div>
+      <h3>🎭 Themes</h3>
+      <div class="theme-grid" id="themeGrid"></div>
+      <h3>🖼 Background</h3>
+      <div class="form-group">
+        <label>Upload Background Image</label>
+        <div class="bg-preview" id="bgPreview">No background set</div>
+        <input type="file" id="bgUpload" accept="image/*" onchange="handleBgUpload(event)" style="font-size:14px;">
+        <button onclick="removeBackground()" style="background:var(--bg-danger);margin-top:5px;font-size:13px;padding:8px;">✕ Remove Background</button>
+      </div>
+      <h3>✨ Presets (Theme + Background)</h3>
+      <div class="preset-grid" id="presetGrid"></div>
+      <button onclick="saveCustomization()" style="margin-top:20px;font-size:16px;padding:14px;">💾 Save All Customizations</button>
+    </div>
+
     <div id="settingsSection" class="section">
       <button onclick="showSection('menuSection')" class="no-print">← Back</button>
       <h2>⚙ System Settings</h2>
-
-      <div class="currency-switcher">
-        <strong>Currency:</strong>
+      <div class="currency-switcher"><strong>Currency:</strong>
         <button onclick="setCurrency('USD')">USD $</button>
         <button onclick="setCurrency('PHP')">PHP ₱</button>
         <button onclick="setCurrency('EUR')">EUR €</button>
       </div>
-
-      <div class="form-group">
-        <label>Price per Cubic Meter</label>
-        <input type="number" id="adminPricePerCubic" step="0.01" placeholder="Enter current rate">
-      </div>
-
-      <div class="form-group">
-        <label>Minimum Charge (if usage ≤ 0)</label>
-        <input type="number" id="adminMinCharge" step="0.01" placeholder="Enter minimum charge">
-      </div>
-
-      <!-- Admin Password Field (with visibility toggle) -->
-      <div>
-        <label>Admin Password</label>
-        <div style="position: relative;">
-          <input type="password" id="adminPassword" placeholder="Enter password to save"
-            data-clear-on-confirm="true"/>
-          <span id="eyeIcon" style="
-            position: absolute; right: 10px; top: 50%;
-            transform: translateY(-50%); cursor: pointer;">👁</span>
-        </div>
-      </div>
-
-      <!-- Save Settings Button -->
+      <div class="form-group"><label>Price per Cubic Meter</label><input type="number" id="adminPricePerCubic" step="0.01" placeholder="Enter current rate"></div>
+      <div class="form-group"><label>Minimum Charge</label><input type="number" id="adminMinCharge" step="0.01" placeholder="Enter minimum charge"></div>
+      <div><label>Admin Password</label><div style="position:relative;"><input type="password" id="adminPassword" placeholder="Enter password to save" data-clear-on-confirm="true" autocomplete="off"/><span id="eyeIcon" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;">👁</span></div></div>
       <button onclick="saveSettings()">💾 Save Settings</button>
-
-      <!-- Temporary Password Buttons & Restore Defaults (Hidden by default) -->
-      <div id="temporaryPasswordButtonContainer" style="display:none; margin-top:15px;">
+      <div id="temporaryPasswordButtonContainer" style="display:none;margin-top:15px;">
         <button onclick="createTempPasswordPrompt()">➕ Create Temporary Password</button>
         <button onclick="deleteTempPassword()">🗑 Delete Temporary Password</button>
         <button onclick="restoreDefaults()">♻ Restore Default</button>
       </div>
-
-      <!-- Master Password Section -->
-      <div>
-        <label>Master Password</label>
-        <div style="position: relative; margin-bottom: 10px;">
-          <input type="password" id="masterPassword" placeholder="Enter master password"
-            data-clear-on-confirm="true"
-            onkeydown="if(event.key==='Enter'){ confirmMasterPassword(); }">
-          <span id="eyeIconMaster" style="
-            position: absolute; right: 10px; top: 50%;
-            transform: translateY(-50%); cursor: pointer;">👁</span>
-        </div>
-        <button onclick="confirmMasterPassword()">Confirm Master Password</button>
-      </div>
-
-      <!-- Master Password Action Buttons (Hidden by default) -->
-      <div id="masterPasswordActions" style="margin-top: 10px; display:none;">
+      <div><label>Master Password</label><div style="position:relative;margin-bottom:10px;"><input type="password" id="masterPassword" placeholder="Enter master password" data-clear-on-confirm="true" autocomplete="off"><span id="eyeIconMaster" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;">👁</span></div>
+        <button onclick="confirmMasterPassword()">Confirm Master Password</button></div>
+      <div id="masterPasswordActions" style="margin-top:10px;display:none;">
         <button onclick="changeMasterPassword()">🔑 Change Master Password</button>
         <button onclick="showDefaultMasterPassword()">👁 Show Default Master Password</button>
         <button onclick="restoreDefaultMasterPassword()">♻ Restore Default</button>
       </div>
     </div>
 
-    <!-- Customers Section -->
     <div id="customersSection" class="section">
       <button onclick="showSection('menuSection')" class="no-print">← Back</button>
       <h2>👥 Manage Customers</h2>
-
-      <input type="text" id="customerSearch" class="search-box"
-        placeholder="Search customer..." oninput="filterCustomers()">
-
+      <input type="text" id="customerSearch" class="search-box" placeholder="Search customer..." oninput="filterCustomers()">
       <div class="sort-controls">
-        <button onclick="sortCustomers('name', 'asc')">A→Z</button>
-        <button onclick="sortCustomers('name', 'desc')">Z→A</button>
-        <button onclick="sortCustomers('date', 'desc')">Newest First</button>
-        <button onclick="sortCustomers('date', 'asc')">Oldest First</button>
+        <button onclick="sortCustomers('name','asc')">A→Z</button><button onclick="sortCustomers('name','desc')">Z→A</button>
+        <button onclick="sortCustomers('date','desc')">Newest</button><button onclick="sortCustomers('date','asc')">Oldest</button>
       </div>
-
-      <div class="form-group">
-        <input type="text" id="newCustomerName" placeholder="Enter customer name">
-        <button onclick="addCustomer()">➕ Add Customer</button>
-      </div>
-
+      <div class="form-group"><input type="text" id="newCustomerName" placeholder="Enter customer name"><button onclick="addCustomer()">➕ Add Customer</button></div>
       <div id="customersList"></div>
     </div>
 
-    <!-- New Bill Section -->
     <div id="newBillSection" class="section">
       <button onclick="showSection('menuSection')" class="no-print">← Back</button>
       <h2>📝 Create New Bill</h2>
-
-      <input type="text" id="billCustomerSearch" class="search-box"
-        placeholder="Search customer..." oninput="filterBillCustomers()">
-
-      <select id="billCustomer" onchange="loadLastReading()">
-        <option value="">-- Select Customer --</option>
-      </select>
-
+      <input type="text" id="billCustomerSearch" class="search-box" placeholder="Search customer..." oninput="filterBillCustomers()">
+      <select id="billCustomer" onchange="loadLastReading()"><option value="">-- Select Customer --</option></select>
       <input type="date" id="billDate">
-
       <div class="form-row">
-        <div class="form-group">
-          <label>Previous Reading (m³)</label>
-          <input type="number" id="prevReading" readonly>
-        </div>
-        <div class="form-group">
-          <label>Present Reading (m³)</label>
-          <input type="number" id="presReading" oninput="calculateTotal()">
-        </div>
+        <div class="form-group"><label>Previous Reading (m³)</label><input type="number" id="prevReading" readonly></div>
+        <div class="form-group"><label>Present Reading (m³)</label><input type="number" id="presReading" oninput="calculateTotal()"></div>
       </div>
-
-      <div class="total-display">
-        Total Due: <span id="displayCurrencySymbol">$</span><span id="displayTotal">0.00</span>
-      </div>
-
+      <div class="total-display">Total Due: <span id="displayCurrencySymbol">$</span><span id="displayTotal">0.00</span></div>
       <button onclick="saveBill(false)" class="no-print">💾 Save Only</button>
       <button onclick="saveBill(true)" class="no-print">🖨 Save &amp; Print</button>
     </div>
 
-    <!-- History Section -->
     <div id="historySection" class="section">
       <button onclick="showSection('menuSection')" class="no-print">← Back</button>
       <h2>📋 Transaction History</h2>
-
-      <input type="text" id="historySearch" class="search-box"
-        placeholder="Search by customer or date..." oninput="filterHistory()">
-
+      <input type="text" id="historySearch" class="search-box" placeholder="Search by customer or date..." oninput="filterHistory()">
       <div class="sort-controls">
-        <button onclick="sortHistory('date', 'desc')">Newest First</button>
-        <button onclick="sortHistory('date', 'asc')">Oldest First</button>
-        <button onclick="sortHistory('amount', 'desc')">Highest Amount</button>
-        <button onclick="sortHistory('amount', 'asc')">Lowest Amount</button>
+        <button onclick="sortHistory('date','desc')">Newest</button><button onclick="sortHistory('date','asc')">Oldest</button>
+        <button onclick="sortHistory('amount','desc')">Highest</button><button onclick="sortHistory('amount','asc')">Lowest</button>
       </div>
-
-      <select id="historyFilter" onchange="loadFilteredHistory()">
-        <option value="all">All Customers</option>
-      </select>
-
+      <select id="historyFilter" onchange="loadFilteredHistory()"><option value="all">All Customers</option></select>
+      <button onclick="printAllShownBills()" class="no-print" style="background:#17a2b8;margin:10px 0;">🖨 Print All Shown Bills</button>
       <div id="historyList"></div>
     </div>
 
-    <!-- Hidden Print Area -->
     <div id="printReceipt" class="print-only"></div>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
   <script>
+    // ============================================================
+    // ANTI-TAMPERING & PROTECTION SYSTEM
+    // ============================================================
+    (function(){
+      // --- Disable right-click context menu ---
+      document.addEventListener('contextmenu',function(e){e.preventDefault();return false;});
+
+      // --- Disable DevTools keyboard shortcuts ---
+      document.addEventListener('keydown',function(e){
+        // F12
+        if(e.key==='F12'){e.preventDefault();return false;}
+        // Ctrl+Shift+I (Inspect)
+        if(e.ctrlKey&&e.shiftKey&&e.key==='I'){e.preventDefault();return false;}
+        // Ctrl+Shift+J (Console)
+        if(e.ctrlKey&&e.shiftKey&&e.key==='J'){e.preventDefault();return false;}
+        // Ctrl+Shift+C (Element picker)
+        if(e.ctrlKey&&e.shiftKey&&e.key==='C'){e.preventDefault();return false;}
+        // Ctrl+U (View source)
+        if(e.ctrlKey&&e.key==='u'){e.preventDefault();return false;}
+        if(e.ctrlKey&&e.key==='U'){e.preventDefault();return false;}
+        // Ctrl+S (Save page)
+        if(e.ctrlKey&&e.key==='s'){e.preventDefault();return false;}
+        if(e.ctrlKey&&e.key==='S'){e.preventDefault();return false;}
+      });
+
+      // --- DevTools detection via debugger timing ---
+      var _dtOpen=false;
+      function _checkDevTools(){
+        var t0=performance.now();
+        debugger;
+        var t1=performance.now();
+        if(t1-t0>100){
+          if(!_dtOpen){
+            _dtOpen=true;
+            document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#1a1a2e;color:#ff4444;font-family:monospace;text-align:center;padding:20px;"><div><h1 style="font-size:48px;margin-bottom:20px;">⛔</h1><h2>Access Denied</h2><p style="margin-top:10px;color:#aaa;">Developer tools detected.<br>This application is protected.</p></div></div>';
+            // Clear all sensitive data from memory
+            try{Object.keys(localStorage).forEach(function(k){if(k.indexOf('water')===0||k==='masterPassword'||k==='tempPassword'){}});}catch(e){}
+          }
+        }else{_dtOpen=false;}
+      }
+      setInterval(_checkDevTools,2000);
+
+      // --- Console warning ---
+      var _warn=function(){
+        console.clear();
+        console.log('%c⛔ STOP!','font-size:48px;color:red;font-weight:bold;');
+        console.log('%cThis is a protected application.','font-size:16px;color:#ff6600;');
+        console.log('%cPasting code here may compromise your data and security.','font-size:14px;color:#cc0000;');
+        console.log('%cIf someone told you to paste something here, they are trying to hack you.','font-size:12px;color:#999;');
+      };
+      _warn();
+      setInterval(_warn,5000);
+
+      // --- Override console methods ---
+      var _noop=function(){};
+      try{
+        Object.defineProperty(window,'console',{
+          get:function(){return{log:_noop,warn:_noop,error:_noop,info:_noop,debug:_noop,clear:_noop,dir:_noop,table:_noop};}
+        });
+      }catch(e){}
+
+      // --- Disable drag ---
+      document.addEventListener('dragstart',function(e){e.preventDefault();});
+
+      // --- Detect window resize (DevTools docking detection) ---
+      var _lastW=window.outerWidth,_lastH=window.outerHeight;
+      setInterval(function(){
+        var dw=window.outerWidth-window.innerWidth>200;
+        var dh=window.outerHeight-window.innerHeight>200;
+        if(dw||dh){
+          // Likely DevTools docked
+        }
+        _lastW=window.outerWidth;_lastH=window.outerHeight;
+      },1000);
+
+      // --- Integrity check on critical functions ---
+      var _integrityToken=Date.now().toString(36);
+      window._appIntegrity=_integrityToken;
+      setInterval(function(){
+        if(window._appIntegrity!==_integrityToken){
+          document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#1a1a2e;color:#ff4444;font-family:monospace;text-align:center;padding:20px;"><div><h1 style="font-size:48px;margin-bottom:20px;">⛔</h1><h2>Tampering Detected</h2><p style="margin-top:10px;color:#aaa;">Application integrity compromised.<br>Please refresh the page.</p></div></div>';
+        }
+      },3000);
+
+      // --- Prevent eval/Function constructor abuse ---
+      try{
+        window._origEval=window.eval;
+        window.eval=function(){throw new Error('eval() is disabled for security.');};
+      }catch(e){}
+    })();
+
     // ============================================================
     // CONSTANTS
     // ============================================================
-    const MASTER_PASSWORD_KEY = 'masterPassword';
-    const DEFAULT_MASTER_PASSWORD = 'admin123';
-    const TEMP_PASSWORD_KEY = 'tempPassword';
-    const TEMP_PASSWORD_EXPIRY_KEY = 'tempPasswordExpiry';
-    const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
-
-    const STORAGE = {
-      customers: 'water_customers_v2',
-      bills: 'water_bills_v2',
-      settings: 'water_settings_v2'
-    };
-
-    const DEFAULT_SETTINGS = {
-      pricePerCubic: 1.50,
-      minCharge: 5.00,
-      currency: 'USD',
-      adminPassword: 'admin123'
-    };
+    const MASTER_PASSWORD_KEY='masterPassword';
+    const DEFAULT_MASTER_PASSWORD='admin123';
+    const TEMP_PASSWORD_KEY='tempPassword';
+    const TEMP_PASSWORD_EXPIRY_KEY='tempPasswordExpiry';
+    const TIME_SYNC_INTERNET_KEY='timeSync_internet';
+    const TIME_SYNC_DEVICE_KEY='timeSync_device';
+    const TIMER_VISIBLE_KEY='timerVisible';
+    const CUSTOMIZE_KEY='water_customize_v2';
+    const THIRTY_DAYS_MS=30*24*60*60*1000;
+    const CLOCK_DRIFT_TOLERANCE=2*60*1000;
+    const STORAGE={customers:'water_customers_v2',bills:'water_bills_v2',settings:'water_settings_v2'};
+    const DEFAULT_SETTINGS={pricePerCubic:1.50,minCharge:5.00,currency:'USD',adminPassword:'admin123'};
 
     // ============================================================
-    // HELPER FUNCTIONS
+    // THEMES
     // ============================================================
-    function getData(key) {
-      try {
-        return JSON.parse(localStorage.getItem(STORAGE[key]) || '[]');
-      } catch (e) {
-        return [];
-      }
-    }
+    const THEMES={
+      light:{name:'Light',icon:'☀️',body:'#f5f7fa',container:'#ffffff',accent:'#007bff',accentHover:'#0056b3',success:'#28a745',text:'#333333',textSec:'#666666',border:'#cccccc',input:'#ffffff',tableEven:'#f9f9f9',cardBorder:'#eeeeee',warning:'#ffc107',warnText:'#333',shadow:'rgba(0,0,0,0.1)'},
+      dark:{name:'Dark',icon:'🌙',body:'#1a1a2e',container:'#16213e',accent:'#0f3460',accentHover:'#1a4a8a',success:'#28a745',text:'#e0e0e0',textSec:'#aaaaaa',border:'#333355',input:'#1a2340',tableEven:'#1c2a4a',cardBorder:'#2a2a4a',warning:'#ffc107',warnText:'#333',shadow:'rgba(0,0,0,0.3)'},
+      ocean:{name:'Ocean',icon:'🌊',body:'#e3f2fd',container:'#ffffff',accent:'#0277bd',accentHover:'#015d94',success:'#00897b',text:'#263238',textSec:'#546e7a',border:'#b0bec5',input:'#f5fbff',tableEven:'#e1f0fa',cardBorder:'#cfe2f0',warning:'#ffb300',warnText:'#333',shadow:'rgba(2,119,189,0.1)'},
+      forest:{name:'Forest',icon:'🌲',body:'#e8f5e9',container:'#ffffff',accent:'#2e7d32',accentHover:'#1b5e20',success:'#388e3c',text:'#1b5e20',textSec:'#4a7c4f',border:'#a5d6a7',input:'#f5fdf5',tableEven:'#e0f2e1',cardBorder:'#c8e6c9',warning:'#ff8f00',warnText:'#333',shadow:'rgba(46,125,50,0.1)'},
+      sunset:{name:'Sunset',icon:'🌅',body:'#fff3e0',container:'#ffffff',accent:'#e65100',accentHover:'#bf360c',success:'#ef6c00',text:'#3e2723',textSec:'#6d4c41',border:'#ffcc80',input:'#fffdf5',tableEven:'#fff0db',cardBorder:'#ffe0b2',warning:'#ff6f00',warnText:'#fff',shadow:'rgba(230,81,0,0.1)'},
+      rose:{name:'Rose',icon:'🌹',body:'#fce4ec',container:'#ffffff',accent:'#c2185b',accentHover:'#ad1457',success:'#e91e63',text:'#880e4f',textSec:'#ad1457',border:'#f48fb1',input:'#fff5f8',tableEven:'#fce4ec',cardBorder:'#f8bbd0',warning:'#ff6f00',warnText:'#fff',shadow:'rgba(194,24,91,0.1)'},
+      lavender:{name:'Lavender',icon:'💜',body:'#ede7f6',container:'#ffffff',accent:'#7b1fa2',accentHover:'#6a1b9a',success:'#9c27b0',text:'#4a148c',textSec:'#7b1fa2',border:'#ce93d8',input:'#faf5ff',tableEven:'#f3e5f5',cardBorder:'#e1bee7',warning:'#ff8f00',warnText:'#333',shadow:'rgba(123,31,162,0.1)'},
+      midnight:{name:'Midnight',icon:'🌌',body:'#0d1117',container:'#161b22',accent:'#58a6ff',accentHover:'#79b8ff',success:'#3fb950',text:'#c9d1d9',textSec:'#8b949e',border:'#30363d',input:'#0d1117',tableEven:'#1c2230',cardBorder:'#21262d',warning:'#d29922',warnText:'#fff',shadow:'rgba(0,0,0,0.4)'},
+      sand:{name:'Sand',icon:'🏖',body:'#fdf6ec',container:'#fffdf7',accent:'#8d6e63',accentHover:'#6d4c41',success:'#a1887f',text:'#4e342e',textSec:'#795548',border:'#d7ccc8',input:'#fffdf7',tableEven:'#efebe9',cardBorder:'#d7ccc8',warning:'#ff8f00',warnText:'#333',shadow:'rgba(141,110,99,0.1)'},
+      slate:{name:'Slate',icon:'🪨',body:'#eceff1',container:'#ffffff',accent:'#546e7a',accentHover:'#37474f',success:'#607d8b',text:'#263238',textSec:'#546e7a',border:'#b0bec5',input:'#f5f7f8',tableEven:'#eceff1',cardBorder:'#cfd8dc',warning:'#ffb300',warnText:'#333',shadow:'rgba(84,110,122,0.1)'},
+      cherry:{name:'Cherry',icon:'🍒',body:'#ffebee',container:'#ffffff',accent:'#d32f2f',accentHover:'#b71c1c',success:'#e53935',text:'#b71c1c',textSec:'#c62828',border:'#ef9a9a',input:'#fff5f5',tableEven:'#ffebee',cardBorder:'#ffcdd2',warning:'#ff6f00',warnText:'#fff',shadow:'rgba(211,47,47,0.1)'},
+      teal:{name:'Teal',icon:'🦚',body:'#e0f2f1',container:'#ffffff',accent:'#00796b',accentHover:'#00695c',success:'#00897b',text:'#004d40',textSec:'#00695c',border:'#80cbc4',input:'#f0fffe',tableEven:'#e0f2f1',cardBorder:'#b2dfdb',warning:'#ff8f00',warnText:'#333',shadow:'rgba(0,121,107,0.1)'}
+    };
+    const PRESETS=[
+      {name:'Clean Office',theme:'light',gradient:'none'},
+      {name:'Night Mode',theme:'dark',gradient:'linear-gradient(135deg,#0d1117 0%,#1a1a2e 50%,#16213e 100%)'},
+      {name:'Ocean Breeze',theme:'ocean',gradient:'linear-gradient(135deg,#667eea 0%,#764ba2 100%)'},
+      {name:'Forest Path',theme:'forest',gradient:'linear-gradient(135deg,#134e5e 0%,#71b280 100%)'},
+      {name:'Sunset Glow',theme:'sunset',gradient:'linear-gradient(135deg,#f093fb 0%,#f5576c 50%,#ffd452 100%)'},
+      {name:'Rose Garden',theme:'rose',gradient:'linear-gradient(135deg,#ee9ca7 0%,#ffdde1 100%)'},
+      {name:'Lavender Dream',theme:'lavender',gradient:'linear-gradient(135deg,#a18cd1 0%,#fbc2eb 100%)'},
+      {name:'Midnight Sky',theme:'midnight',gradient:'linear-gradient(135deg,#0f0c29 0%,#302b63 50%,#24243e 100%)'},
+      {name:'Beach Sand',theme:'sand',gradient:'linear-gradient(135deg,#f5af19 0%,#f12711 100%)'},
+      {name:'Slate Mountain',theme:'slate',gradient:'linear-gradient(135deg,#bdc3c7 0%,#2c3e50 100%)'},
+      {name:'Cherry Bloom',theme:'cherry',gradient:'linear-gradient(135deg,#f85032 0%,#e73827 100%)'},
+      {name:'Teal Lagoon',theme:'teal',gradient:'linear-gradient(135deg,#43cea2 0%,#185a9d 100%)'}
+    ];
 
-    function saveData(key, data) {
-      localStorage.setItem(STORAGE[key], JSON.stringify(data));
-    }
+    // ============================================================
+    // HELPERS
+    // ============================================================
+    function getData(key){try{return JSON.parse(localStorage.getItem(STORAGE[key])||'[]');}catch(e){return[];}}
+    function saveData(key,data){localStorage.setItem(STORAGE[key],JSON.stringify(data));}
+    function getSettings(){try{return JSON.parse(localStorage.getItem(STORAGE.settings))||{...DEFAULT_SETTINGS};}catch(e){return{...DEFAULT_SETTINGS};}}
+    function saveSettingsData(s){localStorage.setItem(STORAGE.settings,JSON.stringify(s));}
+    function getMasterPassword(){return localStorage.getItem(MASTER_PASSWORD_KEY)||DEFAULT_MASTER_PASSWORD;}
+    function getCustomization(){try{return JSON.parse(localStorage.getItem(CUSTOMIZE_KEY))||{};}catch(e){return{};}}
+    function saveCustomizationData(d){localStorage.setItem(CUSTOMIZE_KEY,JSON.stringify(d));}
+    function formatMoney(a){var s=getSettings();return new Intl.NumberFormat('en-US',{style:'currency',currency:s.currency==='PHP'?'PHP':s.currency==='EUR'?'EUR':'USD',minimumFractionDigits:2}).format(a);}
+    function getCurrencyFormatter(){var s=getSettings();return new Intl.NumberFormat('en-US',{style:'currency',currency:s.currency==='PHP'?'PHP':s.currency==='EUR'?'EUR':'USD'});}
 
-    function getSettings() {
-      try {
-        return JSON.parse(localStorage.getItem(STORAGE.settings)) || { ...DEFAULT_SETTINGS };
-      } catch (e) {
-        return { ...DEFAULT_SETTINGS };
-      }
-    }
-
-    function saveSettingsData(settings) {
-      localStorage.setItem(STORAGE.settings, JSON.stringify(settings));
-    }
-
-    function formatMoney(amount) {
-      const settings = getSettings();
-      const formatter = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: settings.currency === 'PHP' ? 'PHP' :
-                  settings.currency === 'EUR' ? 'EUR' : 'USD',
-        minimumFractionDigits: 2
+    function resizeImage(file,maxW,maxH,quality){
+      quality=quality||0.8;
+      return new Promise(function(resolve,reject){
+        var reader=new FileReader();
+        reader.onload=function(e){var img=new Image();img.onload=function(){var w=img.width,h=img.height;if(w>maxW){h=h*maxW/w;w=maxW;}if(h>maxH){w=w*maxH/h;h=maxH;}var c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);resolve(c.toDataURL('image/jpeg',quality));};img.onerror=reject;img.src=e.target.result;};
+        reader.onerror=reject;reader.readAsDataURL(file);
       });
-      return formatter.format(amount);
     }
 
-    function getMasterPassword() {
-      return localStorage.getItem(MASTER_PASSWORD_KEY) || DEFAULT_MASTER_PASSWORD;
+    // ============================================================
+    // THEME & VISUAL
+    // ============================================================
+    function applyTheme(id){
+      var t=THEMES[id]||THEMES.light,r=document.documentElement.style;
+      r.setProperty('--bg-body',t.body);r.setProperty('--bg-container',t.container);
+      r.setProperty('--bg-accent',t.accent);r.setProperty('--bg-accent-hover',t.accentHover);
+      r.setProperty('--bg-success',t.success);r.setProperty('--bg-warning',t.warning);
+      r.setProperty('--bg-danger','#dc3545');r.setProperty('--bg-input',t.input);
+      r.setProperty('--bg-table-even',t.tableEven);r.setProperty('--bg-card-border',t.cardBorder);
+      r.setProperty('--text-primary',t.text);r.setProperty('--text-secondary',t.textSec);
+      r.setProperty('--text-muted',t.textSec);r.setProperty('--text-on-accent','#ffffff');
+      r.setProperty('--text-on-warning',t.warnText);r.setProperty('--border-color',t.border);
+      r.setProperty('--border-focus',t.accent);r.setProperty('--shadow-color',t.shadow);
+      document.querySelector('meta[name="theme-color"]').content=t.accent;
+    }
+    function applyVisuals(){
+      var c=getCustomization();applyTheme(c.theme||'light');
+      if(c.backgroundImage)document.body.style.backgroundImage='url('+c.backgroundImage+')';
+      else if(c.backgroundPreset&&c.backgroundPreset!=='none')document.body.style.backgroundImage=c.backgroundPreset;
+      else document.body.style.backgroundImage='none';
+      renderThemeGrid();renderPresetGrid();
+    }
+    function renderThemeGrid(){
+      var g=document.getElementById('themeGrid'),c=getCustomization();
+      g.innerHTML=Object.entries(THEMES).map(function(e){var id=e[0],t=e[1];return'<div class="theme-swatch '+((c.theme||'light')===id?'active':'')+'" onclick="previewTheme(\''+id+'\')" style="background:'+t.container+';border-color:'+((c.theme||'light')===id?t.accent:'transparent')+';" title="'+t.name+'"><span>'+t.icon+'</span><small style="color:'+t.text+';">'+t.name+'</small><div style="position:absolute;bottom:0;left:0;right:0;height:6px;background:'+t.accent+';border-radius:0 0 9px 9px;"></div></div>';}).join('');
+    }
+    function renderPresetGrid(){
+      var g=document.getElementById('presetGrid'),c=getCustomization();
+      g.innerHTML=PRESETS.map(function(p,i){return'<div class="preset-card '+(c.activePreset===i?'active':'')+'" onclick="applyPreset('+i+')" style="background:'+(p.gradient==='none'?THEMES[p.theme].body:p.gradient)+';">'+p.name+'</div>';}).join('');
+    }
+    function previewTheme(id){applyTheme(id);var c=getCustomization();c.theme=id;c.activePreset=undefined;saveCustomizationData(c);renderThemeGrid();renderPresetGrid();}
+    function applyPreset(i){
+      var p=PRESETS[i],c=getCustomization();c.theme=p.theme;c.activePreset=i;c.backgroundImage='';c.backgroundPreset=p.gradient;
+      saveCustomizationData(c);applyVisuals();
+      var bp=document.getElementById('bgPreview');bp.style.backgroundImage=p.gradient!=='none'?p.gradient:'none';bp.textContent=p.gradient!=='none'?'':'No background set';
+    }
+
+    // ============================================================
+    // CUSTOMIZATION
+    // ============================================================
+    function handleLogoUpload(e){var f=e.target.files[0];if(!f)return;resizeImage(f,200,200,0.85).then(function(d){var c=getCustomization();c.companyLogo=d;saveCustomizationData(c);document.getElementById('logoPreview').innerHTML='<img src="'+d+'" alt="Logo">';}).catch(function(){alert('Error uploading logo.');});}
+    function removeLogo(){var c=getCustomization();c.companyLogo='';saveCustomizationData(c);document.getElementById('logoPreview').innerHTML='<span style="font-size:32px;color:var(--text-muted);">📷</span>';document.getElementById('logoUpload').value='';}
+    function handleBgUpload(e){var f=e.target.files[0];if(!f)return;resizeImage(f,1920,1080,0.7).then(function(d){var c=getCustomization();c.backgroundImage=d;c.backgroundPreset='';c.activePreset=undefined;saveCustomizationData(c);document.body.style.backgroundImage='url('+d+')';var bp=document.getElementById('bgPreview');bp.style.backgroundImage='url('+d+')';bp.textContent='';renderPresetGrid();}).catch(function(){alert('Error uploading background.');});}
+    function removeBackground(){var c=getCustomization();c.backgroundImage='';c.backgroundPreset='';c.activePreset=undefined;saveCustomizationData(c);document.body.style.backgroundImage='none';var bp=document.getElementById('bgPreview');bp.style.backgroundImage='none';bp.textContent='No background set';document.getElementById('bgUpload').value='';renderPresetGrid();}
+    function loadCustomizationForm(){
+      var c=getCustomization();document.getElementById('companyName').value=c.companyName||'';document.getElementById('companyAddress').value=c.companyAddress||'';
+      document.getElementById('companyPhone').value=c.companyPhone||'';document.getElementById('companyEmail').value=c.companyEmail||'';
+      if(c.companyLogo)document.getElementById('logoPreview').innerHTML='<img src="'+c.companyLogo+'" alt="Logo">';
+      var bp=document.getElementById('bgPreview');
+      if(c.backgroundImage){bp.style.backgroundImage='url('+c.backgroundImage+')';bp.textContent='';}
+      else if(c.backgroundPreset&&c.backgroundPreset!=='none'){bp.style.backgroundImage=c.backgroundPreset;bp.textContent='';}
+      renderThemeGrid();renderPresetGrid();
+    }
+    function saveCustomization(){var c=getCustomization();c.companyName=document.getElementById('companyName').value.trim();c.companyAddress=document.getElementById('companyAddress').value.trim();c.companyPhone=document.getElementById('companyPhone').value.trim();c.companyEmail=document.getElementById('companyEmail').value.trim();saveCustomizationData(c);alert('✅ Customizations saved!');}
+
+    // ============================================================
+    // INTERNET TIME
+    // ============================================================
+    function getInternetTime(){
+      var apis=[{url:'https://timeapi.io/api/time/current/zone?timeZone=UTC',parse:function(d){return new Date(d.dateTime+'Z').getTime();}},{url:'https://worldtimeapi.org/api/ip',parse:function(d){return new Date(d.utc_datetime).getTime();}}];
+      return apis.reduce(function(p,api){return p.then(function(r){if(r!==null)return r;var ctrl=new AbortController();var tid=setTimeout(function(){ctrl.abort();},5000);return fetch(api.url,{signal:ctrl.signal}).then(function(res){clearTimeout(tid);if(res.ok)return res.json().then(function(d){var t=api.parse(d);return(t&&!isNaN(t))?t:null;});return null;}).catch(function(){clearTimeout(tid);return null;});});},Promise.resolve(null)).then(function(r){
+        if(r!==null)return r;
+        var hUrls=['https://www.cloudflare.com/cdn-cgi/trace','https://cdn.jsdelivr.net/npm/xlsx@0.18.5/package.json','https://httpbin.org/get'];
+        return hUrls.reduce(function(p,url){return p.then(function(r){if(r!==null)return r;var ctrl=new AbortController();var tid=setTimeout(function(){ctrl.abort();},5000);return fetch(url,{method:'HEAD',signal:ctrl.signal}).then(function(res){clearTimeout(tid);var dh=res.headers.get('date');if(dh){var t=new Date(dh).getTime();if(!isNaN(t))return t;}return null;}).catch(function(){clearTimeout(tid);return null;});});},Promise.resolve(null));
+      });
+    }
+    function saveTimeSync(t){localStorage.setItem(TIME_SYNC_INTERNET_KEY,String(t));localStorage.setItem(TIME_SYNC_DEVICE_KEY,String(Date.now()));}
+    function getCurrentTime(){
+      return getInternetTime().then(function(it){
+        if(it!==null){saveTimeSync(it);return{time:it,source:'internet'};}
+        var lsi=parseInt(localStorage.getItem(TIME_SYNC_INTERNET_KEY)||'0'),lsd=parseInt(localStorage.getItem(TIME_SYNC_DEVICE_KEY)||'0');
+        if(!lsi||!lsd)return{time:null,source:'none'};var dn=Date.now(),el=dn-lsd;
+        if(el<-CLOCK_DRIFT_TOLERANCE)return{time:null,source:'tampered'};
+        var est=lsi+Math.max(0,el);localStorage.setItem(TIME_SYNC_DEVICE_KEY,String(dn));localStorage.setItem(TIME_SYNC_INTERNET_KEY,String(est));
+        return{time:est,source:'offline'};
+      });
+    }
+    function getCurrentTimeSync(){
+      var lsi=parseInt(localStorage.getItem(TIME_SYNC_INTERNET_KEY)||'0'),lsd=parseInt(localStorage.getItem(TIME_SYNC_DEVICE_KEY)||'0');
+      if(!lsi||!lsd)return null;var el=Date.now()-lsd;if(el<-CLOCK_DRIFT_TOLERANCE)return null;return lsi+Math.max(0,el);
+    }
+    function backgroundTimeSync(){return getInternetTime().then(function(t){if(t!==null)saveTimeSync(t);});}
+
+    // ============================================================
+    // PROMPT MODAL
+    // ============================================================
+    function showPromptModal(title,isPassword){
+      return new Promise(function(resolve){
+        var modal=document.getElementById('promptModal'),input=document.getElementById('promptInput');
+        var titleEl=document.getElementById('promptTitle'),tog=document.getElementById('togglePromptPassword');
+        var conf=document.getElementById('promptConfirm'),canc=document.getElementById('promptCancel');
+        titleEl.textContent=title;input.value='';input.type=isPassword?'password':'text';
+        tog.style.display=isPassword?'inline':'none';tog.textContent='👁';modal.style.display='flex';input.focus();
+        function cleanup(){modal.style.display='none';conf.removeEventListener('click',onC);canc.removeEventListener('click',onX);input.removeEventListener('keydown',onK);tog.removeEventListener('click',onT);}
+        function onC(){var v=input.value.trim();cleanup();resolve(v||null);}
+        function onX(){cleanup();resolve(null);}
+        function onK(e){if(e.key==='Enter')onC();if(e.key==='Escape')onX();}
+        function onT(){input.type=input.type==='password'?'text':'password';tog.textContent=input.type==='password'?'👁':'🙈';}
+        conf.addEventListener('click',onC);canc.addEventListener('click',onX);input.addEventListener('keydown',onK);tog.addEventListener('click',onT);
+      });
     }
 
     // ============================================================
     // PASSWORD VALIDATION
     // ============================================================
-    function isValidAdminAccess(password) {
-      const master = getMasterPassword();
-      const settings = getSettings();
-      const admin = settings.adminPassword;
-      const temp = localStorage.getItem(TEMP_PASSWORD_KEY);
-      const expiry = parseInt(localStorage.getItem(TEMP_PASSWORD_EXPIRY_KEY) || '0');
-      const now = Date.now();
-
-      if (password === master) return true;
-      if (admin && password === admin) return true;
-      if (temp && password === temp && now < expiry) return true;
-      return false;
+    function isValidAdminAccessSync(pw){if(pw===getMasterPassword())return true;var s=getSettings();if(s.adminPassword&&pw===s.adminPassword)return true;return false;}
+    function isValidAdminAccess(pw){
+      if(isValidAdminAccessSync(pw))return Promise.resolve(true);
+      var temp=localStorage.getItem(TEMP_PASSWORD_KEY),exp=parseInt(localStorage.getItem(TEMP_PASSWORD_EXPIRY_KEY)||'0');
+      if(temp&&pw===temp){return getCurrentTime().then(function(tr){if(tr.source==='tampered')return'tampered';if(tr.time===null)return'no-sync';if(tr.time<exp)return{valid:true,source:tr.source,daysLeft:Math.ceil((exp-tr.time)/86400000)};localStorage.removeItem(TEMP_PASSWORD_KEY);localStorage.removeItem(TEMP_PASSWORD_EXPIRY_KEY);return'expired';});}
+      return Promise.resolve(false);
     }
-
-    function checkLogin(password) {
-      return isValidAdminAccess(password);
-    }
+    function checkLogin(pw){return isValidAdminAccess(pw);}
 
     // ============================================================
-    // LOGIN MODAL
+    // LOGIN
     // ============================================================
-    function showLoginModal() {
-      document.getElementById('loginModal').style.display = 'flex';
-      document.getElementById('loginPassword').value = '';
-      document.getElementById('loginMessage').textContent = '';
-      document.getElementById('loginPassword').focus();
-    }
-
-    function hideLoginModal() {
-      document.getElementById('loginModal').style.display = 'none';
-    }
+    function showLoginModal(){document.getElementById('loginModal').style.display='flex';document.getElementById('loginPassword').value='';document.getElementById('loginMessage').textContent='';document.getElementById('loginPassword').focus();}
+    function hideLoginModal(){document.getElementById('loginModal').style.display='none';}
 
     // ============================================================
-    // SECTION NAVIGATION
+    // NAVIGATION
     // ============================================================
-    function showSection(id) {
-      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    function showSection(id){
+      document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
       document.getElementById(id).classList.add('active');
-
-      if (id === 'newBillSection') {
-        loadCustomerDropdowns();
-        clearBillForm();
-      } else if (id === 'historySection') {
-        loadCustomerDropdowns();
-        loadHistory();
-      } else if (id === 'customersSection') {
-        loadCustomersList();
-      } else if (id === 'settingsSection') {
-        loadSettings();
-      }
+      if(id==='newBillSection'){loadCustomerDropdowns();clearBillForm();}
+      else if(id==='historySection'){loadCustomerDropdowns();loadHistory();}
+      else if(id==='customersSection'){loadCustomersList();}
+      else if(id==='settingsSection'){loadSettings();}
+      else if(id==='customizeSection'){loadCustomizationForm();}
     }
 
     // ============================================================
     // SETTINGS
     // ============================================================
-    function loadSettings() {
-      const settings = getSettings();
-      document.getElementById('adminPricePerCubic').value = settings.pricePerCubic;
-      document.getElementById('adminMinCharge').value = settings.minCharge;
-      document.getElementById('adminPassword').value = '';
-    }
+    function loadSettings(){var s=getSettings();document.getElementById('adminPricePerCubic').value=s.pricePerCubic;document.getElementById('adminMinCharge').value=s.minCharge;document.getElementById('adminPassword').value='';}
+    function setCurrency(c){var s=getSettings();s.currency=c;saveSettingsData(s);updateCurrencyDisplay();loadHistory();alert('Currency changed to '+c);}
+    function updateCurrencyDisplay(){var s=getSettings(),sym='$';if(s.currency==='PHP')sym='₱';if(s.currency==='EUR')sym='€';document.getElementById('displayCurrencySymbol').textContent=sym;}
 
-    function setCurrency(currency) {
-      const settings = getSettings();
-      settings.currency = currency;
-      saveSettingsData(settings);
-      updateCurrencyDisplay();
-      loadHistory();
-      alert(`Currency changed to ${currency}`);
-    }
-
-    function updateCurrencyDisplay() {
-      const settings = getSettings();
-      let symbol = '$';
-      if (settings.currency === 'PHP') symbol = '₱';
-      if (settings.currency === 'EUR') symbol = '€';
-      document.getElementById('displayCurrencySymbol').textContent = symbol;
-    }
-
-    function saveSettings() {
-      const password = document.getElementById('adminPassword').value;
-
-      if (!isValidAdminAccess(password)) {
-        alert('Invalid password');
-        return;
-      }
-
-      const newPrice = parseFloat(document.getElementById('adminPricePerCubic').value) || DEFAULT_SETTINGS.pricePerCubic;
-      const newMinCharge = parseFloat(document.getElementById('adminMinCharge').value) || DEFAULT_SETTINGS.minCharge;
-
-      const settings = getSettings();
-      settings.pricePerCubic = newPrice;
-      settings.minCharge = newMinCharge;
-      saveSettingsData(settings);
-
-      alert('✅ Settings saved successfully!');
+    function saveSettings(){
+      var pw=document.getElementById('adminPassword').value;
+      return isValidAdminAccess(pw).then(function(r){
+        if(r==='tampered'){alert('⚠️ Clock manipulation detected.');return;}
+        if(r==='no-sync'){alert('⚠️ No time reference. Use master/admin password.');return;}
+        if(r!==true&&!(r&&r.valid===true)){alert('Invalid password');return;}
+        var s=getSettings();
+        s.pricePerCubic=parseFloat(document.getElementById('adminPricePerCubic').value)||DEFAULT_SETTINGS.pricePerCubic;
+        s.minCharge=parseFloat(document.getElementById('adminMinCharge').value)||DEFAULT_SETTINGS.minCharge;
+        saveSettingsData(s);alert('✅ Settings saved!');
+      });
     }
 
     // ============================================================
-    // MASTER PASSWORD SYSTEM
+    // MASTER PASSWORD
     // ============================================================
-    function confirmMasterPassword() {
-      const input = document.getElementById('masterPassword').value.trim();
-
-      if (input === getMasterPassword()) {
-        document.getElementById('masterPasswordActions').style.display = 'block';
-        document.getElementById('temporaryPasswordButtonContainer').style.display = 'block';
-        alert('Master access granted');
-      } else {
-        alert('Incorrect master password');
-      }
+    function confirmMasterPassword(){
+      var inp=document.getElementById('masterPassword').value.trim();
+      if(inp===getMasterPassword()){document.getElementById('masterPasswordActions').style.display='block';document.getElementById('temporaryPasswordButtonContainer').style.display='block';alert('Master access granted');}
+      else{alert('Incorrect master password');}
     }
-
-    function changeMasterPassword() {
-      const current = prompt('Enter current master password:');
-      if (current !== getMasterPassword()) {
-        alert('Incorrect current master password');
-        return;
-      }
-
-      const newPass = prompt('Enter new master password:');
-      if (!newPass) {
-        alert('Password cannot be empty');
-        return;
-      }
-
-      localStorage.setItem(MASTER_PASSWORD_KEY, newPass);
-      alert('Master password changed successfully');
+    function changeMasterPassword(){
+      return showPromptModal('Enter current master password:',true).then(function(cur){
+        if(!cur)return;if(cur!==getMasterPassword()){alert('Incorrect');return;}
+        return showPromptModal('Enter new master password:',true).then(function(np){
+          if(!np){alert('Cannot be empty');return;}
+          localStorage.setItem(MASTER_PASSWORD_KEY,np);alert('Changed successfully');
+          document.getElementById('masterPasswordActions').style.display='none';
+          document.getElementById('temporaryPasswordButtonContainer').style.display='none';showSection('menuSection');
+        });
+      });
     }
-
-    function showDefaultMasterPassword() {
-      alert('Default Master Password: ' + DEFAULT_MASTER_PASSWORD);
-    }
-
-    function restoreDefaultMasterPassword() {
-      if (!confirm('Restore default master password?')) return;
-      localStorage.removeItem(MASTER_PASSWORD_KEY);
-      alert('Master password restored to default (admin123)');
-    }
+    function showDefaultMasterPassword(){alert('Default: '+DEFAULT_MASTER_PASSWORD);}
+    function restoreDefaultMasterPassword(){if(!confirm('Restore default?'))return;localStorage.removeItem(MASTER_PASSWORD_KEY);alert('Restored to admin123');}
 
     // ============================================================
     // TEMPORARY PASSWORD
     // ============================================================
-    function createTempPasswordPrompt() {
-      const tempPwd = prompt('Enter a temporary password:');
-      if (tempPwd) {
-        localStorage.setItem(TEMP_PASSWORD_KEY, tempPwd);
-        localStorage.setItem(TEMP_PASSWORD_EXPIRY_KEY, String(Date.now() + THIRTY_DAYS_MS));
-        alert('Temporary password created!');
-      }
+    function createTempPasswordPrompt(){
+      return getCurrentTime().then(function(tr){
+        if(tr.source==='tampered'){alert('❌ Clock manipulation.');return;}
+        if(tr.time===null){alert('❌ No time reference. Connect to internet first.');return;}
+        return showPromptModal('Enter a temporary password:',true).then(function(tp){
+          if(tp){var exp=tr.time+THIRTY_DAYS_MS;localStorage.setItem(TEMP_PASSWORD_KEY,tp);localStorage.setItem(TEMP_PASSWORD_EXPIRY_KEY,String(exp));
+            var ed=new Date(exp).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+            alert('✅ Created!\nExpires: '+ed+'\n'+(tr.source==='internet'?'(internet verified)':'(offline — recalibrates when online)'));updateTimerDisplay();}
+        });
+      });
     }
-
-    function deleteTempPassword() {
-      if (!confirm('Delete the temporary password and revoke its access?')) return;
-      localStorage.removeItem(TEMP_PASSWORD_KEY);
-      localStorage.removeItem(TEMP_PASSWORD_EXPIRY_KEY);
-      alert('Temporary password deleted. Access revoked.');
-    }
+    function deleteTempPassword(){if(!confirm('Delete temporary password?'))return;localStorage.removeItem(TEMP_PASSWORD_KEY);localStorage.removeItem(TEMP_PASSWORD_EXPIRY_KEY);alert('Deleted.');updateTimerDisplay();}
 
     // ============================================================
     // RESTORE DEFAULTS
     // ============================================================
-    function restoreDefaults() {
-      if (!confirm('Restore all settings to default? This cannot be undone.')) return;
-
-      localStorage.removeItem(STORAGE.settings);
-      localStorage.removeItem(TEMP_PASSWORD_KEY);
-      localStorage.removeItem(TEMP_PASSWORD_EXPIRY_KEY);
-
-      alert('All settings restored to default.');
-      location.reload();
+    function restoreDefaults(){
+      if(!confirm('⚠️ Reset ALL settings, customers, history?\nMaster password preserved.\nCannot be undone.'))return;
+      var mp=localStorage.getItem(MASTER_PASSWORD_KEY),si=localStorage.getItem(TIME_SYNC_INTERNET_KEY),sd=localStorage.getItem(TIME_SYNC_DEVICE_KEY);
+      localStorage.removeItem(STORAGE.settings);localStorage.removeItem(STORAGE.customers);localStorage.removeItem(STORAGE.bills);
+      localStorage.removeItem(TEMP_PASSWORD_KEY);localStorage.removeItem(TEMP_PASSWORD_EXPIRY_KEY);localStorage.removeItem(CUSTOMIZE_KEY);
+      if(mp)localStorage.setItem(MASTER_PASSWORD_KEY,mp);if(si)localStorage.setItem(TIME_SYNC_INTERNET_KEY,si);if(sd)localStorage.setItem(TIME_SYNC_DEVICE_KEY,sd);
+      alert('Restored to default.');location.reload();
     }
 
     // ============================================================
-    // PASSWORD FIELD AUTO-CLEAR
+    // PASSWORD AUTO-CLEAR
     // ============================================================
-    function clearPasswordFields() {
-      const passwordFields = document.querySelectorAll(
-        'input[type="password"][data-clear-on-confirm="true"]'
-      );
-      passwordFields.forEach(field => field.value = '');
-    }
-
-    function confirmWithClear(confirmFunction) {
-      return function (...args) {
-        confirmFunction(...args);
-        clearPasswordFields();
-      };
-    }
-
-    // Wrap confirm functions to auto-clear password fields after execution
-    confirmMasterPassword = confirmWithClear(confirmMasterPassword);
-    saveSettings = confirmWithClear(saveSettings);
+    function clearPasswordFields(){document.querySelectorAll('input[type="password"][data-clear-on-confirm="true"]').forEach(function(f){f.value='';});}
+    function confirmWithClear(fn){return function(){var args=arguments;var result=fn.apply(this,args);if(result&&typeof result.then==='function'){return result.then(function(r){clearPasswordFields();return r;});}clearPasswordFields();return result;};}
+    confirmMasterPassword=confirmWithClear(confirmMasterPassword);
+    saveSettings=confirmWithClear(saveSettings);
 
     // ============================================================
     // CUSTOMERS
     // ============================================================
-    function addCustomer() {
-      const name = document.getElementById('newCustomerName').value.trim();
-      if (!name) return alert('Please enter customer name');
-
-      const customers = getData('customers');
-      if (customers.find(c => c.name.toLowerCase() === name.toLowerCase())) {
-        return alert('Customer already exists!');
-      }
-
-      customers.push({
-        id: Date.now(),
-        name: name,
-        createdAt: new Date().toISOString()
-      });
-
-      saveData('customers', customers);
-      document.getElementById('newCustomerName').value = '';
-      loadCustomersList();
-      loadCustomerDropdowns();
-      alert('✅ Customer added!');
+    function addCustomer(){
+      var n=document.getElementById('newCustomerName').value.trim();if(!n)return alert('Enter customer name');
+      var custs=getData('customers');if(custs.find(function(c){return c.name.toLowerCase()===n.toLowerCase();}))return alert('Already exists!');
+      custs.push({id:Date.now(),name:n,createdAt:new Date().toISOString()});saveData('customers',custs);
+      document.getElementById('newCustomerName').value='';loadCustomersList();loadCustomerDropdowns();alert('✅ Added!');
     }
-
-    function deleteCustomer(id) {
-      if (!confirm('Delete this customer and all their bills?')) return;
-
-      const customers = getData('customers').filter(c => c.id !== id);
-      const bills = getData('bills').filter(b => b.customerId !== id);
-
-      saveData('customers', customers);
-      saveData('bills', bills);
-      loadCustomersList();
-      loadCustomerDropdowns();
+    function deleteCustomer(id){
+      if(!confirm('Delete customer and all their bills?'))return;
+      saveData('customers',getData('customers').filter(function(c){return c.id!==id;}));
+      saveData('bills',getData('bills').filter(function(b){return b.customerId!==id;}));
+      loadCustomersList();loadCustomerDropdowns();
     }
-
-    function loadCustomersList(sortBy = 'name', order = 'asc') {
-      let customers = getData('customers');
-
-      const searchTerm = document.getElementById('customerSearch')?.value.toLowerCase() || '';
-      if (searchTerm) {
-        customers = customers.filter(c => c.name.toLowerCase().includes(searchTerm));
-      }
-
-      customers.sort((a, b) => {
-        if (sortBy === 'name') {
-          return order === 'asc'
-            ? a.name.localeCompare(b.name)
-            : b.name.localeCompare(a.name);
-        } else if (sortBy === 'date') {
-          return order === 'asc'
-            ? new Date(a.createdAt) - new Date(b.createdAt)
-            : new Date(b.createdAt) - new Date(a.createdAt);
-        }
-        return 0;
-      });
-
-      const container = document.getElementById('customersList');
-
-      if (customers.length === 0) {
-        container.innerHTML = '<p style="padding:20px; text-align:center; color:#666;">No customers found.</p>';
-        return;
-      }
-
-      container.innerHTML = customers.map(c => `
-        <div style="padding:15px; border:1px solid #eee; margin:10px 0; border-radius:8px;">
-          <strong>${c.name}</strong><br>
-          <small>Added: ${new Date(c.createdAt).toLocaleDateString()}</small>
-          <div style="margin-top:10px;">
-            <button onclick="viewCustomerHistory(${c.id})" style="padding:5px 10px; font-size:12px;">View Bills</button>
-            <button onclick="deleteCustomer(${c.id})" style="padding:5px 10px; font-size:12px; background:#dc3545;">Delete</button>
-          </div>
-        </div>
-      `).join('');
+    function loadCustomersList(sortBy,order){
+      sortBy=sortBy||'name';order=order||'asc';
+      var custs=getData('customers'),el=document.getElementById('customerSearch');
+      var st=el?el.value.toLowerCase():'';
+      if(st)custs=custs.filter(function(c){return c.name.toLowerCase().indexOf(st)!==-1;});
+      custs.sort(function(a,b){if(sortBy==='name')return order==='asc'?a.name.localeCompare(b.name):b.name.localeCompare(a.name);if(sortBy==='date')return order==='asc'?new Date(a.createdAt)-new Date(b.createdAt):new Date(b.createdAt)-new Date(a.createdAt);return 0;});
+      var ct=document.getElementById('customersList');
+      if(!custs.length){ct.innerHTML='<p style="padding:20px;text-align:center;color:var(--text-muted);">No customers found.</p>';return;}
+      ct.innerHTML=custs.map(function(c){return'<div style="padding:15px;border:1px solid var(--bg-card-border);margin:10px 0;border-radius:8px;background:var(--bg-container);"><strong style="color:var(--text-primary);">'+c.name+'</strong><br><small style="color:var(--text-secondary);">Added: '+new Date(c.createdAt).toLocaleDateString()+'</small><div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;"><button onclick="viewCustomerHistory('+c.id+')" style="padding:8px 12px;font-size:12px;width:auto;flex:1;min-width:80px;">View Bills</button><button onclick="deleteCustomer('+c.id+')" style="padding:8px 12px;font-size:12px;background:var(--bg-danger);width:auto;flex:1;min-width:80px;">Delete</button></div></div>';}).join('');
     }
-
-    function sortCustomers(by, order) {
-      loadCustomersList(by, order);
+    function sortCustomers(b,o){loadCustomersList(b,o);}
+    function filterCustomers(){loadCustomersList();}
+    function viewCustomerHistory(cid){showSection('historySection');document.getElementById('historyFilter').value=cid;loadFilteredHistory();}
+    function loadCustomerDropdowns(){
+      var custs=getData('customers');
+      document.getElementById('billCustomer').innerHTML='<option value="">-- Select Customer --</option>'+custs.map(function(c){return'<option value="'+c.id+'">'+c.name+'</option>';}).join('');
+      document.getElementById('historyFilter').innerHTML='<option value="all">All Customers</option>'+custs.map(function(c){return'<option value="'+c.id+'">'+c.name+'</option>';}).join('');
     }
-
-    function filterCustomers() {
-      loadCustomersList();
-    }
-
-    function viewCustomerHistory(customerId) {
-      showSection('historySection');
-      document.getElementById('historyFilter').value = customerId;
-      loadFilteredHistory();
-    }
-
-    function loadCustomerDropdowns() {
-      const customers = getData('customers');
-
-      const billOptions = '<option value="">-- Select Customer --</option>' +
-        customers.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-
-      const historyOptions = '<option value="all">All Customers</option>' +
-        customers.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-
-      document.getElementById('billCustomer').innerHTML = billOptions;
-      document.getElementById('historyFilter').innerHTML = historyOptions;
-    }
-
-    function filterBillCustomers() {
-      const searchTerm = document.getElementById('billCustomerSearch').value.toLowerCase();
-      const customers = getData('customers');
-      const select = document.getElementById('billCustomer');
-
-      select.innerHTML = '<option value="">-- Select Customer --</option>';
-      customers.forEach(c => {
-        if (c.name.toLowerCase().includes(searchTerm)) {
-          const opt = document.createElement('option');
-          opt.value = c.id;
-          opt.textContent = c.name;
-          select.appendChild(opt);
-        }
-      });
+    function filterBillCustomers(){
+      var st=document.getElementById('billCustomerSearch').value.toLowerCase(),custs=getData('customers'),sel=document.getElementById('billCustomer');
+      sel.innerHTML='<option value="">-- Select Customer --</option>';
+      custs.forEach(function(c){if(c.name.toLowerCase().indexOf(st)!==-1){var o=document.createElement('option');o.value=c.id;o.textContent=c.name;sel.appendChild(o);}});
     }
 
     // ============================================================
-    // BILLING
+    // BILLING (FIXED COMPUTATION)
     // ============================================================
-    function loadLastReading() {
-      const customerId = parseInt(document.getElementById('billCustomer').value);
-      if (!customerId) {
-        document.getElementById('prevReading').value = 0;
-        return;
-      }
-
-      const bills = getData('bills').filter(b => b.customerId === customerId);
-      if (bills.length > 0) {
-        const lastBill = bills.sort((a, b) => new Date(b.date) - new Date(a.date))[0];
-        document.getElementById('prevReading').value = lastBill.presReading;
-      } else {
-        document.getElementById('prevReading').value = 0;
-      }
-      calculateTotal();
+    function loadLastReading(){
+      var cid=parseInt(document.getElementById('billCustomer').value);if(!cid){document.getElementById('prevReading').value=0;return;}
+      var bills=getData('bills').filter(function(b){return b.customerId===cid;});
+      document.getElementById('prevReading').value=bills.length>0?bills.sort(function(a,b){return new Date(b.date)-new Date(a.date);})[0].presReading:0;calculateTotal();
     }
 
-    function calculateTotal() {
-      const settings = getSettings();
-      const prev = parseFloat(document.getElementById('prevReading').value) || 0;
-      const pres = parseFloat(document.getElementById('presReading').value) || 0;
-      const used = prev - pres;
-
-      const totalDue = (used <= 0) ? settings.minCharge : used * settings.pricePerCubic;
-      document.getElementById('displayTotal').textContent = totalDue.toFixed(2);
+    function calculateTotal(){
+      var s=getSettings();
+      var prev=parseFloat(document.getElementById('prevReading').value)||0;
+      var pres=parseFloat(document.getElementById('presReading').value)||0;
+      var used=pres-prev;
+      var totalUsed=Math.max(0,used);
+      var computedAmount=totalUsed*s.pricePerCubic;
+      var totalDue=Math.max(computedAmount,s.minCharge);
+      document.getElementById('displayTotal').textContent=totalDue.toFixed(2);
     }
 
-    function clearBillForm() {
-      document.getElementById('billCustomer').value = '';
-      document.getElementById('prevReading').value = 0;
-      document.getElementById('presReading').value = '';
-      document.getElementById('displayTotal').textContent = '0.00';
-      document.getElementById('billDate').value = new Date().toISOString().split('T')[0];
+    function clearBillForm(){
+      document.getElementById('billCustomer').value='';document.getElementById('prevReading').value=0;
+      document.getElementById('presReading').value='';document.getElementById('displayTotal').textContent='0.00';
+      document.getElementById('billDate').value=new Date().toISOString().split('T')[0];
     }
 
-    function saveBill(shouldPrint) {
-      const customerId = parseInt(document.getElementById('billCustomer').value);
-      if (!customerId) return alert('Please select a customer');
-
-      const presReading = parseFloat(document.getElementById('presReading').value);
-      if (isNaN(presReading)) return alert('Please enter present reading');
-
-      const settings = getSettings();
-      const prevReading = parseFloat(document.getElementById('prevReading').value) || 0;
-      const used = presReading - prevReading;
-      const totalDue = (used <= 0) ? settings.minCharge : used * settings.pricePerCubic;
-
-      const bill = {
-        id: Date.now(),
-        customerId: customerId,
-        date: document.getElementById('billDate').value,
-        prevReading: prevReading,
-        presReading: presReading,
-        totalUsed: Math.max(0, used),
-        pricePerCubic: settings.pricePerCubic,
-        totalDue: totalDue,
-        createdAt: new Date().toISOString()
-      };
-
-      const bills = getData('bills');
-      bills.push(bill);
-      saveData('bills', bills);
-
-      if (shouldPrint) {
-        printBill(bill);
-      } else {
-        alert('✅ Bill saved successfully!');
-      }
-
-      clearBillForm();
+    function saveBill(shouldPrint){
+      var cid=parseInt(document.getElementById('billCustomer').value);if(!cid)return alert('Select a customer');
+      var pres=parseFloat(document.getElementById('presReading').value);if(isNaN(pres))return alert('Enter present reading');
+      var s=getSettings();
+      var prev=parseFloat(document.getElementById('prevReading').value)||0;
+      var used=pres-prev;
+      var totalUsed=Math.max(0,used);
+      var computedAmount=totalUsed*s.pricePerCubic;
+      var totalDue=Math.max(computedAmount,s.minCharge);
+      var bill={id:Date.now(),customerId:cid,date:document.getElementById('billDate').value,prevReading:prev,presReading:pres,totalUsed:totalUsed,pricePerCubic:s.pricePerCubic,totalDue:totalDue,createdAt:new Date().toISOString()};
+      var bills=getData('bills');bills.push(bill);saveData('bills',bills);
+      if(shouldPrint)printBill(bill);else alert('✅ Saved!');clearBillForm();
     }
 
     // ============================================================
     // HISTORY
     // ============================================================
-    function loadHistory(sortBy = 'date', order = 'desc') {
-      loadFilteredHistory(sortBy, order);
+    var lastFilteredBills=[];
+    function loadHistory(s,o){loadFilteredHistory(s||'date',o||'desc');}
+    function loadFilteredHistory(sortBy,order){
+      sortBy=sortBy||'date';order=order||'desc';
+      var bills=getData('bills'),custs=getData('customers'),f=document.getElementById('historyFilter').value;
+      if(f!=='all')bills=bills.filter(function(b){return b.customerId===parseInt(f);});
+      var el=document.getElementById('historySearch'),st=el?el.value.toLowerCase():'';
+      if(st)bills=bills.filter(function(b){var c=custs.find(function(x){return x.id===b.customerId;});return(c?c.name.toLowerCase():'').indexOf(st)!==-1||new Date(b.date).toLocaleDateString().toLowerCase().indexOf(st)!==-1;});
+      bills.sort(function(a,b){if(sortBy==='date')return order==='asc'?new Date(a.date)-new Date(b.date):new Date(b.date)-new Date(a.date);if(sortBy==='amount')return order==='asc'?a.totalDue-b.totalDue:b.totalDue-a.totalDue;return 0;});
+      lastFilteredBills=bills;var ct=document.getElementById('historyList');
+      if(!bills.length){ct.innerHTML='<p style="padding:20px;text-align:center;color:var(--text-muted);">No bills found.</p>';return;}
+      ct.innerHTML=bills.map(function(b){var c=custs.find(function(x){return x.id===b.customerId;});return'<div style="padding:15px;border:1px solid var(--bg-card-border);margin:10px 0;border-radius:8px;background:var(--bg-container);"><strong style="color:var(--text-primary);">'+(c?c.name:'Unknown')+'</strong> • <span style="color:var(--text-secondary);">'+new Date(b.date).toLocaleDateString()+'</span><br><span style="font-size:clamp(12px,3vw,14px);color:var(--text-secondary);">Prev: '+b.prevReading+' → Pres: '+b.presReading+' = '+b.totalUsed+' m³</span><br><strong style="color:var(--text-primary);">Total: '+formatMoney(b.totalDue)+'</strong><br><div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;"><button onclick="printBillById('+b.id+')" style="padding:8px 12px;font-size:12px;width:auto;flex:1;min-width:70px;">🖨 Print</button><button onclick="deleteBill('+b.id+')" style="padding:8px 12px;font-size:12px;background:var(--bg-danger);width:auto;flex:1;min-width:70px;">🗑 Delete</button></div></div>';}).join('');
+    }
+    function sortHistory(b,o){loadFilteredHistory(b,o);}
+    function filterHistory(){loadFilteredHistory();}
+    function deleteBill(id){if(!confirm('Delete bill?'))return;saveData('bills',getData('bills').filter(function(b){return b.id!==id;}));loadFilteredHistory();}
+    function printBillById(id){var b=getData('bills').find(function(x){return x.id===id;});if(b)printBill(b);}
+
+    // ============================================================
+    // RECEIPT
+    // ============================================================
+    function buildReceiptHeader(){
+      var c=getCustomization(),h='';
+      if(c.companyLogo)h+='<div style="text-align:center;margin-bottom:8px;"><img src="'+c.companyLogo+'" style="max-width:80px;max-height:80px;border-radius:8px;" alt="Logo"></div>';
+      if(c.companyName)h+='<div style="text-align:center;font-size:18px;font-weight:900;margin-bottom:2px;">'+c.companyName+'</div>';
+      else h+='<div style="text-align:center;font-size:18px;font-weight:900;margin-bottom:2px;">💧 WATER BILL</div>';
+      if(c.companyAddress)h+='<div style="text-align:center;font-size:11px;color:#555;margin-bottom:1px;">'+c.companyAddress+'</div>';
+      var contacts=[c.companyPhone,c.companyEmail].filter(Boolean).join(' • ');
+      if(contacts)h+='<div style="text-align:center;font-size:10px;color:#666;">'+contacts+'</div>';
+      return h;
     }
 
-    function loadFilteredHistory(sortBy = 'date', order = 'desc') {
-      let bills = getData('bills');
-      const customers = getData('customers');
-
-      const filter = document.getElementById('historyFilter').value;
-      if (filter !== 'all') {
-        bills = bills.filter(b => b.customerId === parseInt(filter));
-      }
-
-      const searchTerm = document.getElementById('historySearch')?.value.toLowerCase() || '';
-      if (searchTerm) {
-        bills = bills.filter(bill => {
-          const customer = customers.find(c => c.id === bill.customerId);
-          const customerName = customer ? customer.name.toLowerCase() : '';
-          const dateStr = new Date(bill.date).toLocaleDateString().toLowerCase();
-          return customerName.includes(searchTerm) || dateStr.includes(searchTerm);
-        });
-      }
-
-      bills.sort((a, b) => {
-        if (sortBy === 'date') {
-          return order === 'asc'
-            ? new Date(a.date) - new Date(b.date)
-            : new Date(b.date) - new Date(a.date);
-        } else if (sortBy === 'amount') {
-          return order === 'asc' ? a.totalDue - b.totalDue : b.totalDue - a.totalDue;
-        }
-        return 0;
-      });
-
-      const container = document.getElementById('historyList');
-
-      if (bills.length === 0) {
-        container.innerHTML = '<p style="padding:20px; text-align:center; color:#666;">No bills found.</p>';
-        return;
-      }
-
-      container.innerHTML = bills.map(bill => {
-        const customer = customers.find(c => c.id === bill.customerId);
-        const customerName = customer ? customer.name : 'Unknown';
-        const formattedAmount = formatMoney(bill.totalDue);
-
-        return `
-          <div style="padding:15px; border:1px solid #eee; margin:10px 0; border-radius:8px;">
-            <strong>${customerName}</strong> • ${new Date(bill.date).toLocaleDateString()}<br>
-            Prev: ${bill.prevReading} → Pres: ${bill.presReading} = ${bill.totalUsed} m³<br>
-            <strong>Total Due: ${formattedAmount}</strong><br>
-            <div style="margin-top:10px;">
-              <button onclick="printBillById(${bill.id})" style="padding:5px 10px; font-size:12px;">🖨 Print</button>
-              <button onclick="deleteBill(${bill.id})" style="padding:5px 10px; font-size:12px; background:#dc3545;">🗑 Delete</button>
-            </div>
-          </div>
-        `;
-      }).join('');
+    function printBill(bill){
+      var custs=getData('customers'),c=custs.find(function(x){return x.id===bill.customerId;});
+      var cn=c?c.name:'Unknown',s=getSettings(),cf=getCurrencyFormatter();
+      var isMin=bill.totalUsed<=0||(bill.totalUsed*s.pricePerCubic)<s.minCharge;
+      var html='<div style="font-family:\'Segoe UI\',Arial,sans-serif;padding:12px;width:80mm;color:#222;">'+
+        buildReceiptHeader()+
+        '<div style="text-align:center;margin:8px 0;padding:6px;background:#f0f0f0;border-radius:4px;"><div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:2px;">Official Billing</div></div>'+
+        '<hr style="border:none;border-top:1px solid #ddd;margin:8px 0;">'+
+        '<table style="width:100%;font-size:12px;border-collapse:collapse;border:none;margin:6px 0;">'+
+        '<tr><td style="padding:3px 0;color:#666;border:none;">Customer</td><td style="text-align:right;font-weight:700;padding:3px 0;border:none;">'+cn+'</td></tr>'+
+        '<tr><td style="padding:3px 0;color:#666;border:none;">Bill Date</td><td style="text-align:right;padding:3px 0;border:none;">'+new Date(bill.date).toLocaleDateString()+'</td></tr>'+
+        '<tr><td style="padding:3px 0;color:#666;border:none;">Billing Period</td><td style="text-align:right;padding:3px 0;border:none;">'+new Date(bill.date).toLocaleDateString('en-US',{month:'long',year:'numeric'})+'</td></tr></table>'+
+        '<hr style="border:none;border-top:1px solid #ddd;margin:8px 0;">'+
+        '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#444;margin-bottom:6px;">Meter Reading</div>'+
+        '<table style="width:100%;font-size:12px;border-collapse:collapse;border:none;">'+
+        '<tr style="background:#f8f8f8;"><td style="padding:5px 8px;border:none;">Previous</td><td style="text-align:right;padding:5px 8px;font-weight:600;border:none;">'+bill.prevReading+' m³</td></tr>'+
+        '<tr><td style="padding:5px 8px;border:none;">Present</td><td style="text-align:right;padding:5px 8px;font-weight:600;border:none;">'+bill.presReading+' m³</td></tr>'+
+        '<tr style="background:#f8f8f8;"><td style="padding:5px 8px;font-weight:700;border:none;">Consumption</td><td style="text-align:right;padding:5px 8px;font-weight:700;border:none;">'+bill.totalUsed+' m³</td></tr></table>'+
+        '<hr style="border:none;border-top:1px solid #ddd;margin:8px 0;">'+
+        '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#444;margin-bottom:6px;">Charges</div>'+
+        '<table style="width:100%;font-size:12px;border-collapse:collapse;border:none;">'+
+        '<tr><td style="padding:4px 0;color:#555;border:none;">Rate per m³</td><td style="text-align:right;padding:4px 0;border:none;">'+cf.format(s.pricePerCubic)+'</td></tr>'+
+        '<tr><td style="padding:4px 0;color:#555;border:none;">Computed Amount</td><td style="text-align:right;padding:4px 0;border:none;">'+cf.format(bill.totalUsed*s.pricePerCubic)+'</td></tr>'+
+        '<tr><td style="padding:4px 0;color:#555;border:none;">Minimum Charge</td><td style="text-align:right;padding:4px 0;border:none;">'+cf.format(s.minCharge)+'</td></tr>'+
+        (isMin?'<tr><td colspan="2" style="padding:4px 0;font-size:10px;color:#e65100;text-align:center;border:none;">* Minimum charge applied</td></tr>':'')+
+        '</table>'+
+        '<div style="margin:12px 0;padding:12px;background:#1a1a1a;color:white;border-radius:6px;text-align:center;"><div style="font-size:10px;text-transform:uppercase;letter-spacing:2px;opacity:0.7;margin-bottom:4px;">Total Amount Due</div><div style="font-size:22px;font-weight:900;letter-spacing:1px;">'+cf.format(bill.totalDue)+'</div></div>'+
+        '<hr style="border:none;border-top:1px dashed #ccc;margin:8px 0;">'+
+        '<div style="text-align:center;font-size:10px;color:#999;line-height:1.6;">Thank you for your prompt payment!<br>Printed: '+new Date().toLocaleString()+'<br>'+(getCustomization().companyName?getCustomization().companyName+' • ':'')+
+        (getCustomization().companyPhone||'')+'</div></div>';
+      document.getElementById('printReceipt').innerHTML=html;window.print();document.getElementById('printReceipt').innerHTML='';
     }
 
-    function sortHistory(by, order) {
-      loadFilteredHistory(by, order);
-    }
-
-    function filterHistory() {
-      loadFilteredHistory();
-    }
-
-    function deleteBill(id) {
-      if (!confirm('Delete this bill?')) return;
-      const bills = getData('bills').filter(b => b.id !== id);
-      saveData('bills', bills);
-      loadFilteredHistory();
-    }
-
-    function printBillById(id) {
-      const bill = getData('bills').find(b => b.id === id);
-      if (bill) printBill(bill);
+    function printAllShownBills(){
+      if(!lastFilteredBills.length){alert('No bills to print');return;}
+      var custs=getData('customers'),s=getSettings(),cf=getCurrencyFormatter(),totalSum=0;
+      var rows=lastFilteredBills.map(function(b,i){var c=custs.find(function(x){return x.id===b.customerId;});totalSum+=b.totalDue;
+        return'<tr'+(i%2===0?' style="background:#f8f8f8;"':'')+'><td style="padding:5px 4px;font-size:11px;border:none;">'+(i+1)+'</td><td style="padding:5px 4px;font-size:11px;border:none;">'+(c?c.name:'Unknown')+'</td><td style="padding:5px 4px;font-size:11px;border:none;">'+new Date(b.date).toLocaleDateString()+'</td><td style="padding:5px 4px;font-size:11px;text-align:right;border:none;">'+b.totalUsed+' m³</td><td style="padding:5px 4px;font-size:11px;text-align:right;border:none;">'+cf.format(b.totalDue)+'</td></tr>';}).join('');
+      var fv=document.getElementById('historyFilter').value;
+      var fn=fv!=='all'?((custs.find(function(c){return c.id===parseInt(fv);}))||{}).name||'':'All Customers';
+      var html='<div style="font-family:\'Segoe UI\',Arial,sans-serif;padding:12px;width:80mm;color:#222;">'+buildReceiptHeader()+
+        '<div style="text-align:center;margin:10px 0;padding:6px;background:#f0f0f0;border-radius:4px;"><div style="font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:2px;">Billing Report</div><div style="font-size:10px;color:#777;">Filter: '+fn+'</div></div>'+
+        '<table style="width:100%;border-collapse:collapse;border:none;margin:8px 0;"><thead><tr style="background:#333;color:white;"><th style="padding:5px 4px;font-size:10px;text-align:left;border:none;">#</th><th style="padding:5px 4px;font-size:10px;text-align:left;border:none;">Customer</th><th style="padding:5px 4px;font-size:10px;text-align:left;border:none;">Date</th><th style="padding:5px 4px;font-size:10px;text-align:right;border:none;">Used</th><th style="padding:5px 4px;font-size:10px;text-align:right;border:none;">Amount</th></tr></thead><tbody>'+rows+'</tbody></table>'+
+        '<div style="margin:10px 0;padding:10px;background:#1a1a1a;color:white;border-radius:6px;"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span>Total Bills:</span><strong>'+lastFilteredBills.length+'</strong></div><div style="display:flex;justify-content:space-between;font-size:14px;font-weight:900;"><span>Grand Total:</span><span>'+cf.format(totalSum)+'</span></div></div>'+
+        '<div style="text-align:center;font-size:9px;color:#999;margin-top:8px;">Printed: '+new Date().toLocaleString()+'</div></div>';
+      document.getElementById('printReceipt').innerHTML=html;window.print();document.getElementById('printReceipt').innerHTML='';
     }
 
     // ============================================================
-    // PRINT RECEIPT
+    // EXPORT
     // ============================================================
-    function printBill(bill) {
-      const customers = getData('customers');
-      const customer = customers.find(c => c.id === bill.customerId);
-      const customerName = customer ? customer.name : 'Unknown';
-      const settings = getSettings();
-
-      const currencyFormatter = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: settings.currency === 'PHP' ? 'PHP' :
-                  settings.currency === 'EUR' ? 'EUR' : 'USD'
-      });
-
-      const receiptHTML = `
-        <div style="font-family: Arial; padding: 10px; width: 80mm;">
-          <h2 style="text-align:center; margin-bottom:5px;">💧 WATER BILL</h2>
-          <div style="text-align:center; margin-bottom:15px; font-size:14px;">
-            ${new Date(bill.date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-          </div>
-          <hr style="border: 1px dashed #000; margin: 10px 0;">
-          <p><strong>Customer:</strong> ${customerName}</p>
-          <p><strong>Date:</strong> ${new Date(bill.date).toLocaleDateString()}</p>
-          <hr style="border: 1px dashed #000; margin: 10px 0;">
-          <table style="width:100%; font-size:14px;">
-            <tr><td>Previous Reading:</td><td style="text-align:right;">${bill.prevReading} m³</td></tr>
-            <tr><td>Present Reading:</td><td style="text-align:right;">${bill.presReading} m³</td></tr>
-            <tr><td>Total Used:</td><td style="text-align:right;">${bill.totalUsed} m³</td></tr>
-            <tr><td>Rate:</td><td style="text-align:right;">${currencyFormatter.format(settings.pricePerCubic)}/m³</td></tr>
-          </table>
-          <hr style="border: 1px dashed #000; margin: 10px 0;">
-          <div style="text-align:center; font-size:18px; font-weight:bold; margin:10px 0;">
-            TOTAL DUE: ${currencyFormatter.format(bill.totalDue)}
-          </div>
-          <div style="text-align:center; font-size:12px; margin-top:20px;">
-            Thank you for your payment!<br>
-            Printed: ${new Date().toLocaleString()}
-          </div>
-        </div>
-      `;
-
-      document.getElementById('printReceipt').innerHTML = receiptHTML;
-      window.print();
+    function exportToExcel(){
+      var bills=getData('bills'),custs=getData('customers'),s=getSettings();if(!bills.length){alert('No bills');return;}
+      var sym='$';if(s.currency==='PHP')sym='₱';if(s.currency==='EUR')sym='€';
+      var data=[['Customer','Date','Prev (m³)','Pres (m³)','Used (m³)','Rate ('+sym+'/m³)','Total ('+sym+')']];
+      bills.forEach(function(b){var c=custs.find(function(x){return x.id===b.customerId;});data.push([c?c.name:'Unknown',b.date,b.prevReading,b.presReading,b.totalUsed,b.pricePerCubic,b.totalDue]);});
+      var ws=XLSX.utils.aoa_to_sheet(data),wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Water Bills');
+      ws['!cols']=[{wch:25},{wch:12},{wch:12},{wch:12},{wch:10},{wch:15},{wch:15}];
+      XLSX.writeFile(wb,'water-bills-'+s.currency+'-'+new Date().toISOString().split('T')[0]+'.xlsx');
     }
 
     // ============================================================
-    // EXPORT TO EXCEL
+    // TIMER
     // ============================================================
-    function exportToExcel() {
-      const bills = getData('bills');
-      const customers = getData('customers');
-      const settings = getSettings();
-
-      if (bills.length === 0) {
-        alert('No bills to export');
-        return;
-      }
-
-      let currencySymbol = '$';
-      if (settings.currency === 'PHP') currencySymbol = '₱';
-      if (settings.currency === 'EUR') currencySymbol = '€';
-
-      const headers = [
-        'Customer Name', 'Date', 'Previous (m³)', 'Present (m³)',
-        'Used (m³)', `Price/${currencySymbol} per m³`, `Total Due (${currencySymbol})`
-      ];
-
-      const data = [headers];
-      bills.forEach(bill => {
-        const customer = customers.find(c => c.id === bill.customerId);
-        data.push([
-          customer ? customer.name : 'Unknown',
-          bill.date, bill.prevReading, bill.presReading,
-          bill.totalUsed, bill.pricePerCubic, bill.totalDue
-        ]);
-      });
-
-      const ws = XLSX.utils.aoa_to_sheet(data);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, 'Water Bills');
-
-      ws['!cols'] = [
-        { wch: 25 }, { wch: 12 }, { wch: 12 },
-        { wch: 12 }, { wch: 10 }, { wch: 15 }, { wch: 15 }
-      ];
-
-      const filename = `water-bills-${settings.currency}-${new Date().toISOString().split('T')[0]}.xlsx`;
-      XLSX.writeFile(wb, filename);
+    var timerVisible=localStorage.getItem(TIMER_VISIBLE_KEY)!=='false';
+    function initTimer(){
+      var display=document.getElementById('timerDisplay'),toggle=document.getElementById('timerToggle');
+      if(!timerVisible){display.classList.add('hidden');toggle.textContent='⏱';}
+      else{display.classList.remove('hidden');toggle.textContent='✕';}
+      toggle.addEventListener('click',function(){timerVisible=!timerVisible;localStorage.setItem(TIMER_VISIBLE_KEY,String(timerVisible));
+        if(timerVisible){display.classList.remove('hidden');toggle.textContent='✕';}else{display.classList.add('hidden');toggle.textContent='⏱';}});
+      updateTimerDisplay();setInterval(updateTimerDisplay,1000);
+    }
+    function updateTimerDisplay(){
+      var el=document.getElementById('timerCountdown'),sub=document.getElementById('timerSubtext');
+      var temp=localStorage.getItem(TEMP_PASSWORD_KEY),exp=parseInt(localStorage.getItem(TEMP_PASSWORD_EXPIRY_KEY)||'0');
+      if(!temp||!exp){el.textContent='No temp password';el.className='timer-countdown inactive';sub.textContent='';return;}
+      var now=getCurrentTimeSync();if(now===null){el.textContent='Sync required';el.className='timer-countdown inactive';sub.textContent='Connect to internet';return;}
+      var rem=exp-now;if(rem<=0){el.textContent='EXPIRED';el.className='timer-countdown critical';sub.textContent='No longer valid';localStorage.removeItem(TEMP_PASSWORD_KEY);localStorage.removeItem(TEMP_PASSWORD_EXPIRY_KEY);return;}
+      var d=Math.floor(rem/86400000),h=Math.floor((rem%86400000)/3600000),m=Math.floor((rem%3600000)/60000),sec=Math.floor((rem%60000)/1000);
+      var pad=function(n){return String(n).padStart(2,'0');};
+      el.textContent=pad(d)+'d '+pad(h)+'h '+pad(m)+'m '+pad(sec)+'s';
+      el.className='timer-countdown '+(d>=7?'active':d>=3?'warning':'critical');
+      var sa=Date.now()-parseInt(localStorage.getItem(TIME_SYNC_DEVICE_KEY)||'0');
+      if(sa<600000)sub.textContent='🌐 Synced';else if(sa<3600000)sub.textContent='📡 '+Math.floor(sa/60000)+'m ago';
+      else if(sa<86400000)sub.textContent='📡 '+Math.floor(sa/3600000)+'h ago';else sub.textContent='📡 '+Math.floor(sa/86400000)+'d ago';
     }
 
     // ============================================================
     // EVENT LISTENERS
     // ============================================================
+    document.getElementById('toggleLoginPassword').addEventListener('click',function(){var p=document.getElementById('loginPassword'),i=document.getElementById('toggleLoginPassword');if(p.type==='password'){p.type='text';i.textContent='🙈';}else{p.type='password';i.textContent='👁';}});
+    document.getElementById('eyeIcon').addEventListener('click',function(){var p=document.getElementById('adminPassword');p.type=p.type==='password'?'text':'password';});
+    document.getElementById('eyeIconMaster').addEventListener('click',function(){var p=document.getElementById('masterPassword');p.type=p.type==='password'?'text':'password';});
 
-    // Login password visibility toggle
-    document.getElementById('toggleLoginPassword').addEventListener('click', () => {
-      const pwd = document.getElementById('loginPassword');
-      const icon = document.getElementById('toggleLoginPassword');
-      if (pwd.type === 'password') {
-        pwd.type = 'text';
-        icon.textContent = '🙈';
-      } else {
-        pwd.type = 'password';
-        icon.textContent = '👁';
-      }
+    document.getElementById('loginBtn').addEventListener('click',function(){
+      var pw=document.getElementById('loginPassword').value.trim();if(!pw)return;
+      var msg=document.getElementById('loginMessage');msg.textContent='⏳ Verifying...';msg.style.color='#666';
+      checkLogin(pw).then(function(r){
+        if(r===true){hideLoginModal();alert('✅ Access granted');}
+        else if(r&&r.valid){hideLoginModal();alert('✅ Access granted (temp)\n'+(r.source==='internet'?'🌐':'📡')+' '+r.daysLeft+'d remaining');}
+        else if(r==='tampered'){msg.style.color='red';msg.textContent='🚨 Clock manipulation detected.';}
+        else if(r==='no-sync'){msg.style.color='orange';msg.textContent='⚠️ Never synced. Use admin/master password.';}
+        else if(r==='expired'){msg.style.color='red';msg.textContent='⏰ Temp password expired.';document.getElementById('loginPassword').value='';updateTimerDisplay();}
+        else{msg.style.color='red';msg.textContent='❌ Incorrect password';document.getElementById('loginPassword').value='';document.getElementById('loginPassword').focus();}
+      });
     });
 
-    // Admin password visibility toggle
-    document.getElementById('eyeIcon').addEventListener('click', () => {
-      const pwd = document.getElementById('adminPassword');
-      pwd.type = pwd.type === 'password' ? 'text' : 'password';
-    });
-
-    // Master password visibility toggle
-    document.getElementById('eyeIconMaster').addEventListener('click', () => {
-      const pwd = document.getElementById('masterPassword');
-      pwd.type = pwd.type === 'password' ? 'text' : 'password';
-    });
-
-    // Login button
-    document.getElementById('loginBtn').addEventListener('click', () => {
-      const pwd = document.getElementById('loginPassword').value.trim();
-      if (!pwd) return;
-
-      if (checkLogin(pwd)) {
-        hideLoginModal();
-        alert('✅ Access granted');
-      } else {
-        document.getElementById('loginMessage').textContent = '❌ Incorrect password, try again';
-        document.getElementById('loginPassword').value = '';
-        document.getElementById('loginPassword').focus();
-      }
-    });
-
-    // Enter key on login field
-    document.getElementById('loginPassword').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') document.getElementById('loginBtn').click();
-    });
-
-    // Universal Enter key for password fields with auto-clear
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') {
-        const active = document.activeElement;
-        if (active && active.type === 'password' && active.dataset.clearOnConfirm === 'true') {
-          const section = active.closest('.section');
-          if (section) {
-            const confirmBtn = section.querySelector('button');
-            if (confirmBtn) confirmBtn.click();
-          }
-          setTimeout(clearPasswordFields, 10);
-        }
-      }
-    });
+    document.getElementById('loginPassword').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('loginBtn').click();});
+    document.getElementById('adminPassword').addEventListener('keydown',function(e){if(e.key==='Enter')saveSettings();});
+    document.getElementById('masterPassword').addEventListener('keydown',function(e){if(e.key==='Enter')confirmMasterPassword();});
+    document.getElementById('newCustomerName').addEventListener('keydown',function(e){if(e.key==='Enter')addCustomer();});
+    document.getElementById('customerSearch').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();filterCustomers();}});
+    document.getElementById('billCustomerSearch').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();filterBillCustomers();}});
+    document.getElementById('historySearch').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();filterHistory();}});
 
     // ============================================================
     // INITIALIZATION
     // ============================================================
-    document.addEventListener('DOMContentLoaded', () => {
-      showLoginModal();
-      document.getElementById('billDate').value = new Date().toISOString().split('T')[0];
-      loadCustomerDropdowns();
-      updateCurrencyDisplay();
-      showSection('menuSection');
+    document.addEventListener('DOMContentLoaded',function(){
+      showLoginModal();document.getElementById('billDate').value=new Date().toISOString().split('T')[0];
+      loadCustomerDropdowns();updateCurrencyDisplay();applyVisuals();showSection('menuSection');
+      initTimer();backgroundTimeSync().then(function(){});setInterval(function(){backgroundTimeSync();},5*60*1000);
     });
   </script>
 </body>
