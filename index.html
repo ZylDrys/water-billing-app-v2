@@ -568,7 +568,7 @@
     // ============================================================
     // RESTORE DEFAULTS (FIXED)
     // ============================================================
-    function restoreDefaults(){
+        function restoreDefaults(){
       if(!confirm('⚠️ Reset ALL settings, customers, history, customizations?\n\nMaster password will be preserved.\n\nThis CANNOT be undone!'))return;
       if(!confirm('🚨 FINAL WARNING!\n\nAll data will be permanently deleted from both this device AND the cloud.\n\nProceed?'))return;
 
@@ -576,7 +576,7 @@
       var si=localStorage.getItem(TIME_SYNC_INTERNET_KEY);
       var sd=localStorage.getItem(TIME_SYNC_DEVICE_KEY);
 
-      // Clear all local data
+      // Clear ALL local data
       localStorage.removeItem(STORAGE.settings);
       localStorage.removeItem(STORAGE.customers);
       localStorage.removeItem(STORAGE.bills);
@@ -591,37 +591,62 @@
       if(si)localStorage.setItem(TIME_SYNC_INTERNET_KEY,si);
       if(sd)localStorage.setItem(TIME_SYNC_DEVICE_KEY,sd);
 
-      setLocalTimestamp();
-
-      // Force push EMPTY data to cloud immediately
-      var emptyPayload={
-        Customers:[],
-        Bills:[],
-        Settings:[Object.assign({},DEFAULT_SETTINGS)],
-        Customization:[{theme:'light',backgroundPreset:'',activePreset:'',companyName:'',companyAddress:'',companyPhone:'',companyEmail:''}],
-        Images:[{companyLogo:'',backgroundImage:'',savedBackgrounds:'[]'}],
-        Meta:[{timestamp:Date.now(),masterPassword:mp||DEFAULT_MASTER_PASSWORD,tempPassword:'',tempPasswordExpiry:''}]
-      };
+      var ts=setLocalTimestamp();
 
       updateSyncIndicator('syncing','Resetting cloud...');
 
-      fetch(API_URL+'?action=writeAll',{
+      // Step 1: Clear ALL sheets in cloud first
+      fetch(API_URL+'?action=clearAll',{
         method:'POST',
         headers:{'Content-Type':'text/plain'},
-        body:JSON.stringify(emptyPayload)
+        body:'{}'
+      }).then(function(r){return r.json()}).then(function(d){
+        // Step 2: Write fresh default data
+        var freshPayload={
+          Customers:[],
+          Bills:[],
+          Settings:[Object.assign({},DEFAULT_SETTINGS)],
+          Customization:[{theme:'light',backgroundPreset:'',activePreset:'',companyName:'',companyAddress:'',companyPhone:'',companyEmail:''}],
+          Images:[{companyLogo:'',backgroundImage:'',savedBackgrounds:'[]'}],
+          Meta:[{timestamp:ts,masterPassword:mp||DEFAULT_MASTER_PASSWORD,tempPassword:'',tempPasswordExpiry:''}]
+        };
+
+        return fetch(API_URL+'?action=writeAll',{
+          method:'POST',
+          headers:{'Content-Type':'text/plain'},
+          body:JSON.stringify(freshPayload)
+        });
       }).then(function(r){return r.json()}).then(function(d){
         if(d.success){
           alert('✅ All data cleared from device AND cloud.');
         }else{
-          alert('⚠️ Local data cleared. Cloud sync failed — will retry.');
+          alert('⚠️ Partial reset. Error: '+(d.error||'unknown'));
         }
         location.reload();
       }).catch(function(e){
-        alert('⚠️ Local data cleared. Cloud sync failed — will retry when online.');
-        location.reload();
+        // Cloud failed - still try direct write
+        var freshPayload={
+          Customers:[],
+          Bills:[],
+          Settings:[Object.assign({},DEFAULT_SETTINGS)],
+          Customization:[{theme:'light',backgroundPreset:'',activePreset:'',companyName:'',companyAddress:'',companyPhone:'',companyEmail:''}],
+          Images:[{companyLogo:'',backgroundImage:'',savedBackgrounds:'[]'}],
+          Meta:[{timestamp:ts,masterPassword:mp||DEFAULT_MASTER_PASSWORD,tempPassword:'',tempPasswordExpiry:''}]
+        };
+
+        fetch(API_URL+'?action=writeAll',{
+          method:'POST',
+          headers:{'Content-Type':'text/plain'},
+          body:JSON.stringify(freshPayload)
+        }).then(function(){
+          alert('✅ Data cleared.');
+          location.reload();
+        }).catch(function(){
+          alert('⚠️ Local data cleared. Cloud will sync when online.');
+          location.reload();
+        });
       });
     }
-
     // ============================================================
     // PASSWORD AUTO-CLEAR
     // ============================================================
