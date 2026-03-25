@@ -20,6 +20,10 @@
     button:hover{background:var(--bg-accent-hover)}button:active{transform:scale(.98)}
     input,select{width:100%;padding:12px;margin:8px 0;border:1px solid var(--border-color);border-radius:8px;font-size:16px;background:var(--bg-input);color:var(--text-primary);-webkit-appearance:none;appearance:none;transition:border-color .2s}
     input:focus,select:focus{outline:none;border-color:var(--border-focus);box-shadow:0 0 0 3px rgba(0,123,255,.15)}
+    
+    /* FIX: Force checkboxes to render normally and be clickable */
+    input[type="checkbox"]{-webkit-appearance:checkbox!important;appearance:checkbox!important;width:auto!important;cursor:pointer;display:inline-block;margin-right:8px;vertical-align:middle;transform:scale(1.2)}
+    
     label{display:block;margin-bottom:4px;font-weight:bold;font-size:clamp(13px,3vw,15px);color:var(--text-secondary)}
     table{width:100%;border-collapse:collapse;margin:15px 0;font-size:clamp(12px,3vw,14px)}
     th,td{border:1px solid var(--bg-card-border);padding:10px;text-align:left;word-break:break-word;color:var(--text-primary)}
@@ -238,7 +242,7 @@
       <div class="form-group"><label>Price per Cubic Meter</label><input type="number" id="adminPricePerCubic" step="0.01" placeholder="Rate"></div>
       <div class="form-group"><label>Minimum Charge</label><input type="number" id="adminMinCharge" step="0.01" placeholder="Min charge"></div>
       <div class="form-group"><label>Penalty Rate (% of total due)</label><input type="number" id="adminPenaltyRate" step="0.1" min="0" max="100" placeholder="e.g. 10 for 10%"></div>
-      <div class="form-group"><label><input type="checkbox" id="adminRoundOff" style="width:auto;margin-right:8px">Round off total to nearest whole number</label></div>
+      <div class="form-group"><label style="display:flex;align-items:center;cursor:pointer"><input type="checkbox" id="adminRoundOff">Round off total to nearest whole number</label></div>
       <h3>🔐 Security</h3>
       <div><label>Admin Password</label><div style="position:relative"><input type="password" id="adminPassword" placeholder="Enter password to save" data-clear-on-confirm="true" autocomplete="off"/><span id="eyeIcon" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer">👁</span></div></div>
       <button onclick="saveSettings()">💾 Save Settings</button>
@@ -257,6 +261,13 @@
       <h2>👥 Customers</h2>
       <input type="text" id="customerSearch" class="search-box" placeholder="Search customer..." oninput="filterCustomers()">
       <div class="sort-controls"><button onclick="sortCustomers('name','asc')">A→Z</button><button onclick="sortCustomers('name','desc')">Z→A</button><button onclick="sortCustomers('date','desc')">Newest</button><button onclick="sortCustomers('date','asc')">Oldest</button></div>
+      
+      <!-- BULK ACTION BAR CUSTOMERS -->
+      <div style="display:flex; justify-content:space-between; align-items:center; margin:10px 0; padding:10px; background:var(--bg-table-even); border-radius:8px;">
+          <label style="margin:0; display:flex; align-items:center; cursor:pointer;"><input type="checkbox" id="selectAllCustomers" onchange="toggleSelectAllCustomers()"> Select All</label>
+          <button onclick="bulkDeleteCustomers()" style="width:auto; padding:8px 14px; background:var(--bg-danger); margin:0; font-size:13px;">🗑 Delete Selected</button>
+      </div>
+
       <div class="form-group"><input type="text" id="newCustomerName" placeholder="Enter customer name"><button onclick="addCustomer()">➕ Add Customer</button></div>
       <h3>📥 Import Customers</h3>
       <div class="import-mode-selector" id="importModeSelector">
@@ -279,7 +290,7 @@
       <select id="billCustomer" onchange="loadLastReading()"><option value="">-- Select Customer --</option></select>
       <input type="date" id="billDate">
       <div class="form-row"><div class="form-group"><label>Previous (m³)</label><input type="number" id="prevReading" readonly></div><div class="form-group"><label>Present (m³)</label><input type="number" id="presReading" oninput="calculateTotal()"></div></div>
-      <div class="form-group"><label><input type="checkbox" id="applyPenalty" onchange="calculateTotal()" style="width:auto;margin-right:8px">Apply Penalty</label></div>
+      <div class="form-group"><label style="display:flex;align-items:center;cursor:pointer"><input type="checkbox" id="applyPenalty" onchange="calculateTotal()">Apply Penalty</label></div>
       <div class="bill-breakdown" id="billBreakdown">
         <div class="row"><span>Consumption</span><span id="brkUsed">0 m³</span></div>
         <div class="row"><span>Rate</span><span id="brkRate">$0.00/m³</span></div>
@@ -327,10 +338,18 @@
       <div class="sort-controls"><button onclick="sortHistory('date','desc')">Newest</button><button onclick="sortHistory('date','asc')">Oldest</button><button onclick="sortHistory('amount','desc')">Highest</button><button onclick="sortHistory('amount','asc')">Lowest</button></div>
       <select id="historyFilter" onchange="loadFilteredHistory()"><option value="all">All Customers</option></select>
       <select id="historyPaymentFilter" onchange="loadFilteredHistory()" style="margin-top:5px"><option value="all">All Status</option><option value="paid">✅ Paid</option><option value="unpaid">❌ Unpaid</option><option value="partial">⚠️ Partial</option></select>
-      <div style="display:flex;gap:8px;margin:10px 0;flex-wrap:wrap">
-        <button onclick="printAllShownBills()" style="background:#17a2b8;flex:1;min-width:100px">🖨 Print All</button>
-        <button onclick="deleteAllShownBills()" style="background:var(--bg-danger);flex:1;min-width:100px">🗑 Delete All Shown</button>
+
+      <!-- BULK ACTION BAR HISTORY -->
+      <div style="display:flex; justify-content:space-between; align-items:center; margin:15px 0; padding:12px; background:var(--bg-table-even); border-radius:8px; flex-wrap: wrap; gap: 10px; border:1px solid var(--bg-card-border)">
+          <label style="margin:0; width:100%; display:flex; align-items:center; cursor:pointer;"><input type="checkbox" id="selectAllHistory" onchange="toggleSelectAllHistory()"> Select All</label>
+          <div style="display:flex; gap:8px; width:100%; flex-wrap:wrap;">
+              <button onclick="bulkMarkHistory('paid')" style="flex:1; padding:8px; font-size:12px; background:var(--bg-success); margin:0; min-width:60px;">✅ Pay</button>
+              <button onclick="bulkMarkHistory('unpaid')" style="flex:1; padding:8px; font-size:12px; background:#6c757d; margin:0; min-width:60px;">❌ Unpay</button>
+              <button onclick="bulkPrintHistory()" style="flex:1; padding:8px; font-size:12px; background:#17a2b8; margin:0; min-width:60px;">🖨 Print</button>
+              <button onclick="bulkDeleteHistory()" style="flex:1; padding:8px; font-size:12px; background:var(--bg-danger); margin:0; min-width:60px;">🗑 Delete</button>
+          </div>
       </div>
+
       <div id="historySummary" style="margin:10px 0"></div>
       <div id="historyList"></div>
     </div>
@@ -495,12 +514,41 @@
     // CUSTOMERS
     function addCustomer(){var n=document.getElementById('newCustomerName').value.trim();if(!n)return alert('Enter name');var c=getData('customers');if(c.find(function(x){return x.name.toLowerCase()===n.toLowerCase()}))return alert('Exists!');c.push({id:Date.now(),name:n,createdAt:new Date().toISOString()});saveData('customers',c);document.getElementById('newCustomerName').value='';loadCustomersList();loadCustomerDropdowns();alert('✅ Added!')}
     function deleteCustomer(id){if(!confirm('Delete customer + bills?'))return;saveData('customers',getData('customers').filter(function(c){return c.id!==id}));saveData('bills',getData('bills').filter(function(b){return b.customerId!==id}));loadCustomersList();loadCustomerDropdowns()}
-    function loadCustomersList(sb,or){sb=sb||'name';or=or||'asc';var c=getData('customers'),el=document.getElementById('customerSearch'),st=el?el.value.toLowerCase():'';if(st)c=c.filter(function(x){return x.name.toLowerCase().indexOf(st)!==-1});c.sort(function(a,b){if(sb==='name')return or==='asc'?a.name.localeCompare(b.name):b.name.localeCompare(a.name);return or==='asc'?new Date(a.createdAt)-new Date(b.createdAt):new Date(b.createdAt)-new Date(a.createdAt)});var ct=document.getElementById('customersList');if(!c.length){ct.innerHTML='<p style="padding:20px;text-align:center;color:var(--text-muted)">No customers.</p>';return}ct.innerHTML=c.map(function(x){var bl=getData('bills').filter(function(b){return b.customerId===x.id}),up=bl.filter(function(b){return(b.paymentStatus||'unpaid')!=='paid'}).length;return'<div style="padding:15px;border:1px solid var(--bg-card-border);margin:10px 0;border-radius:8px;background:var(--bg-container)"><strong>'+x.name+'</strong>'+(up>0?' <span class="payment-badge unpaid">'+up+' unpaid</span>':'')+'<br><small style="color:var(--text-secondary)">Added: '+new Date(x.createdAt).toLocaleDateString()+' • Bills: '+bl.length+'</small><div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap"><button onclick="viewCustomerHistory('+x.id+')" style="padding:8px 12px;font-size:12px;width:auto;flex:1;min-width:80px">View</button><button onclick="deleteCustomer('+x.id+')" style="padding:8px 12px;font-size:12px;background:var(--bg-danger);width:auto;flex:1;min-width:80px">Delete</button></div></div>'}).join('')}
+    function loadCustomersList(sb,or){sb=sb||'name';or=or||'asc';var c=getData('customers'),el=document.getElementById('customerSearch'),st=el?el.value.toLowerCase():'';if(st)c=c.filter(function(x){return x.name.toLowerCase().indexOf(st)!==-1});c.sort(function(a,b){if(sb==='name')return or==='asc'?a.name.localeCompare(b.name):b.name.localeCompare(a.name);return or==='asc'?new Date(a.createdAt)-new Date(b.createdAt):new Date(b.createdAt)-new Date(a.createdAt)});var ct=document.getElementById('customersList');if(!c.length){ct.innerHTML='<p style="padding:20px;text-align:center;color:var(--text-muted)">No customers.</p>';return}
+    ct.innerHTML=c.map(function(x){
+      var bl=getData('bills').filter(function(b){return b.customerId===x.id}),up=bl.filter(function(b){return(b.paymentStatus||'unpaid')!=='paid'}).length;
+      return'<div style="padding:15px;border:1px solid var(--bg-card-border);margin:10px 0;border-radius:8px;background:var(--bg-container)"><div style="display:flex;align-items:center;gap:8px;"><input type="checkbox" class="customer-cb" value="'+x.id+'"><strong style="font-size:16px;">'+x.name+'</strong>'+(up>0?' <span class="payment-badge unpaid">'+up+' unpaid</span>':'')+'</div><small style="color:var(--text-secondary);display:block;margin-top:5px;">Added: '+new Date(x.createdAt).toLocaleDateString()+' • Bills: '+bl.length+'</small><div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap"><button onclick="viewCustomerHistory('+x.id+')" style="padding:8px 12px;font-size:12px;width:auto;flex:1;min-width:80px">View</button><button onclick="deleteCustomer('+x.id+')" style="padding:8px 12px;font-size:12px;background:var(--bg-danger);width:auto;flex:1;min-width:80px">Delete</button></div></div>'
+    }).join('');
+    var sa = document.getElementById('selectAllCustomers'); if(sa) sa.checked = false;}
     function sortCustomers(b,o){loadCustomersList(b,o)}
     function filterCustomers(){loadCustomersList()}
     function viewCustomerHistory(id){showSection('historySection');document.getElementById('historyFilter').value=id;loadFilteredHistory()}
     function loadCustomerDropdowns(){var c=getData('customers'),opts=c.map(function(x){return'<option value="'+x.id+'">'+x.name+'</option>'}).join('');document.getElementById('billCustomer').innerHTML='<option value="">-- Select --</option>'+opts;document.getElementById('historyFilter').innerHTML='<option value="all">All Customers</option>'+opts}
     function filterBillCustomers(){var st=document.getElementById('billCustomerSearch').value.toLowerCase(),c=getData('customers'),sel=document.getElementById('billCustomer');sel.innerHTML='<option value="">-- Select --</option>';c.forEach(function(x){if(x.name.toLowerCase().indexOf(st)!==-1){var o=document.createElement('option');o.value=x.id;o.textContent=x.name;sel.appendChild(o)}})}
+    
+    // CUSTOMER BULK ACTIONS
+    function toggleSelectAllCustomers() {
+        var isChecked = document.getElementById('selectAllCustomers').checked;
+        document.querySelectorAll('.customer-cb').forEach(function(cb) { cb.checked = isChecked; });
+    }
+    function getSelectedCustomerIds() {
+        var ids = [];
+        document.querySelectorAll('.customer-cb:checked').forEach(function(cb) { ids.push(parseInt(cb.value)); });
+        return ids;
+    }
+    function bulkDeleteCustomers() {
+        var ids = getSelectedCustomerIds();
+        if(!ids.length) return alert('No customers selected.');
+        if(!confirm('Delete ' + ids.length + ' selected customers and their bills?')) return;
+        var c = getData('customers').filter(function(x) { return ids.indexOf(x.id) === -1; });
+        var b = getData('bills').filter(function(x) { return ids.indexOf(x.customerId) === -1; });
+        saveData('customers', c);
+        saveData('bills', b);
+        alert('✅ Deleted ' + ids.length + ' customers.');
+        loadCustomersList();
+        loadCustomerDropdowns();
+        document.getElementById('selectAllCustomers').checked = false;
+    }
 
     // IMPORT
     function setImportMode(mode){importMode=mode;document.querySelectorAll('#importModeSelector button').forEach(function(b){b.classList.remove('active')});event.target.classList.add('active');document.getElementById('importSimpleInfo').style.display=mode==='simple'?'block':'none';document.getElementById('importFullInfo').style.display=mode==='full'?'block':'none'}
@@ -523,12 +571,74 @@
 
     // HISTORY
     var lastFilteredBills=[];
-    function loadFilteredHistory(sb,or){sb=sb||'date';or=or||'desc';var bl=getData('bills'),cs=getData('customers'),f=document.getElementById('historyFilter').value;if(f!=='all')bl=bl.filter(function(b){return b.customerId===parseInt(f)});var pf=document.getElementById('historyPaymentFilter').value;if(pf!=='all')bl=bl.filter(function(b){return(b.paymentStatus||'unpaid')===pf});var el=document.getElementById('historySearch'),st=el?el.value.toLowerCase():'';if(st)bl=bl.filter(function(b){var c=cs.find(function(x){return x.id===b.customerId});return(c?c.name.toLowerCase():'').indexOf(st)!==-1||new Date(b.date).toLocaleDateString().toLowerCase().indexOf(st)!==-1});bl.sort(function(a,b){if(sb==='date')return or==='asc'?new Date(a.date)-new Date(b.date):new Date(b.date)-new Date(a.date);return or==='asc'?a.totalDue-b.totalDue:b.totalDue-a.totalDue});lastFilteredBills=bl;var td=0,tp=0,uc=0;bl.forEach(function(b){td+=b.totalDue;tp+=(b.amountPaid||0);if((b.paymentStatus||'unpaid')!=='paid')uc++});document.getElementById('historySummary').innerHTML='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center"><div style="padding:8px;background:rgba(0,123,255,.08);border-radius:6px"><div style="font-size:11px;color:var(--text-muted)">Due</div><div style="font-weight:700">'+formatMoney(td)+'</div></div><div style="padding:8px;background:rgba(40,167,69,.08);border-radius:6px"><div style="font-size:11px;color:var(--text-muted)">Collected</div><div style="font-weight:700;color:#28a745">'+formatMoney(tp)+'</div></div><div style="padding:8px;background:rgba(220,53,69,.08);border-radius:6px"><div style="font-size:11px;color:var(--text-muted)">Outstanding</div><div style="font-weight:700;color:#dc3545">'+formatMoney(td-tp)+'</div></div></div>';var ct=document.getElementById('historyList');if(!bl.length){ct.innerHTML='<p style="padding:20px;text-align:center;color:var(--text-muted)">No bills.</p>';return}ct.innerHTML=bl.map(function(b){var c=cs.find(function(x){return x.id===b.customerId}),s=b.paymentStatus||'unpaid',badge=s==='paid'?'<span class="payment-badge paid">✅ Paid</span>':s==='partial'?'<span class="payment-badge partial">⚠️ '+formatMoney(b.amountPaid||0)+'</span>':'<span class="payment-badge unpaid">❌ Unpaid</span>',pb='';if(s==='unpaid')pb='<button onclick="markAsPaid('+b.id+')" style="padding:6px;font-size:11px;width:auto;flex:1;min-width:50px;background:var(--bg-success)">✅</button><button onclick="markAsPartial('+b.id+')" style="padding:6px;font-size:11px;width:auto;flex:1;min-width:50px;background:var(--bg-warning);color:#333">⚠️</button>';else if(s==='partial')pb='<button onclick="markAsPaid('+b.id+')" style="padding:6px;font-size:11px;width:auto;flex:1;min-width:50px;background:var(--bg-success)">✅</button><button onclick="markAsPartial('+b.id+')" style="padding:6px;font-size:11px;width:auto;flex:1;min-width:50px;background:var(--bg-warning);color:#333">➕</button>';else pb='<button onclick="markAsUnpaid('+b.id+')" style="padding:6px;font-size:11px;width:auto;flex:1;min-width:50px;background:#6c757d">↩</button>';return'<div style="padding:12px;border:1px solid var(--bg-card-border);margin:8px 0;border-radius:8px;background:var(--bg-container);border-left:4px solid '+(s==='paid'?'#28a745':s==='partial'?'#ffc107':'#dc3545')+'"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px"><strong style="font-size:14px">'+(c?c.name:'?')+'</strong>'+badge+'</div><div style="font-size:12px;color:var(--text-secondary);margin:4px 0">'+new Date(b.date).toLocaleDateString()+' • '+b.prevReading+'→'+b.presReading+' = '+b.totalUsed+' m³</div><strong>'+formatMoney(b.totalDue)+'</strong>'+(b.penaltyAmount>0?' <small style="color:#dc3545">(+'+formatMoney(b.penaltyAmount)+' penalty)</small>':'')+'<div style="margin-top:8px;display:flex;gap:5px;flex-wrap:wrap">'+pb+'<button onclick="printBillById('+b.id+')" style="padding:6px;font-size:11px;width:auto;flex:1;min-width:40px">🖨</button><button onclick="deleteBill('+b.id+')" style="padding:6px;font-size:11px;background:var(--bg-danger);width:auto;flex:1;min-width:40px">🗑</button></div></div>'}).join('')}
+    function loadFilteredHistory(sb,or){sb=sb||'date';or=or||'desc';var bl=getData('bills'),cs=getData('customers'),f=document.getElementById('historyFilter').value;if(f!=='all')bl=bl.filter(function(b){return b.customerId===parseInt(f)});var pf=document.getElementById('historyPaymentFilter').value;if(pf!=='all')bl=bl.filter(function(b){return(b.paymentStatus||'unpaid')===pf});var el=document.getElementById('historySearch'),st=el?el.value.toLowerCase():'';if(st)bl=bl.filter(function(b){var c=cs.find(function(x){return x.id===b.customerId});return(c?c.name.toLowerCase():'').indexOf(st)!==-1||new Date(b.date).toLocaleDateString().toLowerCase().indexOf(st)!==-1});bl.sort(function(a,b){if(sb==='date')return or==='asc'?new Date(a.date)-new Date(b.date):new Date(b.date)-new Date(a.date);return or==='asc'?a.totalDue-b.totalDue:b.totalDue-a.totalDue});lastFilteredBills=bl;var td=0,tp=0,uc=0;bl.forEach(function(b){td+=b.totalDue;tp+=(b.amountPaid||0);if((b.paymentStatus||'unpaid')!=='paid')uc++});document.getElementById('historySummary').innerHTML='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center"><div style="padding:8px;background:rgba(0,123,255,.08);border-radius:6px"><div style="font-size:11px;color:var(--text-muted)">Due</div><div style="font-weight:700">'+formatMoney(td)+'</div></div><div style="padding:8px;background:rgba(40,167,69,.08);border-radius:6px"><div style="font-size:11px;color:var(--text-muted)">Collected</div><div style="font-weight:700;color:#28a745">'+formatMoney(tp)+'</div></div><div style="padding:8px;background:rgba(220,53,69,.08);border-radius:6px"><div style="font-size:11px;color:var(--text-muted)">Outstanding</div><div style="font-weight:700;color:#dc3545">'+formatMoney(td-tp)+'</div></div></div>';var ct=document.getElementById('historyList');if(!bl.length){ct.innerHTML='<p style="padding:20px;text-align:center;color:var(--text-muted)">No bills.</p>';return}
+    ct.innerHTML=bl.map(function(b){
+      var c=cs.find(function(x){return x.id===b.customerId}),s=b.paymentStatus||'unpaid',badge=s==='paid'?'<span class="payment-badge paid">✅ Paid</span>':s==='partial'?'<span class="payment-badge partial">⚠️ '+formatMoney(b.amountPaid||0)+'</span>':'<span class="payment-badge unpaid">❌ Unpaid</span>',pb='';
+      if(s==='unpaid')pb='<button onclick="markAsPaid('+b.id+')" style="padding:6px;font-size:11px;width:auto;flex:1;min-width:50px;background:var(--bg-success)">✅</button><button onclick="markAsPartial('+b.id+')" style="padding:6px;font-size:11px;width:auto;flex:1;min-width:50px;background:var(--bg-warning);color:#333">⚠️</button>';else if(s==='partial')pb='<button onclick="markAsPaid('+b.id+')" style="padding:6px;font-size:11px;width:auto;flex:1;min-width:50px;background:var(--bg-success)">✅</button><button onclick="markAsPartial('+b.id+')" style="padding:6px;font-size:11px;width:auto;flex:1;min-width:50px;background:var(--bg-warning);color:#333">➕</button>';else pb='<button onclick="markAsUnpaid('+b.id+')" style="padding:6px;font-size:11px;width:auto;flex:1;min-width:50px;background:#6c757d">↩</button>';
+      return'<div style="padding:12px;border:1px solid var(--bg-card-border);margin:8px 0;border-radius:8px;background:var(--bg-container);border-left:4px solid '+(s==='paid'?'#28a745':s==='partial'?'#ffc107':'#dc3545')+'"><div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:4px"><div style="display:flex;align-items:center;gap:8px;"><input type="checkbox" class="history-cb" value="'+b.id+'"><strong style="font-size:14px">'+(c?c.name:'?')+'</strong></div>'+badge+'</div><div style="font-size:12px;color:var(--text-secondary);margin:4px 0">'+new Date(b.date).toLocaleDateString()+' • '+b.prevReading+'→'+b.presReading+' = '+b.totalUsed+' m³</div><strong>'+formatMoney(b.totalDue)+'</strong>'+(b.penaltyAmount>0?' <small style="color:#dc3545">(+'+formatMoney(b.penaltyAmount)+' penalty)</small>':'')+'<div style="margin-top:8px;display:flex;gap:5px;flex-wrap:wrap">'+pb+'<button onclick="printBillById('+b.id+')" style="padding:6px;font-size:11px;width:auto;flex:1;min-width:40px">🖨</button><button onclick="deleteBill('+b.id+')" style="padding:6px;font-size:11px;background:var(--bg-danger);width:auto;flex:1;min-width:40px">🗑</button></div></div>'
+    }).join('');
+    var sah = document.getElementById('selectAllHistory'); if(sah) sah.checked = false;}
     function sortHistory(b,o){loadFilteredHistory(b,o)}
     function filterHistory(){loadFilteredHistory()}
     function deleteBill(id){if(!confirm('Delete?'))return;saveData('bills',getData('bills').filter(function(b){return b.id!==id}));loadFilteredHistory()}
     function printBillById(id){var b=getData('bills').find(function(x){return x.id===id});if(b)printBill(b)}
-    function deleteAllShownBills(){if(!lastFilteredBills.length){alert('None.');return}var n=lastFilteredBills.length;if(!confirm('Delete '+n+' bill(s)?'))return;if(!confirm('🚨 FINAL: Delete '+n+'?'))return;var ids={};lastFilteredBills.forEach(function(b){ids[b.id]=true});saveData('bills',getData('bills').filter(function(b){return!ids[b.id]}));alert('✅ Deleted '+n);loadFilteredHistory()}
+    
+    // HISTORY BULK ACTIONS
+    function toggleSelectAllHistory() {
+        var isChecked = document.getElementById('selectAllHistory').checked;
+        document.querySelectorAll('.history-cb').forEach(function(cb) { cb.checked = isChecked; });
+    }
+    function getSelectedHistoryIds() {
+        var ids = [];
+        document.querySelectorAll('.history-cb:checked').forEach(function(cb) { ids.push(parseInt(cb.value)); });
+        return ids;
+    }
+    function bulkMarkHistory(status) {
+        var ids = getSelectedHistoryIds();
+        if(!ids.length) return alert('No bills selected.');
+        if(!confirm('Mark ' + ids.length + ' selected bills as ' + status + '?')) return;
+        var bl = getData('bills');
+        bl.forEach(function(b) {
+            if(ids.indexOf(b.id) !== -1) {
+                b.paymentStatus = status;
+                if(status === 'paid') {
+                    b.amountPaid = b.totalDue;
+                    b.paymentDate = new Date().toISOString();
+                } else if(status === 'unpaid') {
+                    b.amountPaid = 0;
+                    b.paymentDate = '';
+                }
+            }
+        });
+        saveData('bills', bl);
+        loadFilteredHistory();
+    }
+    function bulkDeleteHistory() {
+        var ids = getSelectedHistoryIds();
+        if(!ids.length) return alert('No bills selected.');
+        if(!confirm('Delete ' + ids.length + ' selected bills?')) return;
+        if(!confirm('🚨 FINAL: Delete these ' + ids.length + ' bills?')) return;
+        var bl = getData('bills').filter(function(b) { return ids.indexOf(b.id) === -1; });
+        saveData('bills', bl);
+        alert('✅ Deleted ' + ids.length + ' bills.');
+        loadFilteredHistory();
+    }
+    function bulkPrintHistory() {
+        var ids = getSelectedHistoryIds();
+        if(!ids.length) return alert('No bills selected.');
+        var blToPrint = lastFilteredBills.filter(function(b) { return ids.indexOf(b.id) !== -1; });
+        var cs=getData('customers'),cf=getCurrencyFormatter(),ts=0,tc=0;
+        var rows=blToPrint.map(function(b,i){
+            var c=cs.find(function(x){return x.id===b.customerId});
+            ts+=b.totalDue;tc+=(b.amountPaid||0);
+            var s=b.paymentStatus||'unpaid';
+            return '<tr'+(i%2===0?' style="background:#f8f8f8"':'')+'><td style="padding:4px;font-size:11px;border:none">'+(i+1)+'</td><td style="padding:4px;font-size:11px;border:none">'+(c?c.name:'?')+'</td><td style="padding:4px;font-size:11px;border:none">'+new Date(b.date).toLocaleDateString()+'</td><td style="padding:4px;font-size:11px;text-align:right;border:none">'+b.totalUsed+'</td><td style="padding:4px;font-size:11px;text-align:right;border:none">'+cf.format(b.totalDue)+'</td><td style="padding:4px;font-size:11px;text-align:center;border:none">'+(s==='paid'?'✅':s==='partial'?'⚠️':'❌')+'</td></tr>';
+        }).join('');
+        var html='<div style="font-family:\'Segoe UI\',Arial,sans-serif;padding:12px;width:80mm;color:#222">'+buildReceiptHeader()+'<div style="text-align:center;margin:10px 0;padding:6px;background:#f0f0f0;border-radius:4px;font-size:14px;font-weight:700;text-transform:uppercase">Report</div><table style="width:100%;border-collapse:collapse;border:none;margin:8px 0"><thead><tr style="background:#333;color:#fff"><th style="padding:4px;font-size:10px;border:none">#</th><th style="padding:4px;font-size:10px;border:none">Name</th><th style="padding:4px;font-size:10px;border:none">Date</th><th style="padding:4px;font-size:10px;text-align:right;border:none">m³</th><th style="padding:4px;font-size:10px;text-align:right;border:none">Due</th><th style="padding:4px;font-size:10px;border:none">St</th></tr></thead><tbody>'+rows+'</tbody></table><div style="margin:10px 0;padding:10px;background:#1a1a1a;color:#fff;border-radius:6px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>Billed:</span><strong>'+cf.format(ts)+'</strong></div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>Collected:</span><strong style="color:#28a745">'+cf.format(tc)+'</strong></div><div style="display:flex;justify-content:space-between;font-size:14px;font-weight:900"><span>Outstanding:</span><span style="color:#ff6b6b">'+cf.format(ts-tc)+'</span></div></div></div>';
+        document.getElementById('printReceipt').innerHTML=html;
+        window.print();
+        document.getElementById('printReceipt').innerHTML='';
+    }
 
     // ANALYSIS
     function setAnalysisPeriod(p){analysisPeriod=p;document.querySelectorAll('#periodTabs button').forEach(function(b){b.classList.remove('active')});event.target.classList.add('active');renderAnalysis()}
@@ -556,7 +666,6 @@
     function buildReceiptHeader(){var c=getCustomization(),im=getImages(),h='';if(im.companyLogo)h+='<div style="text-align:center;margin-bottom:8px"><img src="'+im.companyLogo+'" style="max-width:80px;max-height:80px;border-radius:8px"></div>';h+='<div style="text-align:center;font-size:18px;font-weight:900;margin-bottom:2px">'+(c.companyName||'💧 WATER BILL')+'</div>';if(c.companyAddress)h+='<div style="text-align:center;font-size:11px;color:#555">'+c.companyAddress+'</div>';var ct=[c.companyPhone,c.companyEmail].filter(Boolean).join(' • ');if(ct)h+='<div style="text-align:center;font-size:10px;color:#666">'+ct+'</div>';return h}
     function printBill(bill){var cs=getData('customers'),c=cs.find(function(x){return x.id===bill.customerId}),cn=c?c.name:'?',s=getSettings(),cf=getCurrencyFormatter(),isMin=bill.totalUsed<=0||(bill.totalUsed*s.pricePerCubic)<s.minCharge,st=bill.paymentStatus||'unpaid',stT=st==='paid'?'PAID':st==='partial'?'PARTIAL':'UNPAID',stC=st==='paid'?'#28a745':st==='partial'?'#ffc107':'#dc3545';
     var html='<div style="font-family:\'Segoe UI\',Arial,sans-serif;padding:12px;width:80mm;color:#222">'+buildReceiptHeader()+'<div style="text-align:center;margin:8px 0;padding:6px;background:#f0f0f0;border-radius:4px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:2px">Official Billing</div><hr style="border:none;border-top:1px solid #ddd;margin:8px 0"><table style="width:100%;font-size:12px;border-collapse:collapse;border:none"><tr><td style="padding:3px 0;color:#666;border:none">Customer</td><td style="text-align:right;font-weight:700;border:none">'+cn+'</td></tr><tr><td style="padding:3px 0;color:#666;border:none">Date</td><td style="text-align:right;border:none">'+new Date(bill.date).toLocaleDateString()+'</td></tr><tr><td style="padding:3px 0;color:#666;border:none">Status</td><td style="text-align:right;color:'+stC+';font-weight:700;border:none">'+stT+'</td></tr></table><hr style="border:none;border-top:1px solid #ddd;margin:8px 0"><table style="width:100%;font-size:12px;border-collapse:collapse;border:none"><tr style="background:#f8f8f8"><td style="padding:5px 8px;border:none">Previous</td><td style="text-align:right;font-weight:600;border:none">'+bill.prevReading+' m³</td></tr><tr><td style="padding:5px 8px;border:none">Present</td><td style="text-align:right;font-weight:600;border:none">'+bill.presReading+' m³</td></tr><tr style="background:#f8f8f8"><td style="padding:5px 8px;font-weight:700;border:none">Used</td><td style="text-align:right;font-weight:700;border:none">'+bill.totalUsed+' m³</td></tr></table><hr style="border:none;border-top:1px solid #ddd;margin:8px 0"><table style="width:100%;font-size:12px;border-collapse:collapse;border:none"><tr><td style="padding:4px 0;color:#555;border:none">Rate/m³</td><td style="text-align:right;border:none">'+cf.format(s.pricePerCubic)+'</td></tr><tr><td style="padding:4px 0;color:#555;border:none">Computed</td><td style="text-align:right;border:none">'+cf.format(bill.totalUsed*s.pricePerCubic)+'</td></tr><tr><td style="padding:4px 0;color:#555;border:none">Min Charge</td><td style="text-align:right;border:none">'+cf.format(s.minCharge)+'</td></tr>'+(bill.penaltyAmount>0?'<tr><td style="padding:4px 0;color:#dc3545;border:none">Penalty ('+(bill.penaltyRate||0)+'%)</td><td style="text-align:right;color:#dc3545;border:none">'+cf.format(bill.penaltyAmount)+'</td></tr>':'')+'</table><div style="margin:12px 0;padding:12px;background:#1a1a1a;color:#fff;border-radius:6px;text-align:center"><div style="font-size:10px;text-transform:uppercase;letter-spacing:2px;opacity:.7;margin-bottom:4px">Total Due</div><div style="font-size:22px;font-weight:900">'+cf.format(bill.totalDue)+'</div></div>'+(st!=='unpaid'?'<div style="text-align:center;padding:8px;border:2px solid '+stC+';border-radius:6px;margin:8px 0"><div style="font-size:11px;color:#666">Paid</div><div style="font-size:16px;font-weight:700;color:'+stC+'">'+cf.format(bill.amountPaid||0)+'</div>'+(st==='partial'?'<div style="font-size:11px;color:#dc3545">Remaining: '+cf.format(bill.totalDue-(bill.amountPaid||0))+'</div>':'')+'</div>':'')+'<hr style="border:none;border-top:1px dashed #ccc;margin:8px 0"><div style="text-align:center;font-size:10px;color:#999;line-height:1.6">Thank you!<br>'+new Date().toLocaleString()+'</div></div>';document.getElementById('printReceipt').innerHTML=html;window.print();document.getElementById('printReceipt').innerHTML=''}
-    function printAllShownBills(){if(!lastFilteredBills.length){alert('None');return}var cs=getData('customers'),cf=getCurrencyFormatter(),ts=0,tc=0;var rows=lastFilteredBills.map(function(b,i){var c=cs.find(function(x){return x.id===b.customerId});ts+=b.totalDue;tc+=(b.amountPaid||0);var s=b.paymentStatus||'unpaid';return'<tr'+(i%2===0?' style="background:#f8f8f8"':'')+'><td style="padding:4px;font-size:11px;border:none">'+(i+1)+'</td><td style="padding:4px;font-size:11px;border:none">'+(c?c.name:'?')+'</td><td style="padding:4px;font-size:11px;border:none">'+new Date(b.date).toLocaleDateString()+'</td><td style="padding:4px;font-size:11px;text-align:right;border:none">'+b.totalUsed+'</td><td style="padding:4px;font-size:11px;text-align:right;border:none">'+cf.format(b.totalDue)+'</td><td style="padding:4px;font-size:11px;text-align:center;border:none">'+(s==='paid'?'✅':s==='partial'?'⚠️':'❌')+'</td></tr>'}).join('');var html='<div style="font-family:\'Segoe UI\',Arial,sans-serif;padding:12px;width:80mm;color:#222">'+buildReceiptHeader()+'<div style="text-align:center;margin:10px 0;padding:6px;background:#f0f0f0;border-radius:4px;font-size:14px;font-weight:700;text-transform:uppercase">Report</div><table style="width:100%;border-collapse:collapse;border:none;margin:8px 0"><thead><tr style="background:#333;color:#fff"><th style="padding:4px;font-size:10px;border:none">#</th><th style="padding:4px;font-size:10px;border:none">Name</th><th style="padding:4px;font-size:10px;border:none">Date</th><th style="padding:4px;font-size:10px;text-align:right;border:none">m³</th><th style="padding:4px;font-size:10px;text-align:right;border:none">Due</th><th style="padding:4px;font-size:10px;border:none">St</th></tr></thead><tbody>'+rows+'</tbody></table><div style="margin:10px 0;padding:10px;background:#1a1a1a;color:#fff;border-radius:6px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>Billed:</span><strong>'+cf.format(ts)+'</strong></div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>Collected:</span><strong style="color:#28a745">'+cf.format(tc)+'</strong></div><div style="display:flex;justify-content:space-between;font-size:14px;font-weight:900"><span>Outstanding:</span><span style="color:#ff6b6b">'+cf.format(ts-tc)+'</span></div></div></div>';document.getElementById('printReceipt').innerHTML=html;window.print();document.getElementById('printReceipt').innerHTML=''}
 
     // EXPORT
     function exportToExcel(){var bl=getData('bills'),cs=getData('customers');if(!bl.length){alert('No bills');return}var sym=getCurrencySymbol(),data=[['Customer','Date','Prev','Present','Used (m³)','Rate','Penalty','Total ('+sym+')','Paid','Status']];bl.forEach(function(b){var c=cs.find(function(x){return x.id===b.customerId});data.push([c?c.name:'?',b.date,b.prevReading,b.presReading,b.totalUsed,b.pricePerCubic,b.penaltyAmount||0,b.totalDue,b.amountPaid||0,b.paymentStatus||'unpaid'])});var ws=XLSX.utils.aoa_to_sheet(data),wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Bills');XLSX.writeFile(wb,'water-bills-'+new Date().toISOString().split('T')[0]+'.xlsx')}
