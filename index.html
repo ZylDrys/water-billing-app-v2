@@ -1,41 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#007bff">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  />
+  <meta name="theme-color" content="#007bff" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>Water Billing System</title>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="icon-192.png">
+
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
 </head>
 <body>
-
   <!-- LOGIN MODAL -->
-  <div id="loginModal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);align-items:center;justify-content:center;z-index:9999;display:none">
-    <div style="background:#fff;padding:25px;border-radius:12px;width:min(320px,90vw);box-shadow:0 4px 12px rgba(0,0,0,.2);text-align:center">
-      <h2>🔐 Enter Password</h2>
-      <div style="position:relative">
-        <input id="loginPassword" type="password" placeholder="Password" style="width:100%;padding:12px;margin:15px 0;border-radius:8px;border:1px solid #ccc" autocomplete="off">
-        <span id="toggleLoginPassword" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px">👁</span>
+  <div
+    id="loginModal"
+    style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);align-items:center;justify-content:center;z-index:9999;display:none;"
+  >
+    <div
+      style="background:#fff;padding:25px;border-radius:12px;width:min(320px,90vw);box-shadow:0 4px 12px rgba(0,0,0,.2);text-align:center;"
+    >
+      <h2>Enter Password</h2>
+      <div style="position:relative;">
+        <input
+          id="loginPassword"
+          type="password"
+          placeholder="Password"
+          autocomplete="off"
+          style="width:100%;padding:12px;margin:15px 0;border-radius:8px;border:1px solid #ccc;"
+        />
+        <span
+          id="toggleLoginPassword"
+          style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px;"
+          >👁</span
+        >
       </div>
-      <div id="loginMessage" style="color:red;font-size:14px;min-height:18px"></div>
-      <button id="loginBtn" style="width:100%;padding:12px;background:#007bff;color:#fff;border:none;border-radius:8px;font-weight:bold;cursor:pointer">Login</button>
+      <div id="loginMessage" style="color:red;font-size:14px;min-height:18px;"></div>
+      <button
+        id="loginBtn"
+        style="width:100%;padding:12px;background:#007bff;color:#fff;border:none;border-radius:8px;font-weight:bold;cursor:pointer;"
+      >
+        Login
+      </button>
     </div>
   </div>
 
   <!-- PROMPT MODAL -->
-  <div id="promptModal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);align-items:center;justify-content:center;z-index:10000;display:none">
-    <div style="background:#fff;padding:25px;border-radius:12px;width:min(320px,90vw);box-shadow:0 4px 12px rgba(0,0,0,.2);text-align:center">
+  <div
+    id="promptModal"
+    style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);align-items:center;justify-content:center;z-index:10000;display:none;"
+  >
+    <div
+      style="background:#fff;padding:25px;border-radius:12px;width:min(320px,90vw);box-shadow:0 4px 12px rgba(0,0,0,.2);text-align:center;"
+    >
       <h2 id="promptTitle"></h2>
-      <div style="position:relative">
-        <input id="promptInput" type="text" style="width:100%;padding:12px;margin:15px 0;border-radius:8px;border:1px solid #ccc;font-size:16px" autocomplete="off">
-        <span id="togglePromptPassword" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px;display:none">👁</span>
+      <div style="position:relative;">
+        <input
+          id="promptInput"
+          type="text"
+          autocomplete="off"
+          style="width:100%;padding:12px;margin:15px 0;border-radius:8px;border:1px solid #ccc;font-size:16px;"
+        />
+        <span
+          id="togglePromptPassword"
+          style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px;display:none;"
+          >👁</span
+        >
       </div>
-      <div style="display:flex;gap:10px">
-        <button id="promptCancel" style="background:#dc3545">Cancel</button>
+      <div style="display:flex;gap:10px;">
+        <button id="promptCancel" style="background:#dc3545;">Cancel</button>
         <button id="promptConfirm">Confirm</button>
       </div>
     </div>
@@ -43,15 +80,16 @@
 
   <!-- SYNC INDICATOR -->
   <div class="sync-indicator synced" id="syncIndicator" onclick="manualSync()" title="Click to sync now">
-    <span id="syncIcon">☁</span><span id="syncText">Synced</span>
+    <span id="syncIcon">☁</span>
+    <span id="syncText">Synced</span>
   </div>
 
   <!-- DEV MODE INDICATOR -->
-  <div class="dev-mode-indicator" id="devModeIndicator">🛠 DEV</div>
+  <div class="dev-mode-indicator" id="devModeIndicator">DEV</div>
 
   <!-- TIMER WIDGET -->
   <div class="timer-widget" id="timerWidget">
-    <button class="timer-toggle" id="timerToggle" title="Toggle timer">⏱</button>
+    <button class="timer-toggle" id="timerToggle" title="Toggle timer" aria-label="Toggle timer">⏱</button>
     <div class="timer-display" id="timerDisplay">
       <div class="timer-label">Temp Password Expires</div>
       <div class="timer-countdown inactive" id="timerCountdown">No temp password</div>
@@ -60,45 +98,90 @@
   </div>
 
   <!-- SCROLL TO TOP -->
-  <button class="scroll-top-btn" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Scroll to top">↑</button>
+  <button
+    class="scroll-top-btn"
+    id="scrollTopBtn"
+    onclick="window.scrollTo({ top: 0, behavior: 'smooth' })"
+    title="Scroll to top"
+    aria-label="Scroll to top"
+  >
+    ↑
+  </button>
 
   <!-- SUGGESTION BUTTON -->
-  <button class="suggestion-btn" id="suggestionBtn" onclick="openSuggestionBox()" title="Send a suggestion">💡</button>
+  <button
+    class="suggestion-btn"
+    id="suggestionBtn"
+    onclick="openSuggestionBox()"
+    title="Send a suggestion"
+    aria-label="Send a suggestion"
+  >
+    💡
+  </button>
 
   <!-- SUGGESTION MODAL -->
-  <div id="suggestionModal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);align-items:center;justify-content:center;z-index:10001;display:none">
-    <div style="background:#fff;padding:25px;border-radius:12px;width:min(360px,92vw);box-shadow:0 4px 12px rgba(0,0,0,.2)">
-      <h3 style="margin-bottom:10px;border:none;padding:0">💡 Suggestion Box</h3>
-      <p style="font-size:12px;color:#666;margin-bottom:10px">Have an idea or feedback? Let the developer know what you'd like to see improved or added.</p>
-      <textarea id="suggestionText" rows="4" placeholder="Type your suggestion here..." style="width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;font-size:14px;resize:vertical;font-family:inherit"></textarea>
-      <div style="display:flex;gap:10px;margin-top:10px">
-        <button onclick="closeSuggestionBox()" style="background:#6c757d;flex:1">Cancel</button>
-        <button onclick="submitSuggestion()" style="background:#28a745;flex:1">Submit</button>
+  <div
+    id="suggestionModal"
+    style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);align-items:center;justify-content:center;z-index:10001;display:none;"
+  >
+    <div
+      style="background:#fff;padding:25px;border-radius:12px;width:min(360px,92vw);box-shadow:0 4px 12px rgba(0,0,0,.2);"
+    >
+      <h3 style="margin-bottom:10px;border:none;padding:0;">Suggestion Box</h3>
+      <p style="font-size:12px;color:#666;margin-bottom:10px;">
+        Have an idea or feedback? Let the developer know what you'd like to see improved or added.
+      </p>
+      <textarea
+        id="suggestionText"
+        rows="4"
+        placeholder="Type your suggestion here..."
+        style="width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;font-size:14px;resize:vertical;font-family:inherit;"
+      ></textarea>
+      <div style="display:flex;gap:10px;margin-top:10px;">
+        <button onclick="closeSuggestionBox()" style="background:#6c757d;flex:1;">Cancel</button>
+        <button onclick="submitSuggestion()" style="background:#28a745;flex:1;">Submit</button>
       </div>
-      <div id="suggestionHistory" style="margin-top:15px;max-height:150px;overflow-y:auto"></div>
+      <div id="suggestionHistory" style="margin-top:15px;max-height:150px;overflow-y:auto;"></div>
     </div>
   </div>
 
   <div class="container">
     <div class="app-header">
-      <h1>💧 Water Billing</h1>
-      <button class="customize-btn" onclick="showSection('customizeSection')" title="Customize">🎨</button>
+      <h1>Water Billing</h1>
+      <button class="customize-btn" onclick="showSection('customizeSection')" title="Customize" aria-label="Customize">
+        ⚙
+      </button>
     </div>
 
     <!-- MAIN MENU -->
     <div id="menuSection" class="section active">
       <div class="menu-grid">
         <div class="menu-card accent-blue" onclick="showSection('newBillSection')">
-          <div class="menu-icon">➕</div><div class="menu-label">New Bill</div><div class="menu-desc">Create billing</div><div class="menu-accent"></div>
+          <div class="menu-icon">➕</div>
+          <div class="menu-label">New Bill</div>
+          <div class="menu-desc">Create billing</div>
+          <div class="menu-accent"></div>
         </div>
+
         <div class="menu-card accent-green" onclick="showSection('customersSection')" id="menuCustomerCard">
-          <div class="menu-icon">👥</div><div class="menu-label">Customers</div><div class="menu-desc">Manage accounts</div><div class="menu-accent"></div>
+          <div class="menu-icon">👥</div>
+          <div class="menu-label">Customers</div>
+          <div class="menu-desc">Manage accounts</div>
+          <div class="menu-accent"></div>
         </div>
+
         <div class="menu-card accent-purple" onclick="showSection('transactionsSection')">
-          <div class="menu-icon">📊</div><div class="menu-label">Transactions</div><div class="menu-desc">History & Analysis</div><div class="menu-accent"></div>
+          <div class="menu-icon">📄</div>
+          <div class="menu-label">Transactions</div>
+          <div class="menu-desc">History &amp; Analysis</div>
+          <div class="menu-accent"></div>
         </div>
+
         <div class="menu-card accent-orange" onclick="showSection('settingsSection')">
-          <div class="menu-icon">⚙️</div><div class="menu-label">Settings</div><div class="menu-desc">System config</div><div class="menu-accent"></div>
+          <div class="menu-icon">⚙</div>
+          <div class="menu-label">Settings</div>
+          <div class="menu-desc">System config</div>
+          <div class="menu-accent"></div>
         </div>
       </div>
     </div>
@@ -106,266 +189,461 @@
     <!-- CUSTOMIZE -->
     <div id="customizeSection" class="section">
       <button onclick="showSection('menuSection')">← Back</button>
-      <h2>🎨 Customize</h2>
-      <h3>🏢 Company Branding</h3>
+      <h2>Customize</h2>
+
+      <h3>Company Branding</h3>
       <div class="form-group">
         <label>Company Logo</label>
-        <div class="logo-preview" id="logoPreview"><span style="font-size:32px;color:var(--text-muted)">📷</span></div>
-        <input type="file" id="logoUpload" accept="image/*" onchange="handleLogoUpload(event)" style="font-size:14px">
-        <div class="upload-progress" id="logoProgress"><div class="upload-progress-bar" id="logoProgressBar"></div></div>
-        <button onclick="removeLogo()" style="background:var(--bg-danger);margin-top:5px;font-size:13px;padding:8px">✕ Remove Logo</button>
+        <div class="logo-preview" id="logoPreview">
+          <span style="font-size:32px;color:var(--text-muted);">🖼</span>
+        </div>
+        <input type="file" id="logoUpload" accept="image/*" onchange="handleLogoUpload(event)" style="font-size:14px;" />
+        <div class="upload-progress" id="logoProgress">
+          <div class="upload-progress-bar" id="logoProgressBar"></div>
+        </div>
+        <button onclick="removeLogo()" style="background:var(--bg-danger);margin-top:5px;font-size:13px;padding:8px;">
+          ✕ Remove Logo
+        </button>
       </div>
-      <div class="form-group"><label>Company Name</label><input type="text" id="companyName" placeholder="e.g. AquaPure Water"></div>
-      <div class="form-group"><label>Company Address</label><input type="text" id="companyAddress" placeholder="e.g. 123 Main St"></div>
-      <div class="form-group"><label>Phone</label><input type="text" id="companyPhone" placeholder="e.g. 0917-123-4567"></div>
-      <div class="form-group"><label>Email</label><input type="email" id="companyEmail" placeholder="e.g. info@aquapure.com"></div>
-      <h3>🎨 Themes</h3><div class="theme-grid" id="themeGrid"></div>
-      <h3>🖼 Background</h3>
+
+      <div class="form-group">
+        <label>Company Name</label>
+        <input type="text" id="companyName" placeholder="e.g. AquaPure Water" />
+      </div>
+      <div class="form-group">
+        <label>Company Address</label>
+        <input type="text" id="companyAddress" placeholder="e.g. 123 Main St" />
+      </div>
+      <div class="form-group">
+        <label>Phone</label>
+        <input type="text" id="companyPhone" placeholder="e.g. 0917-123-4567" />
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="companyEmail" placeholder="e.g. info@aquapure.com" />
+      </div>
+
+      <h3>Themes</h3>
+      <div class="theme-grid" id="themeGrid"></div>
+
+      <h3>Background</h3>
       <div class="form-group">
         <label>Upload Background</label>
         <div class="bg-preview" id="bgPreview">No background set</div>
-        <input type="file" id="bgUpload" accept="image/*" onchange="handleBgUpload(event)" style="font-size:14px">
-        <div class="upload-progress" id="bgProgress"><div class="upload-progress-bar" id="bgProgressBar"></div></div>
-        <div style="display:flex;gap:8px;margin-top:5px">
-          <button onclick="saveCurrentBgAsPreset()" style="background:var(--bg-success);font-size:13px;padding:8px;flex:1">💾 Save Preset</button>
-          <button onclick="removeBackground()" style="background:var(--bg-danger);font-size:13px;padding:8px;flex:1">✕ Remove</button>
+        <input type="file" id="bgUpload" accept="image/*" onchange="handleBgUpload(event)" style="font-size:14px;" />
+        <div class="upload-progress" id="bgProgress">
+          <div class="upload-progress-bar" id="bgProgressBar"></div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:5px;">
+          <button onclick="saveCurrentBgAsPreset()" style="background:var(--bg-success);font-size:13px;padding:8px;flex:1;">
+            💾 Save Preset
+          </button>
+          <button onclick="removeBackground()" style="background:var(--bg-danger);font-size:13px;padding:8px;flex:1;">
+            ✕ Remove
+          </button>
         </div>
       </div>
-      <h3>📁 Saved Backgrounds</h3>
-      <div class="saved-bg-grid" id="savedBgGrid"><p style="grid-column:1/-1;text-align:center;color:var(--text-muted);font-size:13px">No saved backgrounds</p></div>
-      <h3>✨ Presets</h3><div class="preset-grid" id="presetGrid"></div>
-      <button onclick="saveCustomization()" style="margin-top:20px;font-size:16px;padding:14px">💾 Save All</button>
+
+      <h3>Saved Backgrounds</h3>
+      <div class="saved-bg-grid" id="savedBgGrid">
+        <p style="grid-column:1/-1;text-align:center;color:var(--text-muted);font-size:13px;">No saved backgrounds</p>
+      </div>
+
+      <h3>✨ Presets</h3>
+      <div class="preset-grid" id="presetGrid"></div>
+
+      <button onclick="saveCustomization()" style="margin-top:20px;font-size:16px;padding:14px;">
+        Save All
+      </button>
     </div>
 
     <!-- SETTINGS -->
     <div id="settingsSection" class="section">
       <button onclick="showSection('menuSection')">← Back</button>
-      <h2>⚙️ Settings</h2>
-      <h3>💰 Billing</h3>
+      <h2>Settings</h2>
+
+      <h3>Billing</h3>
       <div class="currency-switcher">
         <strong>Currency:</strong>
         <button onclick="setCurrency('USD')">USD $</button>
         <button onclick="setCurrency('PHP')">PHP ₱</button>
         <button onclick="setCurrency('EUR')">EUR €</button>
       </div>
-      <div class="form-group"><label>Price per Cubic Meter</label><input type="number" id="adminPricePerCubic" step="0.01" placeholder="Rate"></div>
-      <div class="form-group"><label>Minimum Charge</label><input type="number" id="adminMinCharge" step="0.01" placeholder="Min charge"></div>
-      <div class="form-group"><label>Penalty Rate (% of total due)</label><input type="number" id="adminPenaltyRate" step="0.1" min="0" max="100" placeholder="e.g. 10 for 10%"></div>
-      <div class="form-group"><label style="display:flex;align-items:center;cursor:pointer"><input type="checkbox" id="adminRoundOff">Round off total to nearest whole number</label></div>
 
-      <h3>🔒 Security</h3>
+      <div class="form-group">
+        <label>Price per Cubic Meter</label>
+        <input type="number" id="adminPricePerCubic" step="0.01" placeholder="Rate" />
+      </div>
+
+      <div class="form-group">
+        <label>Minimum Charge</label>
+        <input type="number" id="adminMinCharge" step="0.01" placeholder="Min charge" />
+      </div>
+
+      <div class="form-group">
+        <label>Penalty Rate (% of total due)</label>
+        <input type="number" id="adminPenaltyRate" step="0.1" min="0" max="100" placeholder="e.g. 10 for 10%" />
+      </div>
+
+      <div class="form-group">
+        <label style="display:flex;align-items:center;cursor:pointer;">
+          <input type="checkbox" id="adminRoundOff" />
+          Round off total to nearest whole number
+        </label>
+      </div>
+
+      <h3>Security</h3>
       <div>
         <label>Password</label>
-        <div style="position:relative">
-          <input type="password" id="adminPassword" placeholder="Enter password to save" data-clear-on-confirm="true" autocomplete="off"/>
-          <span id="eyeIcon" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer">👁</span>
+        <div style="position:relative;">
+          <input
+            type="password"
+            id="adminPassword"
+            placeholder="Enter password to save"
+            data-clear-on-confirm="true"
+            autocomplete="off"
+          />
+          <span
+            id="eyeIcon"
+            style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;"
+            >👁</span
+          >
         </div>
       </div>
-      <button onclick="saveSettings()">💾 Save Settings</button>
+
+      <button onclick="saveSettings()">Save Settings</button>
 
       <div>
         <label>Master Password</label>
-        <div style="position:relative;margin-bottom:10px">
-          <input type="password" id="masterPassword" placeholder="Enter master password" data-clear-on-confirm="true" autocomplete="off">
-          <span id="eyeIconMaster" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer">👁</span>
+        <div style="position:relative;margin-bottom:10px;">
+          <input
+            type="password"
+            id="masterPassword"
+            placeholder="Enter master password"
+            data-clear-on-confirm="true"
+            autocomplete="off"
+          />
+          <span
+            id="eyeIconMaster"
+            style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;"
+            >👁</span
+          >
         </div>
         <button onclick="confirmMasterPassword()">Confirm Master Password</button>
       </div>
 
-      <div id="masterPasswordActions" style="margin-top:10px;display:none">
-        <button onclick="changeMasterPassword()">🔑 Change Master Password</button>
-        <button onclick="showDefaultMasterPassword()">👁 Show Default</button>
-        <button onclick="restoreDefaultMasterPassword()">♻️ Restore Default</button>
-        <button id="devModeToggleBtn" onclick="toggleDevMode()" style="background:#17a2b8;margin-top:5px">🛠 Enable Developer Mode</button>
+      <div id="masterPasswordActions" style="margin-top:10px;display:none;">
+        <button onclick="changeMasterPassword()">Change Master Password</button>
+        <button onclick="showDefaultMasterPassword()">Show Default</button>
+        <button onclick="restoreDefaultMasterPassword()">Restore Default</button>
+        <button id="devModeToggleBtn" onclick="toggleDevMode()" style="background:#17a2b8;margin-top:5px;">
+          Enable Developer Mode
+        </button>
       </div>
 
-      <div id="temporaryPasswordButtonContainer" style="display:none;margin-top:15px">
+      <div id="temporaryPasswordButtonContainer" style="display:none;margin-top:15px;">
         <button onclick="createTempPasswordPrompt()">➕ Create Temp Password</button>
         <button onclick="deleteTempPassword()">🗑 Delete Temp Password</button>
-        <div style="display:flex;gap:8px;margin-top:5px">
-          <button onclick="addTimeToTempPassword()" style="background:#17a2b8;flex:1">➕ Add Time</button>
-          <button onclick="subtractTimeFromTempPassword()" style="background:#e65100;flex:1">➖ Subtract Time</button>
+        <div style="display:flex;gap:8px;margin-top:5px;">
+          <button onclick="addTimeToTempPassword()" style="background:#17a2b8;flex:1;">➕ Add Time</button>
+          <button onclick="subtractTimeFromTempPassword()" style="background:#e65100;flex:1;">➖ Subtract Time</button>
         </div>
-        <button onclick="restoreDefaults()">♻️ Restore Default</button>
+        <button onclick="restoreDefaults()">Restore Default</button>
       </div>
 
       <!-- QR CODE / PAYMENT SECTION -->
-      <div id="qrPaymentSection" style="display:none;margin-top:15px">
-        <h3>📱 Payment QR Code</h3>
+      <div id="qrPaymentSection" style="display:none;margin-top:15px;">
+        <h3>Payment QR Code</h3>
+
         <div class="form-group">
           <label>Upload QR Code Image</label>
-          <div class="qr-preview" id="qrPreview"><span style="font-size:32px;color:var(--text-muted)">📱</span></div>
-          <input type="file" id="qrUpload" accept="image/*" onchange="handleQrUpload(event)" style="font-size:14px">
-          <button onclick="removeQrCode()" style="background:var(--bg-danger);margin-top:5px;font-size:13px;padding:8px">✕ Remove QR</button>
+          <div class="qr-preview" id="qrPreview">
+            <span style="font-size:32px;color:var(--text-muted);">🔳</span>
+          </div>
+          <input type="file" id="qrUpload" accept="image/*" onchange="handleQrUpload(event)" style="font-size:14px;" />
+          <button onclick="removeQrCode()" style="background:var(--bg-danger);margin-top:5px;font-size:13px;padding:8px;">
+            ✕ Remove QR
+          </button>
         </div>
+
         <div class="form-group">
           <label>Subscription Contract (editable)</label>
-          <textarea id="subscriptionContract" rows="6" style="width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;font-size:12px;resize:vertical;font-family:inherit"></textarea>
-          <button onclick="saveQrAndContract()" style="background:var(--bg-success);margin-top:5px">💾 Save QR & Contract</button>
+          <textarea
+            id="subscriptionContract"
+            rows="6"
+            style="width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;font-size:12px;resize:vertical;font-family:inherit;"
+          ></textarea>
+          <button onclick="saveQrAndContract()" style="background:var(--bg-success);margin-top:5px;">
+            Save QR &amp; Contract
+          </button>
         </div>
       </div>
 
-      <h3>📦 Data Management</h3>
-      <button onclick="backupToFile()" style="background:#6c757d">📥 Backup to File</button>
-      <button onclick="restoreFromFile()" style="background:#6c757d">📤 Restore from File</button>
-      <input type="file" id="restoreFileInput" accept=".json" style="display:none" onchange="handleRestoreFile(event)">
+      <h3>Data Management</h3>
+      <button onclick="backupToFile()" style="background:#6c757d;">Backup to File</button>
+      <button onclick="restoreFromFile()" style="background:#6c757d;">Restore from File</button>
+      <input type="file" id="restoreFileInput" accept=".json" style="display:none;" onchange="handleRestoreFile(event)" />
     </div>
 
     <!-- CUSTOMERS -->
     <div id="customersSection" class="section">
       <button onclick="showSection('menuSection')">← Back</button>
-      <h2>👥 Customers</h2>
-      <input type="text" id="customerSearch" class="search-box" placeholder="Search customer..." oninput="filterCustomers()">
+      <h2>Customers</h2>
+
+      <input type="text" id="customerSearch" class="search-box" placeholder="Search customer..." oninput="filterCustomers()" />
+
       <div class="sort-controls">
         <button onclick="sortCustomers('name','asc')">A→Z</button>
         <button onclick="sortCustomers('name','desc')">Z→A</button>
         <button onclick="sortCustomers('date','desc')">Newest</button>
         <button onclick="sortCustomers('date','asc')">Oldest</button>
       </div>
+
       <div style="display:flex;justify-content:space-between;align-items:center;margin:10px 0;padding:10px;background:var(--bg-table-even);border-radius:8px;">
-        <label style="margin:0;display:flex;align-items:center;cursor:pointer;"><input type="checkbox" id="selectAllCustomers" onchange="toggleSelectAllCustomers()"> Select All</label>
-        <button onclick="bulkDeleteCustomers()" style="width:auto;padding:8px 14px;background:var(--bg-danger);margin:0;font-size:13px;">🗑 Delete Selected</button>
+        <label style="margin:0;display:flex;align-items:center;cursor:pointer;">
+          <input type="checkbox" id="selectAllCustomers" onchange="toggleSelectAllCustomers()" />
+          Select All
+        </label>
+        <button onclick="bulkDeleteCustomers()" style="width:auto;padding:8px 14px;background:var(--bg-danger);margin:0;font-size:13px;">
+          Delete Selected
+        </button>
       </div>
+
       <div class="form-group">
-        <input type="text" id="newCustomerName" placeholder="Enter customer name">
+        <input type="text" id="newCustomerName" placeholder="Enter customer name" />
         <button onclick="addCustomer()">➕ Add Customer</button>
       </div>
-      <h3>📋 Import Customers</h3>
+
+      <h3>Import Customers</h3>
       <div class="import-mode-selector" id="importModeSelector">
         <button class="active" onclick="setImportMode('simple',this)">Simple (Names)</button>
         <button onclick="setImportMode('full',this)">Full (With Data)</button>
       </div>
-      <div id="importSimpleInfo" class="import-info"><strong>Simple Import:</strong><br>Column A: Customer Name<br>First row = header (skipped). Duplicates skipped.</div>
-      <div id="importFullInfo" class="import-info" style="display:none"><strong>Full Import:</strong><br>A: Name, B: Date, C: Previous, D: Present, E: Total Used, F: Total Due, G: Amount Paid, H: Status<br>Creates customers + bills. Data feeds into Analysis.</div>
-      <button onclick="document.getElementById('importCustomerFile').click()" style="background:#17a2b8">📋 Import from Excel</button>
-      <input type="file" id="importCustomerFile" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleImportCustomers(event)">
-      <button onclick="downloadCustomerTemplate()" style="background:#6c757d;font-size:13px;padding:8px">📄 Download Template</button>
+
+      <div id="importSimpleInfo" class="import-info">
+        <strong>Simple Import:</strong><br />
+        Column A: Customer Name<br />
+        First row = header (skipped). Duplicates skipped.
+      </div>
+
+      <div id="importFullInfo" class="import-info" style="display:none;">
+        <strong>Full Import:</strong><br />
+        A: Name, B: Date, C: Previous, D: Present, E: Total Used, F: Total Due, G: Amount Paid, H: Status<br />
+        Creates customers + bills. Data feeds into Analysis.
+      </div>
+
+      <button onclick="document.getElementById('importCustomerFile').click()" style="background:#17a2b8;">
+        Import from Excel
+      </button>
+      <input type="file" id="importCustomerFile" accept=".xlsx,.xls,.csv" style="display:none;" onchange="handleImportCustomers(event)" />
+
+      <button onclick="downloadCustomerTemplate()" style="background:#6c757d;font-size:13px;padding:8px;">
+        Download Template
+      </button>
+
       <div id="customersList"></div>
     </div>
 
     <!-- NEW BILL -->
     <div id="newBillSection" class="section">
       <button onclick="showSection('menuSection')">← Back</button>
-      <h2>📝 New Bill</h2>
-      <input type="text" id="billCustomerSearch" class="search-box" placeholder="Search customer..." oninput="filterBillCustomers()">
-      <select id="billCustomer" onchange="loadLastReading()"><option value="">-- Select Customer --</option></select>
-      <input type="date" id="billDate">
+      <h2>New Bill</h2>
+
+      <input type="text" id="billCustomerSearch" class="search-box" placeholder="Search customer..." oninput="filterBillCustomers()" />
+      <select id="billCustomer" onchange="loadLastReading()">
+        <option value="">-- Select Customer --</option>
+      </select>
+
+      <input type="date" id="billDate" />
+
       <div class="form-row">
-        <div class="form-group"><label>Previous (m³)</label><input type="number" id="prevReading" readonly></div>
-        <div class="form-group"><label>Present (m³)</label><input type="number" id="presReading" oninput="calculateTotal()"></div>
+        <div class="form-group">
+          <label>Previous (m³)</label>
+          <input type="number" id="prevReading" readonly />
+        </div>
+        <div class="form-group">
+          <label>Present (m³)</label>
+          <input type="number" id="presReading" oninput="calculateTotal()" />
+        </div>
       </div>
-      <div class="form-group"><label style="display:flex;align-items:center;cursor:pointer"><input type="checkbox" id="applyPenalty" onchange="calculateTotal()">Apply Penalty</label></div>
+
+      <div class="form-group">
+        <label style="display:flex;align-items:center;cursor:pointer;">
+          <input type="checkbox" id="applyPenalty" onchange="calculateTotal()" />
+          Apply Penalty
+        </label>
+      </div>
+
       <div class="bill-breakdown" id="billBreakdown">
         <div class="row"><span>Consumption</span><span id="brkUsed">0 m³</span></div>
         <div class="row"><span>Rate</span><span id="brkRate">$0.00/m³</span></div>
         <div class="row"><span>Computed</span><span id="brkComputed">$0.00</span></div>
         <div class="row"><span>Min Charge</span><span id="brkMin">$0.00</span></div>
-        <div class="row" id="brkPenaltyRow" style="display:none;color:#dc3545"><span>Penalty (<span id="brkPenaltyRate">0</span>%)</span><span id="brkPenalty">$0.00</span></div>
+        <div class="row" id="brkPenaltyRow" style="display:none;color:#dc3545;">
+          <span>Penalty (<span id="brkPenaltyRate">0</span>%)</span>
+          <span id="brkPenalty">$0.00</span>
+        </div>
         <div class="row total"><span>Total Due</span><span id="brkTotal">$0.00</span></div>
       </div>
-      <div class="total-display">Total Due: <span id="displayCurrencySymbol">$</span><span id="displayTotal">0.00</span></div>
-      <button onclick="saveBill(false)">💾 Save Only</button>
-      <button onclick="saveBill(true)">🖨 Save & Print</button>
+
+      <div class="total-display">
+        Total Due: <span id="displayCurrencySymbol">$</span><span id="displayTotal">0.00</span>
+      </div>
+
+      <button onclick="saveBill(false)">Save Only</button>
+      <button onclick="saveBill(true)">Save &amp; Print</button>
     </div>
 
     <!-- TRANSACTIONS HUB -->
     <div id="transactionsSection" class="section">
       <button onclick="showSection('menuSection')">← Back</button>
-      <h2>📊 Transactions</h2>
+      <h2>Transactions</h2>
+
       <div class="menu-grid">
         <div class="menu-card accent-blue" onclick="showSection('historySection')">
-          <div class="menu-icon">📋</div><div class="menu-label">History</div><div class="menu-desc">All bills</div><div class="menu-accent"></div>
+          <div class="menu-icon">🕘</div>
+          <div class="menu-label">History</div>
+          <div class="menu-desc">All bills</div>
+          <div class="menu-accent"></div>
         </div>
+
         <div class="menu-card accent-purple" onclick="showSection('analysisSection')">
-          <div class="menu-icon">📈</div><div class="menu-label">Analysis</div><div class="menu-desc">Reports & charts</div><div class="menu-accent"></div>
+          <div class="menu-icon">📊</div>
+          <div class="menu-label">Analysis</div>
+          <div class="menu-desc">Reports &amp; charts</div>
+          <div class="menu-accent"></div>
         </div>
+
         <div class="menu-card accent-green" onclick="showSection('balanceSheetSection')">
-          <div class="menu-icon">📒</div><div class="menu-label">Balance Sheet</div><div class="menu-desc">Assets & Liabilities</div><div class="menu-accent"></div>
+          <div class="menu-icon">📘</div>
+          <div class="menu-label">Balance Sheet</div>
+          <div class="menu-desc">Assets &amp; Liabilities</div>
+          <div class="menu-accent"></div>
         </div>
+
         <div class="menu-card accent-teal" onclick="showExportOptions()">
-          <div class="menu-icon">📁</div><div class="menu-label">Export to Excel</div><div class="menu-desc">Download data</div><div class="menu-accent"></div>
+          <div class="menu-icon">📥</div>
+          <div class="menu-label">Export to Excel</div>
+          <div class="menu-desc">Download data</div>
+          <div class="menu-accent"></div>
         </div>
       </div>
     </div>
 
     <!-- EXPORT OPTIONS MODAL -->
-    <div id="exportModal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);align-items:center;justify-content:center;z-index:10001;display:none">
-      <div style="background:#fff;padding:25px;border-radius:12px;width:min(340px,90vw);box-shadow:0 4px 12px rgba(0,0,0,.2)">
-        <h3 style="margin:0 0 15px;border:none;padding:0">📁 Export Data</h3>
-        <p style="font-size:12px;color:#666;margin-bottom:12px">Choose the time range for export:</p>
-        <button onclick="exportByPeriod('month')" style="margin:4px 0">📅 This Month</button>
-        <button onclick="exportByPeriod('quarter')" style="margin:4px 0">📊 This Quarter</button>
-        <button onclick="exportByPeriod('semi')" style="margin:4px 0">📈 This Semi-Annual</button>
-        <button onclick="exportByPeriod('year')" style="margin:4px 0">📆 This Year</button>
-        <button onclick="exportByPeriod('all')" style="margin:4px 0;background:#6c757d">📦 All Data</button>
-        <button onclick="closeExportModal()" style="margin:8px 0 0;background:#dc3545">Cancel</button>
+    <div
+      id="exportModal"
+      style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);align-items:center;justify-content:center;z-index:10001;display:none;"
+    >
+      <div
+        style="background:#fff;padding:25px;border-radius:12px;width:min(340px,90vw);box-shadow:0 4px 12px rgba(0,0,0,.2);"
+      >
+        <h3 style="margin:0 0 15px;border:none;padding:0;">Export Data</h3>
+        <p style="font-size:12px;color:#666;margin-bottom:12px;">Choose the time range for export:</p>
+
+        <button onclick="exportByPeriod('month')" style="margin:4px 0;">This Month</button>
+        <button onclick="exportByPeriod('quarter')" style="margin:4px 0;">This Quarter</button>
+        <button onclick="exportByPeriod('semi')" style="margin:4px 0;">This Semi-Annual</button>
+        <button onclick="exportByPeriod('year')" style="margin:4px 0;">This Year</button>
+        <button onclick="exportByPeriod('all')" style="margin:4px 0;background:#6c757d;">All Data</button>
+        <button onclick="closeExportModal()" style="margin:8px 0 0;background:#dc3545;">Cancel</button>
       </div>
     </div>
 
     <!-- HISTORY -->
     <div id="historySection" class="section">
       <button onclick="showSection('transactionsSection')">← Back</button>
-      <h2>📋 History</h2>
-      <input type="text" id="historySearch" class="search-box" placeholder="Search..." oninput="filterHistory()">
+      <h2>History</h2>
+
+      <input type="text" id="historySearch" class="search-box" placeholder="Search..." oninput="filterHistory()" />
+
       <div class="sort-controls">
         <button onclick="sortHistory('date','desc')">Newest</button>
         <button onclick="sortHistory('date','asc')">Oldest</button>
         <button onclick="sortHistory('amount','desc')">Highest</button>
         <button onclick="sortHistory('amount','asc')">Lowest</button>
       </div>
-      <select id="historyFilter" onchange="loadFilteredHistory()"><option value="all">All Customers</option></select>
-      <select id="historyPaymentFilter" onchange="loadFilteredHistory()" style="margin-top:5px">
+
+      <select id="historyFilter" onchange="loadFilteredHistory()">
+        <option value="all">All Customers</option>
+      </select>
+
+      <select id="historyPaymentFilter" onchange="loadFilteredHistory()" style="margin-top:5px;">
         <option value="all">All Status</option>
         <option value="paid">✅ Paid</option>
         <option value="unpaid">❌ Unpaid</option>
         <option value="partial">⚠ Partial</option>
       </select>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin:15px 0;padding:12px;background:var(--bg-table-even);border-radius:8px;flex-wrap:wrap;gap:10px;border:1px solid var(--bg-card-border)">
-        <label style="margin:0;width:100%;display:flex;align-items:center;cursor:pointer;"><input type="checkbox" id="selectAllHistory" onchange="toggleSelectAllHistory()"> Select All</label>
+
+      <div
+        style="display:flex;justify-content:space-between;align-items:center;margin:15px 0;padding:12px;background:var(--bg-table-even);border-radius:8px;flex-wrap:wrap;gap:10px;border:1px solid var(--bg-card-border);"
+      >
+        <label style="margin:0;width:100%;display:flex;align-items:center;cursor:pointer;">
+          <input type="checkbox" id="selectAllHistory" onchange="toggleSelectAllHistory()" />
+          Select All
+        </label>
         <div style="display:flex;gap:8px;width:100%;flex-wrap:wrap;">
-          <button onclick="bulkMarkHistory('paid')" style="flex:1;padding:8px;font-size:12px;background:var(--bg-success);margin:0;min-width:60px;">✅ Pay</button>
-          <button onclick="bulkMarkHistory('unpaid')" style="flex:1;padding:8px;font-size:12px;background:#6c757d;margin:0;min-width:60px;">❌ Unpay</button>
-          <button onclick="bulkPrintHistory()" style="flex:1;padding:8px;font-size:12px;background:#17a2b8;margin:0;min-width:60px;">🖨 Print</button>
-          <button onclick="bulkDeleteHistory()" style="flex:1;padding:8px;font-size:12px;background:var(--bg-danger);margin:0;min-width:60px;">🗑 Delete</button>
+          <button onclick="bulkMarkHistory('paid')" style="flex:1;padding:8px;font-size:12px;background:var(--bg-success);margin:0;min-width:60px;">
+            ✅ Pay
+          </button>
+          <button onclick="bulkMarkHistory('unpaid')" style="flex:1;padding:8px;font-size:12px;background:#6c757d;margin:0;min-width:60px;">
+            ❌ Unpay
+          </button>
+          <button onclick="bulkPrintHistory()" style="flex:1;padding:8px;font-size:12px;background:#17a2b8;margin:0;min-width:60px;">
+            🖨 Print
+          </button>
+          <button onclick="bulkDeleteHistory()" style="flex:1;padding:8px;font-size:12px;background:var(--bg-danger);margin:0;min-width:60px;">
+            🗑 Delete
+          </button>
         </div>
       </div>
-      <div id="historySummary" style="margin:10px 0"></div>
+
+      <div id="historySummary" style="margin:10px 0;"></div>
       <div id="historyList"></div>
     </div>
 
     <!-- ANALYSIS -->
     <div id="analysisSection" class="section">
       <button onclick="showSection('transactionsSection')">← Back</button>
-      <h2>📈 Analysis</h2>
+      <h2>Analysis</h2>
+
       <div class="period-tabs" id="periodTabs">
         <button class="active" onclick="setAnalysisPeriod('monthly',this)">Monthly</button>
         <button onclick="setAnalysisPeriod('quarterly',this)">Quarterly</button>
         <button onclick="setAnalysisPeriod('semiannual',this)">Semi-Annual</button>
         <button onclick="setAnalysisPeriod('yearly',this)">Yearly</button>
       </div>
+
       <div class="period-selector">
         <button onclick="changeAnalysisPeriod(-1)">◀</button>
         <div class="current-period" id="analysisPeriodLabel">January 2025</div>
         <button onclick="changeAnalysisPeriod(1)">▶</button>
       </div>
+
       <div class="stat-grid" id="analysisStats"></div>
+
       <div class="analysis-chart" id="analysisChart">
-        <h3 style="border:none;margin:0 0 10px;padding:0;font-size:14px">📊 Revenue Chart</h3>
+        <h3 style="border:none;margin:0 0 10px;padding:0;font-size:14px;">Revenue Chart</h3>
         <div class="chart-bar-container" id="chartBars"></div>
       </div>
+
       <div id="analysisCustomerBreakdown"></div>
       <div id="analysisPaymentSummary"></div>
-      <h3>📅 Year Overview</h3>
+
+      <h3>Year Overview</h3>
       <div class="analysis-chart" id="yearlyChart">
         <div class="chart-bar-container" id="yearlyChartBars"></div>
       </div>
-      <button onclick="exportAnalysisToExcel()" style="background:#17a2b8;margin-top:10px">📊 Export Analysis</button>
+
+      <button onclick="exportAnalysisToExcel()" style="background:#17a2b8;margin-top:10px;">
+        Export Analysis
+      </button>
     </div>
 
     <!-- BALANCE SHEET -->
     <div id="balanceSheetSection" class="section">
       <button onclick="showSection('transactionsSection')">← Back</button>
-      <h2>📒 Balance Sheet & Income Statement</h2>
+      <h2>Balance Sheet &amp; Income Statement</h2>
 
       <div class="period-tabs" id="bsPeriodTabs">
         <button class="active" onclick="setBsPeriod('bs',this)">Balance Sheet</button>
@@ -374,55 +652,77 @@
 
       <!-- Balance Sheet Tab -->
       <div id="bsTab">
-        <h3>📗 Assets</h3>
+        <h3>Assets</h3>
         <div id="bsAssetsList"></div>
-        <div class="form-row" style="margin-top:8px">
-          <div class="form-group"><input type="text" id="bsAssetName" placeholder="Asset name"></div>
-          <div class="form-group"><input type="number" id="bsAssetAmount" step="0.01" placeholder="Amount"></div>
+        <div class="form-row" style="margin-top:8px;">
+          <div class="form-group">
+            <input type="text" id="bsAssetName" placeholder="Asset name" />
+          </div>
+          <div class="form-group">
+            <input type="number" id="bsAssetAmount" step="0.01" placeholder="Amount" />
+          </div>
         </div>
-        <button onclick="addBsEntry('asset')" style="font-size:13px;padding:8px">➕ Add Asset</button>
+        <button onclick="addBsEntry('asset')" style="font-size:13px;padding:8px;">➕ Add Asset</button>
 
-        <h3>📕 Liabilities</h3>
+        <h3>Liabilities</h3>
         <div id="bsLiabilitiesList"></div>
-        <div class="form-row" style="margin-top:8px">
-          <div class="form-group"><input type="text" id="bsLiabilityName" placeholder="Liability name"></div>
-          <div class="form-group"><input type="number" id="bsLiabilityAmount" step="0.01" placeholder="Amount"></div>
+        <div class="form-row" style="margin-top:8px;">
+          <div class="form-group">
+            <input type="text" id="bsLiabilityName" placeholder="Liability name" />
+          </div>
+          <div class="form-group">
+            <input type="number" id="bsLiabilityAmount" step="0.01" placeholder="Amount" />
+          </div>
         </div>
-        <button onclick="addBsEntry('liability')" style="font-size:13px;padding:8px">➕ Add Liability</button>
+        <button onclick="addBsEntry('liability')" style="font-size:13px;padding:8px;">➕ Add Liability</button>
 
-        <h3>📘 Equity</h3>
+        <h3>Equity</h3>
         <div id="bsEquityList"></div>
-        <div class="form-row" style="margin-top:8px">
-          <div class="form-group"><input type="text" id="bsEquityName" placeholder="Equity name"></div>
-          <div class="form-group"><input type="number" id="bsEquityAmount" step="0.01" placeholder="Amount"></div>
+        <div class="form-row" style="margin-top:8px;">
+          <div class="form-group">
+            <input type="text" id="bsEquityName" placeholder="Equity name" />
+          </div>
+          <div class="form-group">
+            <input type="number" id="bsEquityAmount" step="0.01" placeholder="Amount" />
+          </div>
         </div>
-        <button onclick="addBsEntry('equity')" style="font-size:13px;padding:8px">➕ Add Equity</button>
+        <button onclick="addBsEntry('equity')" style="font-size:13px;padding:8px;">➕ Add Equity</button>
 
-        <div id="bsSummary" style="margin-top:15px"></div>
+        <div id="bsSummary" style="margin-top:15px;"></div>
       </div>
 
       <!-- Income Statement Tab -->
-      <div id="isTab" style="display:none">
-        <h3>💰 Income / Revenue</h3>
+      <div id="isTab" style="display:none;">
+        <h3>Income / Revenue</h3>
         <div id="isIncomeList"></div>
-        <div class="form-row" style="margin-top:8px">
-          <div class="form-group"><input type="text" id="isIncomeName" placeholder="Income source"></div>
-          <div class="form-group"><input type="number" id="isIncomeAmount" step="0.01" placeholder="Amount"></div>
+        <div class="form-row" style="margin-top:8px;">
+          <div class="form-group">
+            <input type="text" id="isIncomeName" placeholder="Income source" />
+          </div>
+          <div class="form-group">
+            <input type="number" id="isIncomeAmount" step="0.01" placeholder="Amount" />
+          </div>
         </div>
-        <button onclick="addIsEntry('income')" style="font-size:13px;padding:8px">➕ Add Income</button>
+        <button onclick="addIsEntry('income')" style="font-size:13px;padding:8px;">➕ Add Income</button>
 
-        <h3>📉 Expenses</h3>
+        <h3>Expenses</h3>
         <div id="isExpensesList"></div>
-        <div class="form-row" style="margin-top:8px">
-          <div class="form-group"><input type="text" id="isExpenseName" placeholder="Expense name"></div>
-          <div class="form-group"><input type="number" id="isExpenseAmount" step="0.01" placeholder="Amount"></div>
+        <div class="form-row" style="margin-top:8px;">
+          <div class="form-group">
+            <input type="text" id="isExpenseName" placeholder="Expense name" />
+          </div>
+          <div class="form-group">
+            <input type="number" id="isExpenseAmount" step="0.01" placeholder="Amount" />
+          </div>
         </div>
-        <button onclick="addIsEntry('expense')" style="font-size:13px;padding:8px">➕ Add Expense</button>
+        <button onclick="addIsEntry('expense')" style="font-size:13px;padding:8px;">➕ Add Expense</button>
 
-        <div id="isSummary" style="margin-top:15px"></div>
+        <div id="isSummary" style="margin-top:15px;"></div>
       </div>
 
-      <button onclick="exportBalanceSheet()" style="background:#17a2b8;margin-top:15px">📁 Export to Excel</button>
+      <button onclick="exportBalanceSheet()" style="background:#17a2b8;margin-top:15px;">
+        Export to Excel
+      </button>
     </div>
 
     <div id="printReceipt" class="print-only"></div>
@@ -432,7 +732,7 @@
   <script src="app.js"></script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').catch(function() {});
+      navigator.serviceWorker.register('sw.js').catch(function () {});
     }
   </script>
 </body>
