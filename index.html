@@ -16,7 +16,7 @@
   <!-- LOGIN MODAL -->
   <div id="loginModal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);align-items:center;justify-content:center;z-index:9999;display:none">
     <div style="background:#fff;padding:25px;border-radius:12px;width:min(320px,90vw);box-shadow:0 4px 12px rgba(0,0,0,.2);text-align:center">
-      <h2>🔒 Enter Password</h2>
+      <h2>🔐 Enter Password</h2>
       <div style="position:relative">
         <input id="loginPassword" type="password" placeholder="Password" style="width:100%;padding:12px;margin:15px 0;border-radius:8px;border:1px solid #ccc" autocomplete="off">
         <span id="toggleLoginPassword" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px">👁</span>
@@ -47,7 +47,7 @@
   </div>
 
   <!-- DEV MODE INDICATOR -->
-  <div class="dev-mode-indicator" id="devModeIndicator">🔧 DEV</div>
+  <div class="dev-mode-indicator" id="devModeIndicator">🛠 DEV</div>
 
   <!-- TIMER WIDGET -->
   <div class="timer-widget" id="timerWidget">
@@ -62,8 +62,22 @@
   <!-- SCROLL TO TOP -->
   <button class="scroll-top-btn" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Scroll to top">↑</button>
 
-  <!-- FEEDBACK BUTTON -->
-  <button class="feedback-btn" id="feedbackBtn" onclick="showSection('feedbackSection')" title="Send Suggestion">💡</button>
+  <!-- SUGGESTION BUTTON -->
+  <button class="suggestion-btn" id="suggestionBtn" onclick="openSuggestionBox()" title="Send a suggestion">💡</button>
+
+  <!-- SUGGESTION MODAL -->
+  <div id="suggestionModal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);align-items:center;justify-content:center;z-index:10001;display:none">
+    <div style="background:#fff;padding:25px;border-radius:12px;width:min(360px,92vw);box-shadow:0 4px 12px rgba(0,0,0,.2)">
+      <h3 style="margin-bottom:10px;border:none;padding:0">💡 Suggestion Box</h3>
+      <p style="font-size:12px;color:#666;margin-bottom:10px">Have an idea or feedback? Let the developer know what you'd like to see improved or added.</p>
+      <textarea id="suggestionText" rows="4" placeholder="Type your suggestion here..." style="width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;font-size:14px;resize:vertical;font-family:inherit"></textarea>
+      <div style="display:flex;gap:10px;margin-top:10px">
+        <button onclick="closeSuggestionBox()" style="background:#6c757d;flex:1">Cancel</button>
+        <button onclick="submitSuggestion()" style="background:#28a745;flex:1">Submit</button>
+      </div>
+      <div id="suggestionHistory" style="margin-top:15px;max-height:150px;overflow-y:auto"></div>
+    </div>
+  </div>
 
   <div class="container">
     <div class="app-header">
@@ -84,7 +98,7 @@
           <div class="menu-icon">📊</div><div class="menu-label">Transactions</div><div class="menu-desc">History & Analysis</div><div class="menu-accent"></div>
         </div>
         <div class="menu-card accent-orange" onclick="showSection('settingsSection')">
-          <div class="menu-icon">⚙</div><div class="menu-label">Settings</div><div class="menu-desc">System config</div><div class="menu-accent"></div>
+          <div class="menu-icon">⚙️</div><div class="menu-label">Settings</div><div class="menu-desc">System config</div><div class="menu-accent"></div>
         </div>
       </div>
     </div>
@@ -126,7 +140,7 @@
     <!-- SETTINGS -->
     <div id="settingsSection" class="section">
       <button onclick="showSection('menuSection')">← Back</button>
-      <h2>⚙ Settings</h2>
+      <h2>⚙️ Settings</h2>
       <h3>💰 Billing</h3>
       <div class="currency-switcher">
         <strong>Currency:</strong>
@@ -138,15 +152,17 @@
       <div class="form-group"><label>Minimum Charge</label><input type="number" id="adminMinCharge" step="0.01" placeholder="Min charge"></div>
       <div class="form-group"><label>Penalty Rate (% of total due)</label><input type="number" id="adminPenaltyRate" step="0.1" min="0" max="100" placeholder="e.g. 10 for 10%"></div>
       <div class="form-group"><label style="display:flex;align-items:center;cursor:pointer"><input type="checkbox" id="adminRoundOff">Round off total to nearest whole number</label></div>
-      <h3>🔐 Security</h3>
+
+      <h3>🔒 Security</h3>
       <div>
         <label>Password</label>
         <div style="position:relative">
-          <input type="password" id="adminPassword" placeholder="Enter master or temp password to save" data-clear-on-confirm="true" autocomplete="off"/>
+          <input type="password" id="adminPassword" placeholder="Enter password to save" data-clear-on-confirm="true" autocomplete="off"/>
           <span id="eyeIcon" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer">👁</span>
         </div>
       </div>
       <button onclick="saveSettings()">💾 Save Settings</button>
+
       <div>
         <label>Master Password</label>
         <div style="position:relative;margin-bottom:10px">
@@ -155,34 +171,41 @@
         </div>
         <button onclick="confirmMasterPassword()">Confirm Master Password</button>
       </div>
+
       <div id="masterPasswordActions" style="margin-top:10px;display:none">
         <button onclick="changeMasterPassword()">🔑 Change Master Password</button>
         <button onclick="showDefaultMasterPassword()">👁 Show Default</button>
-        <button onclick="restoreDefaultMasterPassword()">♻ Restore Default</button>
-        <button id="devModeToggleBtn" onclick="toggleDevMode()" style="background:#17a2b8;margin-top:5px">🔧 Enable Developer Mode</button>
+        <button onclick="restoreDefaultMasterPassword()">♻️ Restore Default</button>
+        <button id="devModeToggleBtn" onclick="toggleDevMode()" style="background:#17a2b8;margin-top:5px">🛠 Enable Developer Mode</button>
       </div>
+
       <div id="temporaryPasswordButtonContainer" style="display:none;margin-top:15px">
-        <h3>⏱ Subscription Timer</h3>
         <button onclick="createTempPasswordPrompt()">➕ Create Temp Password</button>
-        <div style="display:flex;gap:6px;margin-top:5px;flex-wrap:wrap">
-          <button onclick="addTimeToTempPassword(30)" style="flex:1;background:var(--bg-success);font-size:12px;padding:8px;min-width:70px">+30 Days</button>
-          <button onclick="addTimeToTempPassword(7)" style="flex:1;background:var(--bg-success);font-size:12px;padding:8px;min-width:70px">+7 Days</button>
-          <button onclick="addTimeToTempPassword(-7)" style="flex:1;background:var(--bg-warning);color:#333;font-size:12px;padding:8px;min-width:70px">-7 Days</button>
-          <button onclick="addTimeToTempPassword(-30)" style="flex:1;background:var(--bg-danger);font-size:12px;padding:8px;min-width:70px">-30 Days</button>
-        </div>
-        <button onclick="addTimeCustomPrompt()" style="background:#17a2b8;margin-top:5px;font-size:13px;padding:8px">⏱ Custom +/- Days</button>
         <button onclick="deleteTempPassword()">🗑 Delete Temp Password</button>
-        <button onclick="restoreDefaults()">♻ Restore Default</button>
-        <h3>💳 Payment QR Code</h3>
-        <div class="qr-preview" id="qrPreview"><span style="font-size:24px;color:var(--text-muted)">📱</span></div>
-        <input type="file" id="qrUpload" accept="image/*" onchange="handleQrUpload(event)" style="font-size:14px;margin-top:5px">
-        <button onclick="removeQr()" style="background:var(--bg-danger);font-size:13px;padding:8px;margin-top:5px">✕ Remove QR</button>
-        <div class="form-group" style="margin-top:10px"><label>Developer Contact Number</label><input type="text" id="devContactNumber" placeholder="e.g. 0917-123-4567" onchange="saveDevContact()"></div>
-        <h3>📋 Subscription Contract</h3>
-        <textarea id="contractText" style="width:100%;min-height:150px;padding:12px;border:1px solid var(--border-color);border-radius:8px;font-size:13px;line-height:1.6;resize:vertical;text-transform:none" placeholder="Enter subscription terms and conditions..."></textarea>
-        <button onclick="saveContract()" style="background:var(--bg-success);margin-top:5px;font-size:13px;padding:8px">💾 Save Contract</button>
+        <div style="display:flex;gap:8px;margin-top:5px">
+          <button onclick="addTimeToTempPassword()" style="background:#17a2b8;flex:1">➕ Add Time</button>
+          <button onclick="subtractTimeFromTempPassword()" style="background:#e65100;flex:1">➖ Subtract Time</button>
+        </div>
+        <button onclick="restoreDefaults()">♻️ Restore Default</button>
       </div>
-      <h3>💾 Data Management</h3>
+
+      <!-- QR CODE / PAYMENT SECTION -->
+      <div id="qrPaymentSection" style="display:none;margin-top:15px">
+        <h3>📱 Payment QR Code</h3>
+        <div class="form-group">
+          <label>Upload QR Code Image</label>
+          <div class="qr-preview" id="qrPreview"><span style="font-size:32px;color:var(--text-muted)">📱</span></div>
+          <input type="file" id="qrUpload" accept="image/*" onchange="handleQrUpload(event)" style="font-size:14px">
+          <button onclick="removeQrCode()" style="background:var(--bg-danger);margin-top:5px;font-size:13px;padding:8px">✕ Remove QR</button>
+        </div>
+        <div class="form-group">
+          <label>Subscription Contract (editable)</label>
+          <textarea id="subscriptionContract" rows="6" style="width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;font-size:12px;resize:vertical;font-family:inherit"></textarea>
+          <button onclick="saveQrAndContract()" style="background:var(--bg-success);margin-top:5px">💾 Save QR & Contract</button>
+        </div>
+      </div>
+
+      <h3>📦 Data Management</h3>
       <button onclick="backupToFile()" style="background:#6c757d">📥 Backup to File</button>
       <button onclick="restoreFromFile()" style="background:#6c757d">📤 Restore from File</button>
       <input type="file" id="restoreFileInput" accept=".json" style="display:none" onchange="handleRestoreFile(event)">
@@ -207,23 +230,23 @@
         <input type="text" id="newCustomerName" placeholder="Enter customer name">
         <button onclick="addCustomer()">➕ Add Customer</button>
       </div>
-      <h3>📥 Import Customers</h3>
+      <h3>📋 Import Customers</h3>
       <div class="import-mode-selector" id="importModeSelector">
         <button class="active" onclick="setImportMode('simple',this)">Simple (Names)</button>
         <button onclick="setImportMode('full',this)">Full (With Data)</button>
       </div>
       <div id="importSimpleInfo" class="import-info"><strong>Simple Import:</strong><br>Column A: Customer Name<br>First row = header (skipped). Duplicates skipped.</div>
       <div id="importFullInfo" class="import-info" style="display:none"><strong>Full Import:</strong><br>A: Name, B: Date, C: Previous, D: Present, E: Total Used, F: Total Due, G: Amount Paid, H: Status<br>Creates customers + bills. Data feeds into Analysis.</div>
-      <button onclick="document.getElementById('importCustomerFile').click()" style="background:#17a2b8">📥 Import from Excel</button>
+      <button onclick="document.getElementById('importCustomerFile').click()" style="background:#17a2b8">📋 Import from Excel</button>
       <input type="file" id="importCustomerFile" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleImportCustomers(event)">
-      <button onclick="downloadCustomerTemplate()" style="background:#6c757d;font-size:13px;padding:8px">📋 Download Template</button>
+      <button onclick="downloadCustomerTemplate()" style="background:#6c757d;font-size:13px;padding:8px">📄 Download Template</button>
       <div id="customersList"></div>
     </div>
 
     <!-- NEW BILL -->
     <div id="newBillSection" class="section">
       <button onclick="showSection('menuSection')">← Back</button>
-      <h2>💧 New Bill</h2>
+      <h2>📝 New Bill</h2>
       <input type="text" id="billCustomerSearch" class="search-box" placeholder="Search customer..." oninput="filterBillCustomers()">
       <select id="billCustomer" onchange="loadLastReading()"><option value="">-- Select Customer --</option></select>
       <input type="date" id="billDate">
@@ -256,12 +279,26 @@
         <div class="menu-card accent-purple" onclick="showSection('analysisSection')">
           <div class="menu-icon">📈</div><div class="menu-label">Analysis</div><div class="menu-desc">Reports & charts</div><div class="menu-accent"></div>
         </div>
-        <div class="menu-card accent-teal" onclick="showSection('accountingSection')">
-          <div class="menu-icon">📒</div><div class="menu-label">Accounting</div><div class="menu-desc">Balance & Income</div><div class="menu-accent"></div>
+        <div class="menu-card accent-green" onclick="showSection('balanceSheetSection')">
+          <div class="menu-icon">📒</div><div class="menu-label">Balance Sheet</div><div class="menu-desc">Assets & Liabilities</div><div class="menu-accent"></div>
         </div>
-        <div class="menu-card accent-orange" onclick="showExportOptions()">
-          <div class="menu-icon">📁</div><div class="menu-label">Export</div><div class="menu-desc">Download data</div><div class="menu-accent"></div>
+        <div class="menu-card accent-teal" onclick="showExportOptions()">
+          <div class="menu-icon">📁</div><div class="menu-label">Export to Excel</div><div class="menu-desc">Download data</div><div class="menu-accent"></div>
         </div>
+      </div>
+    </div>
+
+    <!-- EXPORT OPTIONS MODAL -->
+    <div id="exportModal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);align-items:center;justify-content:center;z-index:10001;display:none">
+      <div style="background:#fff;padding:25px;border-radius:12px;width:min(340px,90vw);box-shadow:0 4px 12px rgba(0,0,0,.2)">
+        <h3 style="margin:0 0 15px;border:none;padding:0">📁 Export Data</h3>
+        <p style="font-size:12px;color:#666;margin-bottom:12px">Choose the time range for export:</p>
+        <button onclick="exportByPeriod('month')" style="margin:4px 0">📅 This Month</button>
+        <button onclick="exportByPeriod('quarter')" style="margin:4px 0">📊 This Quarter</button>
+        <button onclick="exportByPeriod('semi')" style="margin:4px 0">📈 This Semi-Annual</button>
+        <button onclick="exportByPeriod('year')" style="margin:4px 0">📆 This Year</button>
+        <button onclick="exportByPeriod('all')" style="margin:4px 0;background:#6c757d">📦 All Data</button>
+        <button onclick="closeExportModal()" style="margin:8px 0 0;background:#dc3545">Cancel</button>
       </div>
     </div>
 
@@ -313,7 +350,7 @@
       </div>
       <div class="stat-grid" id="analysisStats"></div>
       <div class="analysis-chart" id="analysisChart">
-        <h3 style="border:none;margin:0 0 10px;padding:0;font-size:14px">💰 Revenue Chart</h3>
+        <h3 style="border:none;margin:0 0 10px;padding:0;font-size:14px">📊 Revenue Chart</h3>
         <div class="chart-bar-container" id="chartBars"></div>
       </div>
       <div id="analysisCustomerBreakdown"></div>
@@ -325,48 +362,67 @@
       <button onclick="exportAnalysisToExcel()" style="background:#17a2b8;margin-top:10px">📊 Export Analysis</button>
     </div>
 
-    <!-- ACCOUNTING -->
-    <div id="accountingSection" class="section">
+    <!-- BALANCE SHEET -->
+    <div id="balanceSheetSection" class="section">
       <button onclick="showSection('transactionsSection')">← Back</button>
-      <h2>📒 Accounting</h2>
-      <div class="period-tabs" id="acctTabs">
-        <button class="active" onclick="setAcctView('balance',this)">Balance Sheet</button>
-        <button onclick="setAcctView('income',this)">Income Statement</button>
-      </div>
-      <div id="acctBalanceView">
-        <h3>📊 Balance Sheet</h3>
-        <div class="form-group"><label>Assets</label><input type="number" id="acctAssets" step="0.01" placeholder="Total Assets" oninput="calcAcctEquity()"></div>
-        <div class="form-group"><label>Liabilities</label><input type="number" id="acctLiabilities" step="0.01" placeholder="Total Liabilities" oninput="calcAcctEquity()"></div>
-        <div class="bill-breakdown"><div class="row total"><span>Equity (A - L)</span><span id="acctEquity">0.00</span></div></div>
-      </div>
-      <div id="acctIncomeView" style="display:none">
-        <h3>💰 Income Statement</h3>
-        <div class="form-group"><label>Total Income / Revenue</label><input type="number" id="acctIncome" step="0.01" placeholder="Total Income" oninput="calcAcctNet()"></div>
-        <div class="form-group"><label>Total Expenses</label><input type="number" id="acctExpenses" step="0.01" placeholder="Total Expenses" oninput="calcAcctNet()"></div>
-        <div class="bill-breakdown"><div class="row total"><span>Net Income (I - E)</span><span id="acctNetIncome">0.00</span></div></div>
-      </div>
-      <div class="form-group" style="margin-top:10px"><label>Notes</label><textarea id="acctNotes" style="width:100%;min-height:80px;padding:10px;border:1px solid var(--border-color);border-radius:8px;font-size:14px;resize:vertical" placeholder="Additional notes..."></textarea></div>
-      <button onclick="saveAccounting()" style="background:var(--bg-success)">💾 Save</button>
-      <button onclick="exportAccounting()" style="background:#17a2b8;margin-top:5px">📊 Export to Excel</button>
-    </div>
+      <h2>📒 Balance Sheet & Income Statement</h2>
 
-    <!-- FEEDBACK -->
-    <div id="feedbackSection" class="section">
-      <button onclick="showSection('menuSection')">← Back</button>
-      <h2>💡 Suggestions</h2>
-      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:15px">Have an idea or feature request? Let the developer know!</p>
-      <div class="form-group"><label>Your Name (optional)</label><input type="text" id="feedbackName" placeholder="Your name"></div>
-      <div class="form-group"><label>Suggestion</label><textarea id="feedbackText" style="width:100%;min-height:120px;padding:12px;border:1px solid var(--border-color);border-radius:8px;font-size:14px;resize:vertical;text-transform:none" placeholder="Type your suggestion here..."></textarea></div>
-      <button onclick="submitFeedback()" style="background:var(--bg-success)">📩 Submit Suggestion</button>
-      <div id="feedbackHistory" style="margin-top:20px"></div>
-    </div>
+      <div class="period-tabs" id="bsPeriodTabs">
+        <button class="active" onclick="setBsPeriod('bs',this)">Balance Sheet</button>
+        <button onclick="setBsPeriod('is',this)">Income Statement</button>
+      </div>
 
-    <!-- PAYMENT INFO -->
-    <div id="paymentSection" class="section">
-      <button onclick="showSection('menuSection')">← Back</button>
-      <h2>💳 Payment</h2>
-      <div id="paymentQrDisplay" style="text-align:center;margin:20px 0"><p style="color:var(--text-muted)">No payment QR configured</p></div>
-      <div id="paymentContractDisplay" style="margin-top:15px"></div>
+      <!-- Balance Sheet Tab -->
+      <div id="bsTab">
+        <h3>📗 Assets</h3>
+        <div id="bsAssetsList"></div>
+        <div class="form-row" style="margin-top:8px">
+          <div class="form-group"><input type="text" id="bsAssetName" placeholder="Asset name"></div>
+          <div class="form-group"><input type="number" id="bsAssetAmount" step="0.01" placeholder="Amount"></div>
+        </div>
+        <button onclick="addBsEntry('asset')" style="font-size:13px;padding:8px">➕ Add Asset</button>
+
+        <h3>📕 Liabilities</h3>
+        <div id="bsLiabilitiesList"></div>
+        <div class="form-row" style="margin-top:8px">
+          <div class="form-group"><input type="text" id="bsLiabilityName" placeholder="Liability name"></div>
+          <div class="form-group"><input type="number" id="bsLiabilityAmount" step="0.01" placeholder="Amount"></div>
+        </div>
+        <button onclick="addBsEntry('liability')" style="font-size:13px;padding:8px">➕ Add Liability</button>
+
+        <h3>📘 Equity</h3>
+        <div id="bsEquityList"></div>
+        <div class="form-row" style="margin-top:8px">
+          <div class="form-group"><input type="text" id="bsEquityName" placeholder="Equity name"></div>
+          <div class="form-group"><input type="number" id="bsEquityAmount" step="0.01" placeholder="Amount"></div>
+        </div>
+        <button onclick="addBsEntry('equity')" style="font-size:13px;padding:8px">➕ Add Equity</button>
+
+        <div id="bsSummary" style="margin-top:15px"></div>
+      </div>
+
+      <!-- Income Statement Tab -->
+      <div id="isTab" style="display:none">
+        <h3>💰 Income / Revenue</h3>
+        <div id="isIncomeList"></div>
+        <div class="form-row" style="margin-top:8px">
+          <div class="form-group"><input type="text" id="isIncomeName" placeholder="Income source"></div>
+          <div class="form-group"><input type="number" id="isIncomeAmount" step="0.01" placeholder="Amount"></div>
+        </div>
+        <button onclick="addIsEntry('income')" style="font-size:13px;padding:8px">➕ Add Income</button>
+
+        <h3>📉 Expenses</h3>
+        <div id="isExpensesList"></div>
+        <div class="form-row" style="margin-top:8px">
+          <div class="form-group"><input type="text" id="isExpenseName" placeholder="Expense name"></div>
+          <div class="form-group"><input type="number" id="isExpenseAmount" step="0.01" placeholder="Amount"></div>
+        </div>
+        <button onclick="addIsEntry('expense')" style="font-size:13px;padding:8px">➕ Add Expense</button>
+
+        <div id="isSummary" style="margin-top:15px"></div>
+      </div>
+
+      <button onclick="exportBalanceSheet()" style="background:#17a2b8;margin-top:15px">📁 Export to Excel</button>
     </div>
 
     <div id="printReceipt" class="print-only"></div>
