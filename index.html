@@ -59,8 +59,11 @@
     </div>
   </div>
 
-  <!-- SCROLL TO TOP -->
-  <button class="scroll-top-btn" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Scroll to top">↑</button>
+ <!-- SCROLL TO TOP -->
+<button class="scroll-top-btn" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Scroll to top">↑</button>
+
+<!-- FEEDBACK BUTTON -->
+<button class="feedback-btn" id="feedbackBtn" onclick="showSection('feedbackSection')" title="Send Suggestion">💡</button>
 
   <div class="container">
     <div class="app-header">
@@ -135,20 +138,9 @@
       <div class="form-group"><label>Minimum Charge</label><input type="number" id="adminMinCharge" step="0.01" placeholder="Min charge"></div>
       <div class="form-group"><label>Penalty Rate (% of total due)</label><input type="number" id="adminPenaltyRate" step="0.1" min="0" max="100" placeholder="e.g. 10 for 10%"></div>
       <div class="form-group"><label style="display:flex;align-items:center;cursor:pointer"><input type="checkbox" id="adminRoundOff">Round off total to nearest whole number</label></div>
-      <h3>🔐 Security</h3>
-      <div>
-        <label>Admin Password</label>
-        <div style="position:relative">
-          <input type="password" id="adminPassword" placeholder="Enter password to save" data-clear-on-confirm="true" autocomplete="off"/>
-          <span id="eyeIcon" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer">👁</span>
-        </div>
-      </div>
       <button onclick="saveSettings()">💾 Save Settings</button>
-      <div id="temporaryPasswordButtonContainer" style="display:none;margin-top:15px">
-        <button onclick="createTempPasswordPrompt()">➕ Create Temp Password</button>
-        <button onclick="deleteTempPassword()">🗑 Delete Temp Password</button>
-        <button onclick="restoreDefaults()">♻ Restore Default</button>
-      </div>
+
+      <h3>🔐 Security</h3>
       <div>
         <label>Master Password</label>
         <div style="position:relative;margin-bottom:10px">
@@ -163,12 +155,37 @@
         <button onclick="restoreDefaultMasterPassword()">♻ Restore Default</button>
         <button id="devModeToggleBtn" onclick="toggleDevMode()" style="background:#17a2b8;margin-top:5px">🔧 Enable Developer Mode</button>
       </div>
+
+      <div id="temporaryPasswordButtonContainer" style="display:none;margin-top:15px">
+        <h3>⏱ Subscription Timer</h3>
+        <button onclick="createTempPasswordPrompt()">➕ Create Temp Password</button>
+        <div style="display:flex;gap:6px;margin-top:5px;flex-wrap:wrap">
+          <button onclick="addTimeToTempPassword(30)" style="flex:1;background:var(--bg-success);font-size:12px;padding:8px;min-width:70px">+30 Days</button>
+          <button onclick="addTimeToTempPassword(7)" style="flex:1;background:var(--bg-success);font-size:12px;padding:8px;min-width:70px">+7 Days</button>
+          <button onclick="addTimeToTempPassword(-7)" style="flex:1;background:var(--bg-warning);color:#333;font-size:12px;padding:8px;min-width:70px">-7 Days</button>
+          <button onclick="addTimeToTempPassword(-30)" style="flex:1;background:var(--bg-danger);font-size:12px;padding:8px;min-width:70px">-30 Days</button>
+        </div>
+        <button onclick="addTimeCustomPrompt()" style="background:#17a2b8;margin-top:5px;font-size:13px;padding:8px">⏱ Custom +/- Days</button>
+        <button onclick="deleteTempPassword()">🗑 Delete Temp Password</button>
+        <button onclick="restoreDefaults()">♻ Restore Default</button>
+
+        <h3>💳 Payment QR Code</h3>
+        <div class="qr-preview" id="qrPreview"><span style="font-size:24px;color:var(--text-muted)">📱</span></div>
+        <input type="file" id="qrUpload" accept="image/*" onchange="handleQrUpload(event)" style="font-size:14px;margin-top:5px">
+        <button onclick="removeQr()" style="background:var(--bg-danger);font-size:13px;padding:8px;margin-top:5px">✕ Remove QR</button>
+        <div class="form-group" style="margin-top:10px"><label>Developer Contact Number</label><input type="text" id="devContactNumber" placeholder="e.g. 0917-123-4567" onchange="saveDevContact()"></div>
+
+        <h3>📋 Subscription Contract</h3>
+        <textarea id="contractText" style="width:100%;min-height:150px;padding:12px;border:1px solid var(--border-color);border-radius:8px;font-size:13px;line-height:1.6;resize:vertical;text-transform:none" placeholder="Enter subscription terms and conditions..."></textarea>
+        <button onclick="saveContract()" style="background:var(--bg-success);margin-top:5px;font-size:13px;padding:8px">💾 Save Contract</button>
+      </div>
+
       <h3>💾 Data Management</h3>
       <button onclick="backupToFile()" style="background:#6c757d">📥 Backup to File</button>
       <button onclick="restoreFromFile()" style="background:#6c757d">📤 Restore from File</button>
       <input type="file" id="restoreFileInput" accept=".json" style="display:none" onchange="handleRestoreFile(event)">
     </div>
-
+    
     <!-- CUSTOMERS -->
     <div id="customersSection" class="section">
       <button onclick="showSection('menuSection')">← Back</button>
@@ -237,8 +254,11 @@
         <div class="menu-card accent-purple" onclick="showSection('analysisSection')">
           <div class="menu-icon">📈</div><div class="menu-label">Analysis</div><div class="menu-desc">Reports & charts</div><div class="menu-accent"></div>
         </div>
-        <div class="menu-card accent-teal full-width" onclick="exportToExcel()">
-          <div class="menu-icon">📁</div><div class="menu-label">Export to Excel</div><div class="menu-desc">Download all data</div><div class="menu-accent"></div>
+        <div class="menu-card accent-teal" onclick="showSection('accountingSection')">
+          <div class="menu-icon">📒</div><div class="menu-label">Accounting</div><div class="menu-desc">Balance & Income</div><div class="menu-accent"></div>
+        </div>
+        <div class="menu-card accent-orange" onclick="showExportOptions()">
+          <div class="menu-icon">📁</div><div class="menu-label">Export</div><div class="menu-desc">Download data</div><div class="menu-accent"></div>
         </div>
       </div>
     </div>
@@ -301,6 +321,52 @@
         <div class="chart-bar-container" id="yearlyChartBars"></div>
       </div>
       <button onclick="exportAnalysisToExcel()" style="background:#17a2b8;margin-top:10px">📊 Export Analysis</button>
+    </div>
+
+        <!-- ACCOUNTING -->
+    <div id="accountingSection" class="section">
+      <button onclick="showSection('transactionsSection')">← Back</button>
+      <h2>📒 Accounting</h2>
+      <div class="period-tabs" id="acctTabs">
+        <button class="active" onclick="setAcctView('balance',this)">Balance Sheet</button>
+        <button onclick="setAcctView('income',this)">Income Statement</button>
+      </div>
+      <div id="acctBalanceView">
+        <h3>📊 Balance Sheet</h3>
+        <div class="form-group"><label>Assets</label><input type="number" id="acctAssets" step="0.01" placeholder="Total Assets" oninput="calcAcctEquity()"></div>
+        <div class="form-group"><label>Liabilities</label><input type="number" id="acctLiabilities" step="0.01" placeholder="Total Liabilities" oninput="calcAcctEquity()"></div>
+        <div class="bill-breakdown"><div class="row total"><span>Equity (A - L)</span><span id="acctEquity">0.00</span></div></div>
+      </div>
+      <div id="acctIncomeView" style="display:none">
+        <h3>💰 Income Statement</h3>
+        <div class="form-group"><label>Total Income / Revenue</label><input type="number" id="acctIncome" step="0.01" placeholder="Total Income" oninput="calcAcctNet()"></div>
+        <div class="form-group"><label>Total Expenses</label><input type="number" id="acctExpenses" step="0.01" placeholder="Total Expenses" oninput="calcAcctNet()"></div>
+        <div class="bill-breakdown"><div class="row total"><span>Net Income (I - E)</span><span id="acctNetIncome">0.00</span></div></div>
+      </div>
+      <div class="form-group" style="margin-top:10px"><label>Notes</label><textarea id="acctNotes" style="width:100%;min-height:80px;padding:10px;border:1px solid var(--border-color);border-radius:8px;font-size:14px;resize:vertical" placeholder="Additional notes..."></textarea></div>
+      <button onclick="saveAccounting()" style="background:var(--bg-success)">💾 Save</button>
+      <button onclick="exportAccounting()" style="background:#17a2b8;margin-top:5px">📊 Export to Excel</button>
+    </div>
+
+    <!-- FEEDBACK / SUGGESTIONS -->
+    <div id="feedbackSection" class="section">
+      <button onclick="showSection('menuSection')">← Back</button>
+      <h2>💡 Suggestions</h2>
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:15px">Have an idea or feature request? Let the developer know!</p>
+      <div class="form-group"><label>Your Name (optional)</label><input type="text" id="feedbackName" placeholder="Your name"></div>
+      <div class="form-group"><label>Suggestion</label><textarea id="feedbackText" style="width:100%;min-height:120px;padding:12px;border:1px solid var(--border-color);border-radius:8px;font-size:14px;resize:vertical;text-transform:none" placeholder="Type your suggestion here..."></textarea></div>
+      <button onclick="submitFeedback()" style="background:var(--bg-success)">📩 Submit Suggestion</button>
+      <div id="feedbackHistory" style="margin-top:20px"></div>
+    </div>
+
+    <!-- PAYMENT INFO (visible to customers) -->
+    <div id="paymentSection" class="section">
+      <button onclick="showSection('menuSection')">← Back</button>
+      <h2>💳 Payment</h2>
+      <div id="paymentQrDisplay" style="text-align:center;margin:20px 0">
+        <p style="color:var(--text-muted)">No payment QR configured</p>
+      </div>
+      <div id="paymentContractDisplay" style="margin-top:15px"></div>
     </div>
 
     <div id="printReceipt" class="print-only"></div>
