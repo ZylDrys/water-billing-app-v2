@@ -1,605 +1,362 @@
 // ============================================
-// ANALYSIS.JS — Reports, Charts & Analytics
+// ANALYSIS.JS - Reports, Charts & Analytics
 // ============================================
 
-// ─── CONSTANTS ─────────────────────────────
-var MONTH_NAMES_SHORT = [
-  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-];
-
-// ─── HELPERS ───────────────────────────────
-
-/**
- * Safely get a DOM element by ID (logs warning if missing)
- */
-function getAnalysisEl(id) {
-  var el = document.getElementById(id);
-  if (!el) {
-    console.warn('[analysis.js] Element #' + id + ' not found');
-  }
-  return el;
-}
-
-/**
- * Escape HTML to prevent XSS in innerHTML
- */
-function escapeHtml(str) {
-  var div = document.createElement('div');
-  div.appendChild(document.createTextNode(str || ''));
-  return div.innerHTML;
-}
-
-/**
- * Parse a date string safely — returns null if invalid
- */
-function safeParseDate(dateStr) {
-  if (!dateStr) return null;
-  var d = new Date(dateStr);
-  return isNaN(d.getTime()) ? null : d;
-}
-
-/**
- * Safe Math.max that handles empty arrays
- */
-function safeMax(arr) {
-  if (!arr || !arr.length) return 0;
-  return Math.max.apply(null, arr);
-}
-
-
-// ═══════════════════════════════════════════
-// PERIOD CONTROLS
-// ═══════════════════════════════════════════
-
-function setAnalysisPeriod(period, btn) {
-  analysisPeriod = period;
-
+// === PERIOD CONTROLS ===
+function setAnalysisPeriod(p, btn) {
+  analysisPeriod = p;
   document.querySelectorAll('#periodTabs button').forEach(function (b) {
     b.classList.remove('active');
   });
+  if (btn) btn.classList.add('active');
+  renderAnalysis();
+}
 
-  if (btn) {
-    btn.classList.add('active');
+function changeAnalysisPeriod(d) {
+  if (analysisPeriod === 'monthly') {
+    analysisMonth += d;
+    if (analysisMonth > 11) { analysisMonth = 0; analysisYear++; }
+    if (analysisMonth < 0) { analysisMonth = 11; analysisYear--; }
+  } else if (analysisPeriod === 'quarterly') {
+    analysisQuarter += d;
+    if (analysisQuarter > 3) { analysisQuarter = 0; analysisYear++; }
+    if (analysisQuarter < 0) { analysisQuarter = 3; analysisYear--; }
+  } else if (analysisPeriod === 'semiannual') {
+    analysisSemiAnnual += d;
+    if (analysisSemiAnnual > 1) { analysisSemiAnnual = 0; analysisYear++; }
+    if (analysisSemiAnnual < 0) { analysisSemiAnnual = 1; analysisYear--; }
+  } else {
+    analysisYear += d;
   }
+
+  // Bounds check: reasonable year range
+  if (analysisYear < 2000) analysisYear = 2000;
+  if (analysisYear > 2100) analysisYear = 2100;
 
   renderAnalysis();
 }
 
-function changeAnalysisPeriod(direction) {
-  switch (analysisPeriod) {
-    case 'monthly':
-      analysisMonth += direction;
-      if (analysisMonth > 11) { analysisMonth = 0; analysisYear++; }
-      else if (analysisMonth < 0) { analysisMonth = 11; analysisYear--; }
-      break;
-
-    case 'quarterly':
-      analysisQuarter += direction;
-      if (analysisQuarter > 3) { analysisQuarter = 0; analysisYear++; }
-      else if (analysisQuarter < 0) { analysisQuarter = 3; analysisYear--; }
-      break;
-
-    case 'semiannual':
-      analysisSemiAnnual += direction;
-      if (analysisSemiAnnual > 1) { analysisSemiAnnual = 0; analysisYear++; }
-      else if (analysisSemiAnnual < 0) { analysisSemiAnnual = 1; analysisYear--; }
-      break;
-
-    default: // yearly
-      analysisYear += direction;
-      break;
-  }
-
-  renderAnalysis();
-}
-
-/**
- * Called when a bar in the yearly chart is clicked —
- * drills down into that specific month.
- * FIX: Replaces broken inline onclick that always activated the first tab.
- */
-function selectMonthFromYearlyChart(monthIndex) {
-  analysisMonth = monthIndex;
-  analysisPeriod = 'monthly';
-
-  // Remove active from all tabs
-  var tabs = document.querySelectorAll('#periodTabs button');
-  tabs.forEach(function (b) {
-    b.classList.remove('active');
-  });
-
-  // Activate the "Monthly" tab — match by data-period or text content
-  var activated = false;
-  tabs.forEach(function (b) {
-    if (activated) return;
-    var byAttr = b.getAttribute('data-period') === 'monthly';
-    var byText = b.textContent.trim().toLowerCase() === 'monthly';
-    if (byAttr || byText) {
-      b.classList.add('active');
-      activated = true;
-    }
-  });
-
-  // Fallback: activate first tab if no match found
-  if (!activated && tabs.length) {
-    tabs[0].classList.add('active');
-  }
-
-  renderAnalysis();
-}
-
-
-// ═══════════════════════════════════════════
-// PERIOD FILTER & LABEL
-// ═══════════════════════════════════════════
-
+// === PERIOD FILTER & LABEL ===
 function getAnalysisFilter() {
   var startMonth, endMonth;
 
-  switch (analysisPeriod) {
-    case 'monthly':
-      startMonth = analysisMonth;
-      endMonth = analysisMonth;
-      break;
-
-    case 'quarterly':
-      startMonth = analysisQuarter * 3;
-      endMonth = startMonth + 2;
-      break;
-
-    case 'semiannual':
-      startMonth = analysisSemiAnnual * 6;
-      endMonth = startMonth + 5;
-      break;
-
-    default: // yearly
-      startMonth = 0;
-      endMonth = 11;
-      break;
+  if (analysisPeriod === 'monthly') {
+    startMonth = analysisMonth;
+    endMonth = analysisMonth;
+  } else if (analysisPeriod === 'quarterly') {
+    startMonth = analysisQuarter * 3;
+    endMonth = startMonth + 2;
+  } else if (analysisPeriod === 'semiannual') {
+    startMonth = analysisSemiAnnual * 6;
+    endMonth = startMonth + 5;
+  } else {
+    startMonth = 0;
+    endMonth = 11;
   }
 
-  return {
-    startMonth: startMonth,
-    endMonth: endMonth,
-    year: analysisYear
-  };
+  return { startMonth: startMonth, endMonth: endMonth, year: analysisYear };
 }
 
 function getAnalysisPeriodLabel() {
-  switch (analysisPeriod) {
-    case 'monthly':
-      return new Date(analysisYear, analysisMonth)
-        .toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-
-    case 'quarterly':
-      return 'Q' + (analysisQuarter + 1) + ' ' + analysisYear;
-
-    case 'semiannual':
-      return (analysisSemiAnnual === 0 ? '1st Half' : '2nd Half') + ' ' + analysisYear;
-
-    default:
-      return 'Year ' + analysisYear;
-  }
-}
-
-
-// ═══════════════════════════════════════════
-// DATA PROCESSING
-// ═══════════════════════════════════════════
-
-/**
- * Filter bills array to only those within the given period.
- * FIX: validates date before comparing.
- */
-function filterBillsByPeriod(bills, filter) {
-  return bills.filter(function (b) {
-    var d = safeParseDate(b.date);
-    if (!d) return false;
-    return d.getFullYear() === filter.year &&
-           d.getMonth() >= filter.startMonth &&
-           d.getMonth() <= filter.endMonth;
-  });
-}
-
-/**
- * Compute aggregate totals from a set of bills.
- * FIX: every numeric property uses `|| 0` to prevent NaN.
- */
-function calculateAnalysisTotals(bills) {
-  var totals = {
-    revenue: 0,
-    collected: 0,
-    outstanding: 0,
-    usage: 0,
-    penalty: 0,
-    paidCount: 0,
-    partialCount: 0,
-    unpaidCount: 0,
-    billCount: bills.length,
-    collectionRate: 0
-  };
-
-  bills.forEach(function (b) {
-    totals.revenue  += (b.totalDue || 0);
-    totals.collected += (b.amountPaid || 0);
-    totals.usage    += (b.totalUsed || 0);
-    totals.penalty  += (b.penaltyAmount || 0);
-
-    var status = (b.paymentStatus || 'unpaid').toLowerCase();
-    switch (status) {
-      case 'paid':    totals.paidCount++;    break;
-      case 'partial': totals.partialCount++; break;
-      default:        totals.unpaidCount++;  break;
-    }
-  });
-
-  totals.outstanding = totals.revenue - totals.collected;
-  totals.collectionRate = totals.revenue > 0
-    ? Math.round((totals.collected / totals.revenue) * 100)
-    : 0;
-
-  return totals;
-}
-
-/**
- * Build chart data structure for the selected period.
- * Monthly → one key per day. Otherwise → one key per month.
- * FIX: uses hasOwnProperty to guard against out-of-range data.
- */
-function buildChartData(bills, filter) {
-  var data   = {};
-  var labels = [];
-  var keys, i;
-
   if (analysisPeriod === 'monthly') {
-    // One bar per day
-    var daysInMonth = new Date(filter.year, filter.endMonth + 1, 0).getDate();
-    for (i = 1; i <= daysInMonth; i++) {
-      data[i] = 0;
-      labels.push(String(i));
-    }
-    bills.forEach(function (b) {
-      var d = safeParseDate(b.date);
-      if (!d) return;
-      var day = d.getDate();
-      if (data.hasOwnProperty(day)) {
-        data[day] += (b.totalDue || 0);
-      }
-    });
-  } else {
-    // One bar per month in the range
-    for (i = filter.startMonth; i <= filter.endMonth; i++) {
-      data[i] = 0;
-      labels.push(MONTH_NAMES_SHORT[i]);
-    }
-    bills.forEach(function (b) {
-      var d = safeParseDate(b.date);
-      if (!d) return;
-      var month = d.getMonth();
-      if (data.hasOwnProperty(month)) {
-        data[month] += (b.totalDue || 0);
-      }
-    });
+    return new Date(analysisYear, analysisMonth).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
   }
-
-  return { data: data, labels: labels };
+  if (analysisPeriod === 'quarterly') return 'Q' + (analysisQuarter + 1) + ' ' + analysisYear;
+  if (analysisPeriod === 'semiannual') return (analysisSemiAnnual === 0 ? '1st Half' : '2nd Half') + ' ' + analysisYear;
+  return 'Year ' + analysisYear;
 }
 
-/**
- * Build a per-customer breakdown sorted by revenue descending.
- */
-function buildCustomerBreakdown(bills, customers) {
-  var map = {};
-
-  bills.forEach(function (b) {
-    var id = b.customerId;
-    if (!map[id]) {
-      var cust = customers.find(function (c) { return c.id === id; });
-      map[id] = {
-        name: cust ? cust.name : 'Unknown',
-        due: 0,
-        paid: 0,
-        usage: 0,
-        count: 0,
-        penalty: 0
-      };
-    }
-    map[id].due     += (b.totalDue || 0);
-    map[id].paid    += (b.amountPaid || 0);
-    map[id].usage   += (b.totalUsed || 0);
-    map[id].count++;
-    map[id].penalty += (b.penaltyAmount || 0);
-  });
-
-  return Object.values(map).sort(function (a, b) {
-    return b.due - a.due;
-  });
+// === SAFE PERCENTAGE ===
+function safePercent(part, total) {
+  if (!total || total === 0) return 0;
+  return Math.round(part / total * 100);
 }
 
-
-// ═══════════════════════════════════════════
-// RENDERING
-// ═══════════════════════════════════════════
-
-function renderStatCards(totals) {
-  var el = getAnalysisEl('analysisStats');
-  if (!el) return;
-
-  var crColor = totals.collectionRate >= 80 ? '#28a745'
-              : totals.collectionRate >= 50 ? '#ffc107'
-              : '#dc3545';
-
-  el.innerHTML =
-    '<div class="stat-card">' +
-      '<div class="stat-value">' + formatMoney(totals.revenue) + '</div>' +
-      '<div class="stat-label">Billed</div>' +
-    '</div>' +
-    '<div class="stat-card">' +
-      '<div class="stat-value" style="color:#28a745">' + formatMoney(totals.collected) + '</div>' +
-      '<div class="stat-label">Collected</div>' +
-    '</div>' +
-    '<div class="stat-card">' +
-      '<div class="stat-value" style="color:#dc3545">' + formatMoney(totals.outstanding) + '</div>' +
-      '<div class="stat-label">Outstanding</div>' +
-    '</div>' +
-    '<div class="stat-card">' +
-      '<div class="stat-value">' + totals.billCount + '</div>' +
-      '<div class="stat-label">Bills</div>' +
-    '</div>' +
-    '<div class="stat-card">' +
-      '<div class="stat-value">' + totals.usage.toFixed(1) + '</div>' +
-      '<div class="stat-label">m³ Used</div>' +
-    '</div>' +
-    '<div class="stat-card">' +
-      '<div class="stat-value" style="color:' + crColor + '">' + totals.collectionRate + '%</div>' +
-      '<div class="stat-label">Collection</div>' +
-    '</div>';
+// === FORMAT SHORT MONEY (for chart labels) ===
+function formatShortMoney(val) {
+  var sym = getCurrencySymbol();
+  if (val >= 1000000) return sym + (val / 1000000).toFixed(1) + 'M';
+  if (val >= 1000) return sym + (val / 1000).toFixed(1) + 'K';
+  return sym + Math.round(val);
 }
 
-function renderChartBars(chartInfo) {
-  var el = getAnalysisEl('chartBars');
-  if (!el) return;
+// === BUILD STATS CARDS ===
+function buildAnalysisStats(tr, tc, filtered, tu, cr) {
+  var crColor = cr >= 80 ? '#28a745' : cr >= 50 ? '#ffc107' : '#dc3545';
 
-  var data   = chartInfo.data;
-  var labels = chartInfo.labels;
-  var keys   = Object.keys(data);
-  var values = keys.map(function (k) { return data[k]; });
-  var maxVal = safeMax(values) || 1;       // FIX: safe max, fallback to 1
+  return '<div class="stat-card"><div class="stat-value">' + formatMoney(tr) + '</div><div class="stat-label">Billed</div></div>' +
+    '<div class="stat-card"><div class="stat-value" style="color:#28a745">' + formatMoney(tc) + '</div><div class="stat-label">Collected</div></div>' +
+    '<div class="stat-card"><div class="stat-value" style="color:#dc3545">' + formatMoney(tr - tc) + '</div><div class="stat-label">Outstanding</div></div>' +
+    '<div class="stat-card"><div class="stat-value">' + filtered.length + '</div><div class="stat-label">Bills</div></div>' +
+    '<div class="stat-card"><div class="stat-value">' + tu.toFixed(1) + '</div><div class="stat-label">m³ Used</div></div>' +
+    '<div class="stat-card"><div class="stat-value" style="color:' + crColor + '">' + cr + '%</div><div class="stat-label">Collection</div></div>';
+}
 
+// === BUILD CHART BARS ===
+function buildChartBars(chartData, chartLabels) {
+  var vals = Object.values(chartData);
+  var mx = Math.max.apply(null, vals) || 1;
+  var keys = Object.keys(chartData);
   var html = '';
 
-  keys.forEach(function (key, i) {
-    var val       = data[key];
-    var barHeight = val > 0 ? Math.max(6, (val / maxVal) * 120) : 0;
-    var barColor  = val > 0 ? 'var(--bg-accent)' : 'var(--bg-card-border)';
+  keys.forEach(function (k, i) {
+    var v = chartData[k];
+    var h = v > 0 ? Math.max(6, (v / mx) * 120) : 0;
+    var bgColor = v > 0 ? 'var(--bg-accent)' : 'var(--bg-card-border)';
 
-    html += '<div class="chart-bar-wrapper">';
-    if (val > 0) {
-      html += '<div class="chart-bar-value">' + formatMoney(val) + '</div>';
-    }
-    html +=   '<div class="chart-bar"' +
-              ' style="height:' + barHeight + 'px;background:' + barColor + '"' +
-              ' title="' + labels[i] + ': ' + formatMoney(val) + '">' +
-              '</div>' +
-              '<div class="chart-bar-label">' + labels[i] + '</div>' +
-            '</div>';
+    html += '<div class="chart-bar-wrapper">' +
+      (v > 0 ? '<div class="chart-bar-value">' + formatShortMoney(v) + '</div>' : '') +
+      '<div class="chart-bar" style="height:' + h + 'px;background:' + bgColor + '" title="' + chartLabels[i] + ': ' + formatMoney(v) + '"></div>' +
+      '<div class="chart-bar-label">' + chartLabels[i] + '</div></div>';
   });
 
-  el.innerHTML = html;
+  return html;
 }
 
-function renderCustomerBreakdownTable(breakdown) {
-  var el = getAnalysisEl('analysisCustomerBreakdown');
-  if (!el) return;
+// === BUILD CUSTOMER BREAKDOWN ===
+function buildCustomerBreakdown(filtered, custs) {
+  var cd = {};
 
-  var html = '<h3>📋 Breakdown</h3>';
+  filtered.forEach(function (b) {
+    if (!cd[b.customerId]) {
+      cd[b.customerId] = { name: '', due: 0, paid: 0, usage: 0, count: 0, penalty: 0 };
+    }
+    var c = custs.find(function (x) { return x.id === b.customerId; });
+    cd[b.customerId].name = c ? c.name : 'Unknown';
+    cd[b.customerId].due += b.totalDue;
+    cd[b.customerId].paid += (b.amountPaid || 0);
+    cd[b.customerId].usage += b.totalUsed;
+    cd[b.customerId].count++;
+    cd[b.customerId].penalty += (b.penaltyAmount || 0);
+  });
 
-  if (!breakdown.length) {
-    html += '<p style="text-align:center;color:var(--text-muted);padding:15px">No data</p>';
-  } else {
-    html += '<table><thead><tr>' +
-              '<th>Customer</th><th>Bills</th><th>m³</th><th>Due</th><th>Paid</th>' +
-            '</tr></thead><tbody>';
+  var ca = Object.values(cd).sort(function (a, b) { return b.due - a.due; });
 
-    breakdown.forEach(function (row) {
-      html += '<tr>' +
-        '<td>' + escapeHtml(row.name) + '</td>' +          // FIX: escaped
-        '<td>' + row.count + '</td>' +
-        '<td>' + row.usage.toFixed(1) + '</td>' +
-        '<td>' + formatMoney(row.due) + '</td>' +
-        '<td>' + formatMoney(row.paid) + '</td>' +
-        '</tr>';
-    });
+  var html = '<h3>📋 Customer Breakdown</h3>';
 
-    html += '</tbody></table>';
+  if (!ca.length) {
+    html += '<p style="text-align:center;color:var(--text-muted);padding:15px">No data for this period</p>';
+    return html;
   }
 
-  el.innerHTML = html;
+  // Responsive table wrapper
+  html += '<div style="overflow-x:auto;-webkit-overflow-scrolling:touch">' +
+    '<table><thead><tr>' +
+    '<th>Customer</th><th>Bills</th><th>m³</th><th>Due</th><th>Paid</th>' +
+    '</tr></thead><tbody>';
+
+  ca.forEach(function (x) {
+    html += '<tr>' +
+      '<td>' + x.name + '</td>' +
+      '<td>' + x.count + '</td>' +
+      '<td>' + x.usage.toFixed(1) + '</td>' +
+      '<td>' + formatMoney(x.due) + '</td>' +
+      '<td>' + formatMoney(x.paid) + '</td>' +
+      '</tr>';
+  });
+
+  html += '</tbody></table></div>';
+  return html;
 }
 
-function renderPaymentSummary(totals) {
-  var el = getAnalysisEl('analysisPaymentSummary');
-  if (!el) return;
-
-  el.innerHTML =
-    '<h3>💳 Payment</h3>' +
+// === BUILD PAYMENT SUMMARY ===
+function buildPaymentSummary(pc, prc, uc, cr) {
+  return '<h3>💳 Payment Summary</h3>' +
     '<div class="analysis-summary">' +
-      '<div><div class="label">✅ Paid</div><div class="value">'    + totals.paidCount    + '</div></div>' +
-      '<div><div class="label">⚠ Partial</div><div class="value">' + totals.partialCount + '</div></div>' +
-      '<div><div class="label">❌ Unpaid</div><div class="value">'  + totals.unpaidCount  + '</div></div>' +
-      '<div><div class="label">📊 Rate</div><div class="value">'   + totals.collectionRate + '%</div></div>' +
+    '<div><div class="label">✅ Paid</div><div class="value">' + pc + '</div></div>' +
+    '<div><div class="label">⚠ Partial</div><div class="value">' + prc + '</div></div>' +
+    '<div><div class="label">❌ Unpaid</div><div class="value">' + uc + '</div></div>' +
+    '<div><div class="label">📊 Rate</div><div class="value">' + cr + '%</div></div>' +
     '</div>';
 }
 
-
-// ═══════════════════════════════════════════
-// YEARLY OVERVIEW CHART
-// ═══════════════════════════════════════════
-
-function renderYearlyChart(allBills) {
-  var el = getAnalysisEl('yearlyChartBars');
-  if (!el) return;
-
-  var filter   = getAnalysisFilter();
-  var monthTotals = [];
-
-  // Aggregate every month of the analysis year
-  for (var m = 0; m < 12; m++) {
-    var monthRevenue = 0;
-    allBills.forEach(function (b) {
-      var d = safeParseDate(b.date);
-      if (!d) return;
-      if (d.getFullYear() === analysisYear && d.getMonth() === m) {
-        monthRevenue += (b.totalDue || 0);
-      }
-    });
-    monthTotals.push({ label: MONTH_NAMES_SHORT[m], revenue: monthRevenue });
-  }
-
-  var maxVal = safeMax(monthTotals.map(function (x) { return x.revenue; })) || 1;
-
-  var html = '';
-
-  monthTotals.forEach(function (item, i) {
-    var barHeight = item.revenue > 0 ? Math.max(6, (item.revenue / maxVal) * 120) : 0;
-    var isActive  = i >= filter.startMonth && i <= filter.endMonth;
-    var barColor  = isActive ? 'var(--bg-accent)' : 'rgba(0,123,255,.25)';
-
-    // FIX: use named function instead of broken inline onclick
-    html += '<div class="chart-bar-wrapper" ' +
-                 'onclick="selectMonthFromYearlyChart(' + i + ')" ' +
-                 'style="cursor:pointer">';
-
-    if (item.revenue > 0) {
-      html += '<div class="chart-bar-value">' + formatMoney(item.revenue) + '</div>';
-    }
-
-    html +=   '<div class="chart-bar" style="height:' + barHeight + 'px;background:' + barColor + '"></div>' +
-              '<div class="chart-bar-label"' +
-                (isActive ? ' style="font-weight:700;color:var(--bg-accent)"' : '') +
-              '>' + item.label + '</div>' +
-            '</div>';
-  });
-
-  el.innerHTML = html;
-}
-
-
-// ═══════════════════════════════════════════
-// MAIN RENDER (orchestrator)
-// ═══════════════════════════════════════════
-
+// === MAIN RENDER ===
 function renderAnalysis() {
-  var bills     = getData('bills')     || [];
-  var customers = getData('customers') || [];
-  var filter    = getAnalysisFilter();
+  var bills = getData('bills');
+  var custs = getData('customers');
+  var af = getAnalysisFilter();
 
-  // Period label
-  var labelEl = getAnalysisEl('analysisPeriodLabel');
-  if (labelEl) {
-    labelEl.textContent = getAnalysisPeriodLabel();
-  }
+  // Update period label
+  var labelEl = document.getElementById('analysisPeriodLabel');
+  if (labelEl) labelEl.textContent = getAnalysisPeriodLabel();
 
-  // Filter bills to selected period
-  var filtered = filterBillsByPeriod(bills, filter);
+  // Filter bills for period
+  var filtered = bills.filter(function (b) {
+    var d = new Date(b.date);
+    return d.getFullYear() === af.year &&
+      d.getMonth() >= af.startMonth &&
+      d.getMonth() <= af.endMonth;
+  });
 
   // Calculate totals
-  var totals = calculateAnalysisTotals(filtered);
+  var tr = 0, tc = 0, tu = 0, pc = 0, uc = 0, prc = 0;
+  filtered.forEach(function (b) {
+    tr += b.totalDue;
+    tc += (b.amountPaid || 0);
+    tu += b.totalUsed;
+    var s = b.paymentStatus || 'unpaid';
+    if (s === 'paid') pc++;
+    else if (s === 'partial') prc++;
+    else uc++;
+  });
 
-  // Render sections
-  renderStatCards(totals);
+  var cr = safePercent(tc, tr);
 
-  var chartInfo = buildChartData(filtered, filter);
-  renderChartBars(chartInfo);
+  // Render stats
+  var statsEl = document.getElementById('analysisStats');
+  if (statsEl) statsEl.innerHTML = buildAnalysisStats(tr, tc, filtered, tu, cr);
 
-  var breakdown = buildCustomerBreakdown(filtered, customers);
-  renderCustomerBreakdownTable(breakdown);
+  // Build chart data
+  var chartData = {};
+  var chartLabels = [];
 
-  renderPaymentSummary(totals);
+  if (analysisPeriod === 'monthly') {
+    var dim = new Date(af.year, af.endMonth + 1, 0).getDate();
+    for (var i = 1; i <= dim; i++) {
+      chartData[i] = 0;
+      chartLabels.push(String(i));
+    }
+    filtered.forEach(function (b) {
+      var day = new Date(b.date).getDate();
+      if (chartData[day] !== undefined) chartData[day] += b.totalDue;
+    });
+  } else {
+    var mn = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    for (var m = af.startMonth; m <= af.endMonth; m++) {
+      chartData[m] = 0;
+      chartLabels.push(mn[m]);
+    }
+    filtered.forEach(function (b) {
+      var mo = new Date(b.date).getMonth();
+      if (chartData[mo] !== undefined) chartData[mo] += b.totalDue;
+    });
+  }
 
-  // Yearly overview always uses ALL bills (not filtered)
+  // Render chart
+  var chartEl = document.getElementById('chartBars');
+  if (chartEl) chartEl.innerHTML = buildChartBars(chartData, chartLabels);
+
+  // Render customer breakdown
+  var breakdownEl = document.getElementById('analysisCustomerBreakdown');
+  if (breakdownEl) breakdownEl.innerHTML = buildCustomerBreakdown(filtered, custs);
+
+  // Render payment summary
+  var paymentEl = document.getElementById('analysisPaymentSummary');
+  if (paymentEl) paymentEl.innerHTML = buildPaymentSummary(pc, prc, uc, cr);
+
+  // Yearly chart
   renderYearlyChart(bills);
 }
 
+// === YEARLY OVERVIEW CHART ===
+function renderYearlyChart(allBills) {
+  var mn = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  var monthlyTotals = [];
 
-// ═══════════════════════════════════════════
-// EXPORT ANALYSIS TO EXCEL
-// ═══════════════════════════════════════════
-
-function exportAnalysisToExcel() {
-  // FIX: guard for missing XLSX library
-  if (typeof XLSX === 'undefined') {
-    alert('Export library (XLSX) is not loaded. Please check your connection and try again.');
-    return;
+  for (var m = 0; m < 12; m++) {
+    var monthBills = allBills.filter(function (b) {
+      var d = new Date(b.date);
+      return d.getFullYear() === analysisYear && d.getMonth() === m;
+    });
+    var revenue = 0;
+    monthBills.forEach(function (b) { revenue += b.totalDue; });
+    monthlyTotals.push({ month: mn[m], revenue: revenue, index: m });
   }
 
-  var bills     = getData('bills')     || [];
-  var customers = getData('customers') || [];
-  var filter    = getAnalysisFilter();
-  var label     = getAnalysisPeriodLabel();
+  var mx = Math.max.apply(null, monthlyTotals.map(function (x) { return x.revenue; })) || 1;
+  var af = getAnalysisFilter();
+  var html = '';
 
-  var filtered = filterBillsByPeriod(bills, filter);
+  monthlyTotals.forEach(function (x) {
+    var ht = x.revenue > 0 ? Math.max(6, (x.revenue / mx) * 120) : 0;
+    var isActive = x.index >= af.startMonth && x.index <= af.endMonth;
+    var barBg = isActive ? 'var(--bg-accent)' : 'rgba(0,123,255,.25)';
+    var labelStyle = isActive ? 'font-weight:700;color:var(--bg-accent)' : '';
 
-  if (!filtered.length) {
-    alert('No data to export for ' + label);
+    html += '<div class="chart-bar-wrapper" onclick="jumpToMonth(' + x.index + ')" style="cursor:pointer">' +
+      (x.revenue > 0 ? '<div class="chart-bar-value">' + formatShortMoney(x.revenue) + '</div>' : '') +
+      '<div class="chart-bar" style="height:' + ht + 'px;background:' + barBg + '" title="' + x.month + ' ' + analysisYear + ': ' + formatMoney(x.revenue) + '"></div>' +
+      '<div class="chart-bar-label" style="' + labelStyle + '">' + x.month + '</div></div>';
+  });
+
+  var yearlyEl = document.getElementById('yearlyChartBars');
+  if (yearlyEl) yearlyEl.innerHTML = html;
+}
+
+// === JUMP TO MONTH (from yearly chart click) ===
+function jumpToMonth(monthIndex) {
+  analysisMonth = monthIndex;
+  analysisPeriod = 'monthly';
+
+  // Update period tab buttons
+  document.querySelectorAll('#periodTabs button').forEach(function (b) {
+    b.classList.remove('active');
+  });
+  var firstTab = document.querySelector('#periodTabs button');
+  if (firstTab) firstTab.classList.add('active');
+
+  renderAnalysis();
+}
+
+// === EXPORT ANALYSIS ===
+function exportAnalysisToExcel() {
+  var bills = getData('bills');
+  var custs = getData('customers');
+  var af = getAnalysisFilter();
+
+  var fb = bills.filter(function (b) {
+    var d = new Date(b.date);
+    return d.getFullYear() === af.year &&
+      d.getMonth() >= af.startMonth &&
+      d.getMonth() <= af.endMonth;
+  });
+
+  if (!fb.length) {
+    alert('No data for this period');
     return;
   }
 
   var sym = getCurrencySymbol();
+  var label = getAnalysisPeriodLabel();
 
-  // Header rows
-  var rows = [
+  var data = [
     ['Analysis Report: ' + label],
-    ['Generated: ' + new Date().toLocaleString()],
+    ['Generated: ' + new Date().toLocaleDateString()],
     [''],
-    ['Customer', 'Date', 'm³ Used', 'Due (' + sym + ')', 'Paid (' + sym + ')', 'Penalty (' + sym + ')', 'Status']
+    ['Customer', 'Date', 'Ref', 'm³', 'Due (' + sym + ')', 'Paid (' + sym + ')', 'Penalty', 'Status']
   ];
 
-  // Data rows
-  var totalRevenue   = 0;
-  var totalCollected = 0;
-
-  filtered.forEach(function (b) {
-    var cust = customers.find(function (c) { return c.id === b.customerId; });
-    var due  = b.totalDue    || 0;
-    var paid = b.amountPaid  || 0;
-
-    totalRevenue   += due;
-    totalCollected += paid;
-
-    rows.push([
-      cust ? cust.name : 'Unknown',
-      b.date || '',
-      b.totalUsed      || 0,
-      due,
-      paid,
-      b.penaltyAmount  || 0,
-      b.paymentStatus  || 'unpaid'
+  fb.forEach(function (b) {
+    var c = custs.find(function (x) { return x.id === b.customerId; });
+    data.push([
+      c ? c.name : 'Unknown',
+      b.date,
+      b.ref || '',
+      b.totalUsed,
+      b.totalDue,
+      b.amountPaid || 0,
+      b.penaltyAmount || 0,
+      b.paymentStatus || 'unpaid'
     ]);
   });
 
-  // FIX: division by zero
-  var collectionRate = totalRevenue > 0
-    ? Math.round((totalCollected / totalRevenue) * 100) + '%'
-    : '0%';
+  // Summary
+  var tr = 0, tc = 0;
+  fb.forEach(function (b) {
+    tr += b.totalDue;
+    tc += (b.amountPaid || 0);
+  });
 
-  // Summary row
-  rows.push(
-    [''],
-    ['TOTAL', '', '', totalRevenue, totalCollected, '', collectionRate]
-  );
+  data.push([]);
+  data.push(['SUMMARY']);
+  data.push(['Total Billed', '', '', '', tr]);
+  data.push(['Total Collected', '', '', '', '', tc]);
+  data.push(['Outstanding', '', '', '', tr - tc]);
+  data.push(['Collection Rate', '', '', '', safePercent(tc, tr) + '%']);
+  data.push(['Total Bills', '', '', '', fb.length]);
 
-  // Build and download
-  try {
-    var ws = XLSX.utils.aoa_to_sheet(rows);
-    var wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Analysis');
-
-    var filename = 'analysis-' + label.replace(/\s+/g, '-').toLowerCase() + '.xlsx';
-    XLSX.writeFile(wb, filename);
-  } catch (err) {
-    console.error('[analysis.js] Export failed:', err);
-    alert('Export failed. Please try again.');
-  }
+  var ws = XLSX.utils.aoa_to_sheet(data);
+  var wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Analysis');
+  XLSX.writeFile(wb, 'analysis-' + label.replace(/\s/g, '-') + '.xlsx');
 }
