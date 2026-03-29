@@ -72,6 +72,8 @@ var SAVED_BGS_KEY = 'water_saved_bgs';
 var SUGGESTIONS_KEY = 'water_suggestions';
 var INCOME_STATEMENT_KEY = 'water_income_statement';
 var BALANCE_SHEET_KEY = 'water_balance_sheet';
+var DEV_SUGGESTIONS_KEY = 'water_dev_suggestions';
+var DEV_QR_CODES_KEY = 'water_dev_qr_codes';
 
 var LAST_SYNC_KEY = 'water_lastSync';
 var SYNC_TIMESTAMP_KEY = 'water_syncTimestamp';
