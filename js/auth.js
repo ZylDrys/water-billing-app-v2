@@ -26,10 +26,8 @@ function showPromptModal(title, isPw) {
     }
     m.style.display = 'flex';
 
-    // Focus after display
     setTimeout(function () { inp.focus(); }, 100);
 
-    // Remove old listeners by cloning
     var newConf = conf.cloneNode(true);
     var newCanc = canc.cloneNode(true);
     conf.parentNode.replaceChild(newConf, conf);
@@ -87,10 +85,8 @@ function showTempDurationModal() {
     unitSel.value = 'days';
     m.style.display = 'flex';
 
-    // Focus after display
     setTimeout(function () { valInp.focus(); valInp.select(); }, 100);
 
-    // Remove old listeners by cloning
     var newConf = conf.cloneNode(true);
     var newCanc = canc.cloneNode(true);
     conf.parentNode.replaceChild(newConf, conf);
@@ -105,7 +101,6 @@ function showTempDurationModal() {
       var val = parseInt(valInp.value);
       var unit = unitSel.value;
 
-      // Validate input
       if (isNaN(val) || val <= 0) {
         alert('Please enter a positive number');
         valInp.focus();
@@ -164,7 +159,6 @@ function isValidAdminAccess(pw) {
         };
       }
 
-      // Expired — clean up
       localStorage.removeItem(TEMP_PASSWORD_KEY);
       localStorage.removeItem(TEMP_PASSWORD_EXPIRY_KEY);
       scheduleSync();
@@ -199,7 +193,7 @@ function hideLoginModal() {
   if (modal) modal.style.display = 'none';
 }
 
-// === MASTER PASSWORD ACTIONS ===
+// === MASTER PASSWORD SECTIONS ===
 function showMasterPasswordSections() {
   var actions = document.getElementById('masterPasswordActions');
   var tempContainer = document.getElementById('temporaryPasswordButtonContainer');
@@ -376,34 +370,73 @@ function subtractTimeFromTempPassword() {
   });
 }
 
-// === RESTORE DEFAULTS ===
+// === RESTORE DEFAULTS (future-proof wipe) ===
+function isAppKey(key) {
+  // Known prefixed keys
+  if (key.indexOf('water_') === 0) return true;
+  if (key.indexOf('water-') === 0) return true;
+
+  // Known exact keys
+  var knownKeys = [
+    MASTER_PASSWORD_KEY,
+    TEMP_PASSWORD_KEY,
+    TEMP_PASSWORD_EXPIRY_KEY,
+    TIMER_VISIBLE_KEY,
+    DEV_MODE_KEY,
+    SYNC_TIMESTAMP_KEY,
+    LAST_SYNC_KEY,
+    CUSTOMIZE_KEY,
+    IMAGES_KEY,
+    SAVED_BGS_KEY,
+    SUGGESTIONS_KEY,
+    INCOME_STATEMENT_KEY,
+    BALANCE_SHEET_KEY
+  ];
+
+  return knownKeys.indexOf(key) !== -1;
+}
+
 function restoreDefaults() {
   if (!confirm('⚠ Reset ALL data?\nMaster password will be preserved.')) return;
   if (!confirm('⚠ FINAL WARNING!\nThis cannot be undone. Proceed?')) return;
 
-  // Preserve critical data
-  var mp = localStorage.getItem(MASTER_PASSWORD_KEY);
-  var si = localStorage.getItem(TIME_SYNC_INTERNET_KEY);
-  var sd = localStorage.getItem(TIME_SYNC_DEVICE_KEY);
+  // Keys to preserve after wipe
+  var keysToPreserve = [
+    MASTER_PASSWORD_KEY,
+    TIME_SYNC_INTERNET_KEY,
+    TIME_SYNC_DEVICE_KEY
+  ];
 
-  // Clear all app data
-  localStorage.removeItem(STORAGE.settings);
-  localStorage.removeItem(STORAGE.customers);
-  localStorage.removeItem(STORAGE.bills);
-  localStorage.removeItem(TEMP_PASSWORD_KEY);
-  localStorage.removeItem(TEMP_PASSWORD_EXPIRY_KEY);
-  localStorage.removeItem(CUSTOMIZE_KEY);
-  localStorage.removeItem(IMAGES_KEY);
-  localStorage.removeItem(SAVED_BGS_KEY);
-  localStorage.removeItem(DEV_MODE_KEY);
-  localStorage.removeItem(SUGGESTIONS_KEY);
-  localStorage.removeItem(INCOME_STATEMENT_KEY);
-  localStorage.removeItem(BALANCE_SHEET_KEY);
+  // Save values we want to keep
+  var preserved = {};
+  keysToPreserve.forEach(function (key) {
+    var val = localStorage.getItem(key);
+    if (val !== null) preserved[key] = val;
+  });
 
-  // Restore preserved data
-  if (mp) localStorage.setItem(MASTER_PASSWORD_KEY, mp);
-  if (si) localStorage.setItem(TIME_SYNC_INTERNET_KEY, si);
-  if (sd) localStorage.setItem(TIME_SYNC_DEVICE_KEY, sd);
+  // Wipe all app keys
+  var allKeys = [];
+  for (var i = 0; i < localStorage.length; i++) {
+    allKeys.push(localStorage.key(i));
+  }
+
+  allKeys.forEach(function (key) {
+    if (isAppKey(key)) {
+      localStorage.removeItem(key);
+    }
+  });
+
+  // Also wipe STORAGE keys explicitly in case naming pattern changes
+  if (typeof STORAGE === 'object') {
+    Object.keys(STORAGE).forEach(function (k) {
+      localStorage.removeItem(STORAGE[k]);
+    });
+  }
+
+  // Restore preserved values
+  Object.keys(preserved).forEach(function (key) {
+    localStorage.setItem(key, preserved[key]);
+  });
 
   var ts = setLocalTimestamp();
   updateSyncIndicator('syncing', 'Resetting...');
@@ -419,19 +452,29 @@ function restoreDefaults() {
         Bills: [],
         Settings: [Object.assign({}, DEFAULT_SETTINGS)],
         Customization: [{
-          theme: 'light', backgroundPreset: '', activePreset: '',
-          companyName: '', companyAddress: '', companyPhone: '',
-          companyEmail: '', subscriptionContract: ''
+          theme: 'light',
+          backgroundPreset: '',
+          activePreset: '',
+          companyName: '',
+          companyAddress: '',
+          companyPhone: '',
+          companyEmail: '',
+          subscriptionContract: ''
         }],
         Images: [{
-          companyLogo: '', backgroundImage: '', qrCode: '',
+          companyLogo: '',
+          backgroundImage: '',
+          qrCode: '',
           savedBackgrounds: '[]'
         }],
         Meta: [{
           timestamp: ts,
-          masterPassword: mp || DEFAULT_MASTER_PASSWORD,
-          tempPassword: '', tempPasswordExpiry: '',
-          suggestions: '[]', incomeStatement: '{}', balanceSheet: '{}'
+          masterPassword: preserved[MASTER_PASSWORD_KEY] || DEFAULT_MASTER_PASSWORD,
+          tempPassword: '',
+          tempPasswordExpiry: '',
+          suggestions: '[]',
+          incomeStatement: '{}',
+          balanceSheet: '{}'
         }]
       };
       return safeFetchJSON(API_URL + '?action=writeAll', {
@@ -474,44 +517,55 @@ function confirmWithClear(fn) {
   };
 }
 
-// Apply clear wrappers
 confirmMasterPassword = confirmWithClear(confirmMasterPassword);
 
 // === SETTINGS ===
 function saveSettings() {
   var s = getSettings();
 
-  var priceVal = parseFloat(document.getElementById('adminPricePerCubic').value);
-  var minVal = parseFloat(document.getElementById('adminMinCharge').value);
-  var penaltyVal = parseFloat(document.getElementById('adminPenaltyRate').value);
+  var priceEl = document.getElementById('adminPricePerCubic');
+  var minEl = document.getElementById('adminMinCharge');
+  var penaltyEl = document.getElementById('adminPenaltyRate');
+  var roundEl = document.getElementById('adminRoundOff');
+  var pwEl = document.getElementById('adminPassword');
 
-  // Validate values
+  if (!priceEl || !minEl || !penaltyEl || !roundEl) return Promise.resolve();
+
+  var priceVal = parseFloat(priceEl.value);
+  var minVal = parseFloat(minEl.value);
+  var penaltyVal = parseFloat(penaltyEl.value);
+
   if (isNaN(priceVal) || priceVal < 0) {
     alert('⚠ Price per cubic meter must be a positive number');
+    priceEl.focus();
     return Promise.resolve();
   }
   if (isNaN(minVal) || minVal < 0) {
     alert('⚠ Minimum charge must be a positive number');
+    minEl.focus();
     return Promise.resolve();
   }
   if (isNaN(penaltyVal) || penaltyVal < 0 || penaltyVal > 100) {
     alert('⚠ Penalty rate must be between 0 and 100');
+    penaltyEl.focus();
     return Promise.resolve();
   }
 
   s.pricePerCubic = priceVal || DEFAULT_SETTINGS.pricePerCubic;
   s.minCharge = minVal || DEFAULT_SETTINGS.minCharge;
   s.penaltyRate = penaltyVal || 0;
-  s.roundOff = document.getElementById('adminRoundOff').checked;
+  s.roundOff = roundEl.checked;
 
-  // Store password if entered
-  var pw = document.getElementById('adminPassword').value.trim();
-  if (pw) {
-    if (pw.length < 4) {
-      alert('⚠ Password must be at least 4 characters');
-      return Promise.resolve();
+  if (pwEl) {
+    var pw = pwEl.value.trim();
+    if (pw) {
+      if (pw.length < 4) {
+        alert('⚠ Password must be at least 4 characters');
+        pwEl.focus();
+        return Promise.resolve();
+      }
+      s.adminPassword = pw;
     }
-    s.adminPassword = pw;
   }
 
   saveSettingsData(s);
@@ -519,7 +573,6 @@ function saveSettings() {
   return Promise.resolve();
 }
 
-// Apply clear wrapper to saveSettings
 saveSettings = confirmWithClear(saveSettings);
 
 function loadSettings() {
@@ -541,7 +594,6 @@ function loadSettings() {
   el = document.getElementById('adminPassword');
   if (el) el.value = '';
 
-  // Always hide master password sections on load
   hideMasterPasswordSections();
 }
 
