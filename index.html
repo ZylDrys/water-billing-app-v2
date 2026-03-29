@@ -65,7 +65,7 @@
     </div>
   </div>
 
-  <!-- QR DISPLAY MODAL (for customer payment view) -->
+  <!-- QR DISPLAY MODAL -->
   <div id="qrDisplayModal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:10001">
     <div style="background:#fff;padding:25px;border-radius:12px;width:min(360px,92vw);box-shadow:0 4px 12px rgba(0,0,0,.2);text-align:center">
       <h3 style="margin:0 0 10px;border:none;padding:0">📱 Scan to Pay</h3>
@@ -132,7 +132,7 @@
           <div class="menu-icon">📊</div><div class="menu-label">Transactions</div><div class="menu-desc">History & Analysis</div><div class="menu-accent"></div>
         </div>
         <div class="menu-card accent-orange" onclick="showSection('settingsSection')">
-          <div class="menu-icon">⚙</div><div class="menu-label">Settings</div><div class="menu-desc">System config</div><div class="menu-accent"></div>
+          <div class="menu-icon">⚙️</div><div class="menu-label">Settings</div><div class="menu-desc">System config</div><div class="menu-accent"></div>
         </div>
       </div>
     </div>
@@ -180,7 +180,7 @@
     <!-- SETTINGS -->
     <div id="settingsSection" class="section">
       <button onclick="showSection('menuSection')">← Back</button>
-      <h2>⚙ Settings</h2>
+      <h2>⚙️ Settings</h2>
 
       <h3>💰 Billing</h3>
       <div class="currency-switcher">
@@ -189,24 +189,21 @@
         <button onclick="setCurrency('PHP')">PHP ₱</button>
         <button onclick="setCurrency('EUR')">EUR €</button>
       </div>
-      <div class="form-group"><label>Price per Cubic Meter</label><input type="number" id="adminPricePerCubic" step="0.01" placeholder="Rate"></div>
-      <div class="form-group"><label>Minimum Charge</label><input type="number" id="adminMinCharge" step="0.01" placeholder="Min charge"></div>
+      <div class="form-group"><label>Price per Cubic Meter</label><input type="number" id="adminPricePerCubic" step="0.01" min="0" placeholder="Rate"></div>
+      <div class="form-group"><label>Minimum Charge</label><input type="number" id="adminMinCharge" step="0.01" min="0" placeholder="Min charge"></div>
       <div class="form-group"><label>Penalty Rate (% of total due)</label><input type="number" id="adminPenaltyRate" step="0.1" min="0" max="100" placeholder="e.g. 10 for 10%"></div>
       <div class="form-group"><label style="display:flex;align-items:center;cursor:pointer"><input type="checkbox" id="adminRoundOff">Round off total to nearest whole number</label></div>
 
       <h3>🔐 Security</h3>
-
-      <!-- PASSWORD (renamed from Admin Password - no admin function, just label + field kept) -->
       <div>
         <label>Password</label>
         <div style="position:relative">
-          <input type="password" id="adminPassword" placeholder="Enter password to save" data-clear-on-confirm="true" autocomplete="off"/>
+          <input type="password" id="adminPassword" placeholder="Enter password to save" data-clear-on-confirm="true" autocomplete="off" />
           <span id="eyeIcon" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer">👁</span>
         </div>
       </div>
       <button onclick="saveSettings()">💾 Save Settings</button>
 
-      <!-- MASTER PASSWORD -->
       <div>
         <label>Master Password</label>
         <div style="position:relative;margin-bottom:10px">
@@ -216,7 +213,6 @@
         <button onclick="confirmMasterPassword()">Confirm Master Password</button>
       </div>
 
-      <!-- MASTER PASSWORD ACTIONS (shown after confirming master password) -->
       <div id="masterPasswordActions" style="margin-top:10px;display:none">
         <button onclick="changeMasterPassword()">🔑 Change Master Password</button>
         <button onclick="showDefaultMasterPassword()">👁 Show Default</button>
@@ -224,7 +220,6 @@
         <button id="devModeToggleBtn" onclick="toggleDevMode()" style="background:#17a2b8;margin-top:5px">🛠 Enable Developer Mode</button>
       </div>
 
-      <!-- TEMPORARY PASSWORD CONTROLS -->
       <div id="temporaryPasswordButtonContainer" style="display:none;margin-top:15px">
         <button onclick="createTempPasswordPrompt()">➕ Create Temp Password</button>
         <button onclick="deleteTempPassword()">🗑 Delete Temp Password</button>
@@ -235,7 +230,6 @@
         <button onclick="restoreDefaults()">🔄 Restore Default</button>
       </div>
 
-      <!-- QR CODE / PAYMENT SECTION (within master password access) -->
       <div id="qrPaymentSection" style="display:none;margin-top:15px">
         <h3>📱 Payment QR Code</h3>
         <div class="form-group">
@@ -246,7 +240,7 @@
         </div>
         <div class="form-group">
           <label>Subscription Contract (editable)</label>
-          <textarea id="subscriptionContract" rows="6" style="width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;font-size:12px;resize:vertical;font-family:inherit"></textarea>
+          <textarea id="subscriptionContract" rows="6" class="no-capitalize" style="width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;font-size:12px;resize:vertical;font-family:inherit"></textarea>
           <button onclick="saveQrAndContract()" style="background:var(--bg-success);margin-top:5px">💾 Save QR & Contract</button>
         </div>
       </div>
@@ -326,7 +320,6 @@
         <div class="menu-card accent-purple" onclick="showSection('analysisSection')">
           <div class="menu-icon">📈</div><div class="menu-label">Analysis</div><div class="menu-desc">Reports & charts</div><div class="menu-accent"></div>
         </div>
-        <!-- INCOME STATEMENT card placed near Analysis -->
         <div class="menu-card accent-orange" onclick="showSection('incomeStatementSection')">
           <div class="menu-icon">💹</div><div class="menu-label">Income Statement</div><div class="menu-desc">Income vs Expense</div><div class="menu-accent"></div>
         </div>
@@ -413,7 +406,7 @@
       <button onclick="exportAnalysisToExcel()" style="background:#17a2b8;margin-top:10px">📤 Export Analysis</button>
     </div>
 
-    <!-- INCOME STATEMENT (standalone section near Analysis) -->
+    <!-- INCOME STATEMENT -->
     <div id="incomeStatementSection" class="section">
       <button onclick="showSection('transactionsSection')">← Back</button>
       <h2>💹 Income Statement</h2>
@@ -423,7 +416,7 @@
       <div id="isIncomeList2"></div>
       <div class="form-row" style="margin-top:8px">
         <div class="form-group"><input type="text" id="isIncomeName2" placeholder="Income source"></div>
-        <div class="form-group"><input type="number" id="isIncomeAmount2" step="0.01" placeholder="Amount"></div>
+        <div class="form-group"><input type="number" id="isIncomeAmount2" step="0.01" min="0" placeholder="Amount"></div>
       </div>
       <button onclick="addIsEntry2('income')" style="font-size:13px;padding:8px">➕ Add Income</button>
 
@@ -431,12 +424,11 @@
       <div id="isExpensesList2"></div>
       <div class="form-row" style="margin-top:8px">
         <div class="form-group"><input type="text" id="isExpenseName2" placeholder="Expense name"></div>
-        <div class="form-group"><input type="number" id="isExpenseAmount2" step="0.01" placeholder="Amount"></div>
+        <div class="form-group"><input type="number" id="isExpenseAmount2" step="0.01" min="0" placeholder="Amount"></div>
       </div>
       <button onclick="addIsEntry2('expense')" style="font-size:13px;padding:8px">➕ Add Expense</button>
 
       <div id="isSummary2" style="margin-top:15px"></div>
-
       <button onclick="exportIncomeStatement()" style="background:#17a2b8;margin-top:15px">📤 Export to Excel</button>
     </div>
 
@@ -445,13 +437,12 @@
       <button onclick="showSection('transactionsSection')">← Back</button>
       <h2>📑 Balance Sheet</h2>
 
-      <!-- Balance Sheet Tab -->
       <div id="bsTab">
         <h3>📊 Assets</h3>
         <div id="bsAssetsList"></div>
         <div class="form-row" style="margin-top:8px">
           <div class="form-group"><input type="text" id="bsAssetName" placeholder="Asset name"></div>
-          <div class="form-group"><input type="number" id="bsAssetAmount" step="0.01" placeholder="Amount"></div>
+          <div class="form-group"><input type="number" id="bsAssetAmount" step="0.01" min="0" placeholder="Amount"></div>
         </div>
         <button onclick="addBsEntry('asset')" style="font-size:13px;padding:8px">➕ Add Asset</button>
 
@@ -459,7 +450,7 @@
         <div id="bsLiabilitiesList"></div>
         <div class="form-row" style="margin-top:8px">
           <div class="form-group"><input type="text" id="bsLiabilityName" placeholder="Liability name"></div>
-          <div class="form-group"><input type="number" id="bsLiabilityAmount" step="0.01" placeholder="Amount"></div>
+          <div class="form-group"><input type="number" id="bsLiabilityAmount" step="0.01" min="0" placeholder="Amount"></div>
         </div>
         <button onclick="addBsEntry('liability')" style="font-size:13px;padding:8px">➕ Add Liability</button>
 
@@ -467,19 +458,19 @@
         <div id="bsEquityList"></div>
         <div class="form-row" style="margin-top:8px">
           <div class="form-group"><input type="text" id="bsEquityName" placeholder="Equity name"></div>
-          <div class="form-group"><input type="number" id="bsEquityAmount" step="0.01" placeholder="Amount"></div>
+          <div class="form-group"><input type="number" id="bsEquityAmount" step="0.01" min="0" placeholder="Amount"></div>
         </div>
         <button onclick="addBsEntry('equity')" style="font-size:13px;padding:8px">➕ Add Equity</button>
 
         <div id="bsSummary" style="margin-top:15px"></div>
       </div>
-
       <button onclick="exportBalanceSheet()" style="background:#17a2b8;margin-top:15px">📤 Export to Excel</button>
     </div>
 
     <div id="printReceipt" class="print-only"></div>
   </div>
 
+  <!-- JS files -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="js/config.js"></script>
   <script src="js/sync.js"></script>
@@ -493,9 +484,12 @@
   <script src="js/customize.js"></script>
   <script src="js/ui.js"></script>
   <script src="js/app.js"></script>
+
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').catch(function() {});
+      navigator.serviceWorker.register('sw.js').catch(function(err) {
+        console.error('Service Worker registration failed:', err);
+      });
     }
   </script>
 </body>
