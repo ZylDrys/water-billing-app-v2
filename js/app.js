@@ -1,476 +1,323 @@
 // ============================================
-// APP.JS — Initialization & Event Wiring
+// APP.JS - Initialization & Event Wiring
 // ============================================
 
-// ─── CONSTANTS ─────────────────────────────
-var FIVE_MINUTES_MS  = 300000;   // 5 min — background time sync
-var THIRTY_SECONDS_MS = 30000;   // 30s  — sync indicator refresh
-var ONE_MINUTE_MS    = 60000;    // 1 min
-var ONE_HOUR_MS      = 3600000;  // 1 hour
+var eventListenersAttached = false;
+var syncIntervalsStarted = false;
 
-
-// ─── HELPERS ───────────────────────────────
-
-/**
- * Safely get a DOM element by ID.
- * Returns null (instead of crashing) if not found.
- */
-function safeGetEl(id) {
-  var el = document.getElementById(id);
-  if (!el) {
-    console.warn('[app.js] Element #' + id + ' not found');
-  }
-  return el;
+// === SAFE GET ELEMENT ===
+function safeGetElement(id) {
+  return document.getElementById(id);
 }
 
-/**
- * Safely add an event listener to an element by ID.
- * Prevents entire setupEventListeners() from crashing
- * if one element is missing.
- */
-function safeAddEvent(id, event, handler) {
-  var el = safeGetEl(id);
-  if (el) {
-    el.addEventListener(event, handler);
-    return true;
-  }
-  return false;
+// === SAFE ADD LISTENER ===
+function safeAddListener(id, event, handler) {
+  var el = safeGetElement(id);
+  if (el) el.addEventListener(event, handler);
 }
 
-/**
- * Get today's date as YYYY-MM-DD using LOCAL timezone.
- * FIX: toISOString() uses UTC which can return wrong date.
- */
-function getLocalDateString() {
-  var now = new Date();
-  var year  = now.getFullYear();
-  var month = String(now.getMonth() + 1).padStart(2, '0');
-  var day   = String(now.getDate()).padStart(2, '0');
-  return year + '-' + month + '-' + day;
-}
-
-
-// ═══════════════════════════════════════════
-// EVENT LISTENERS
-// ═══════════════════════════════════════════
-
+// === EVENT LISTENERS ===
 function setupEventListeners() {
+  if (eventListenersAttached) return;
+  eventListenersAttached = true;
 
-  // --- Login: toggle password visibility ---
-  safeAddEvent('toggleLoginPassword', 'click', function () {
-    var p = safeGetEl('loginPassword');
+  // === LOGIN ===
+  safeAddListener('toggleLoginPassword', 'click', function () {
+    var p = safeGetElement('loginPassword');
     if (!p) return;
     p.type = p.type === 'password' ? 'text' : 'password';
     this.textContent = p.type === 'password' ? '👁' : '🙈';
   });
 
-  // --- Settings: toggle admin password visibility ---
-  safeAddEvent('eyeIcon', 'click', function () {
-    var p = safeGetEl('adminPassword');
-    if (!p) return;
-    p.type = p.type === 'password' ? 'text' : 'password';
+  safeAddListener('loginBtn', 'click', function () {
+    var pwEl = safeGetElement('loginPassword');
+    if (!pwEl) return;
+    var pw = pwEl.value.trim();
+    if (!pw) return;
+
+    var msg = safeGetElement('loginMessage');
+    if (msg) {
+      msg.textContent = '⏳ Verifying...';
+      msg.style.color = '#666';
+    }
+
+    checkLogin(pw).then(function (r) {
+      if (r === true) {
+        hideLoginModal();
+      } else if (r && r.valid) {
+        hideLoginModal();
+        alert('✅ Temp access (' + r.daysLeft + ' day(s) left)');
+      } else if (r === 'tampered') {
+        if (msg) { msg.style.color = 'red'; msg.textContent = '⚠ Clock tampered detected'; }
+      } else if (r === 'no-sync') {
+        if (msg) { msg.style.color = 'orange'; msg.textContent = '⚠ Time not synced. Use admin/master password'; }
+      } else if (r === 'expired') {
+        if (msg) { msg.style.color = 'red'; msg.textContent = '⏰ Temp password expired'; }
+        pwEl.value = '';
+        if (typeof updateTimerDisplay === 'function') updateTimerDisplay();
+      } else {
+        if (msg) { msg.style.color = 'red'; msg.textContent = '❌ Wrong password'; }
+        pwEl.value = '';
+        pwEl.focus();
+      }
+    });
   });
 
-  // --- Settings: toggle master password visibility ---
-  safeAddEvent('eyeIconMaster', 'click', function () {
-    var p = safeGetEl('masterPassword');
-    if (!p) return;
-    p.type = p.type === 'password' ? 'text' : 'password';
-  });
-
-  // --- Login button ---
-  safeAddEvent('loginBtn', 'click', handleLogin);
-
-  // --- Enter key shortcuts ---
-  safeAddEvent('loginPassword', 'keydown', function (e) {
+  safeAddListener('loginPassword', 'keydown', function (e) {
     if (e.key === 'Enter') {
-      var btn = safeGetEl('loginBtn');
+      var btn = safeGetElement('loginBtn');
       if (btn) btn.click();
     }
   });
 
-  safeAddEvent('adminPassword', 'keydown', function (e) {
-    if (e.key === 'Enter') {
-      if (typeof saveSettings === 'function') saveSettings();
-    }
+  // === SETTINGS ===
+  safeAddListener('eyeIcon', 'click', function () {
+    var p = safeGetElement('adminPassword');
+    if (!p) return;
+    p.type = p.type === 'password' ? 'text' : 'password';
   });
 
-  safeAddEvent('masterPassword', 'keydown', function (e) {
-    if (e.key === 'Enter') {
-      if (typeof confirmMasterPassword === 'function') confirmMasterPassword();
-    }
+  safeAddListener('eyeIconMaster', 'click', function () {
+    var p = safeGetElement('masterPassword');
+    if (!p) return;
+    p.type = p.type === 'password' ? 'text' : 'password';
   });
 
-  safeAddEvent('newCustomerName', 'keydown', function (e) {
-    if (e.key === 'Enter') {
-      if (typeof addCustomer === 'function') addCustomer();
-    }
+  safeAddListener('adminPassword', 'keydown', function (e) {
+    if (e.key === 'Enter' && typeof saveSettings === 'function') saveSettings();
   });
 
-  // --- Prevent search boxes from submitting forms ---
-  var searchBoxIds = ['customerSearch', 'billCustomerSearch', 'historySearch'];
-  searchBoxIds.forEach(function (id) {
-    safeAddEvent(id, 'keydown', function (e) {
+  safeAddListener('masterPassword', 'keydown', function (e) {
+    if (e.key === 'Enter' && typeof confirmMasterPassword === 'function') confirmMasterPassword();
+  });
+
+  // === CUSTOMERS ===
+  safeAddListener('newCustomerName', 'keydown', function (e) {
+    if (e.key === 'Enter' && typeof addCustomer === 'function') addCustomer();
+  });
+
+  // === SEARCH BOXES (prevent form submit on Enter) ===
+  ['customerSearch', 'billCustomerSearch', 'historySearch'].forEach(function (id) {
+    safeAddListener(id, 'keydown', function (e) {
       if (e.key === 'Enter') e.preventDefault();
     });
   });
 
-  // --- Online/Offline detection ---
+  // === ONLINE/OFFLINE ===
   window.addEventListener('online', function () {
     isOnline = true;
-    if (typeof updateSyncIndicator === 'function') {
-      updateSyncIndicator('syncing', 'Reconnected...');
-    }
-    if (typeof pushToCloud === 'function') {
-      pushToCloud();
-    }
+    updateSyncIndicator('syncing', 'Reconnected...');
+    if (typeof pushToCloud === 'function') pushToCloud();
   });
 
   window.addEventListener('offline', function () {
     isOnline = false;
-    if (typeof updateSyncIndicator === 'function') {
-      updateSyncIndicator('offline');
-    }
+    updateSyncIndicator('offline', 'No connection');
   });
 }
 
-
-// ═══════════════════════════════════════════
-// LOGIN HANDLER
-// ═══════════════════════════════════════════
-
-function handleLogin() {
-  var passwordField = safeGetEl('loginPassword');
-  var msg = safeGetEl('loginMessage');
-  if (!passwordField || !msg) return;
-
-  var pw = passwordField.value.trim();
-  if (!pw) return;
-
-  msg.textContent = '⏳ Verifying...';
-  msg.style.color = '#666';
-
-  // FIX: guard for checkLogin not being loaded yet
-  if (typeof checkLogin !== 'function') {
-    msg.style.color = 'red';
-    msg.textContent = '❌ Auth module not loaded';
-    return;
-  }
-
-  checkLogin(pw)
-    .then(function (result) {
-      if (result === true) {
-        // Full access
-        hideLoginModal();
-
-      } else if (result && result.valid) {
-        // Temp password access
-        hideLoginModal();
-        alert('✅ Temp access (' + result.daysLeft + 'd left)');
-
-      } else if (result === 'tampered') {
-        msg.style.color = 'red';
-        msg.textContent = '⚠ Clock tampered';
-
-      } else if (result === 'no-sync') {
-        msg.style.color = 'orange';
-        msg.textContent = '⚠ Use admin/master pw';
-
-      } else if (result === 'expired') {
-        msg.style.color = 'red';
-        msg.textContent = '⏰ Expired';
-        passwordField.value = '';
-        if (typeof updateTimerDisplay === 'function') {
-          updateTimerDisplay();
-        }
-
-      } else {
-        // Wrong password
-        msg.style.color = 'red';
-        msg.textContent = '❌ Wrong password';
-        passwordField.value = '';
-        passwordField.focus();
-      }
-    })
-    .catch(function (err) {
-      // FIX: handle promise rejection
-      console.error('[app.js] Login check failed:', err);
-      msg.style.color = 'red';
-      msg.textContent = '❌ Login error. Try again.';
-    });
-}
-
-
-// ═══════════════════════════════════════════
-// DATA MIGRATION
-// ═══════════════════════════════════════════
-
+// === DATA MIGRATION ===
 function migrateData() {
-  migrateImageData();
-  migrateBillData();
-}
-
-/**
- * Migrate old image data from customization storage to images storage.
- */
-function migrateImageData() {
+  // Migrate old image data from customization to images
   try {
-    if (typeof getCustomization !== 'function' || typeof getImages !== 'function') return;
-
-    var customization = getCustomization();
-    var images = getImages();
+    var c = getCustomization();
+    var im = getImages();
     var changed = false;
 
-    if (customization.companyLogo && !images.companyLogo) {
-      images.companyLogo = customization.companyLogo;
+    if (c.companyLogo && !im.companyLogo) {
+      im.companyLogo = c.companyLogo;
       changed = true;
     }
-
-    if (customization.backgroundImage && !images.backgroundImage) {
-      images.backgroundImage = customization.backgroundImage;
+    if (c.backgroundImage && !im.backgroundImage) {
+      im.backgroundImage = c.backgroundImage;
       changed = true;
     }
 
     if (changed) {
-      if (typeof saveImages === 'function') {
-        saveImages(images);
-      }
-
-      delete customization.companyLogo;
-      delete customization.backgroundImage;
-
-      // FIX: try/catch for localStorage (can throw if full)
-      try {
-        localStorage.setItem(CUSTOMIZE_KEY, JSON.stringify(customization));
-      } catch (storageErr) {
-        console.error('[app.js] Failed to save migrated customization:', storageErr);
-      }
+      saveImages(im);
+      delete c.companyLogo;
+      delete c.backgroundImage;
+      localStorage.setItem(CUSTOMIZE_KEY, JSON.stringify(c));
     }
-  } catch (err) {
-    console.error('[app.js] Image migration failed:', err);
+  } catch (e) {
+    console.error('Image migration error:', e.message);
   }
-}
 
-/**
- * Migrate old bill records that lack newer fields.
- * FIX: getData could return null → added || [] fallback.
- */
-function migrateBillData() {
+  // Migrate old bill data
   try {
-    var bills = getData('bills') || [];
-    var changed = false;
+    var bl = getData('bills');
+    var billsChanged = false;
 
-    bills.forEach(function (bill) {
-      // Add payment tracking fields if missing
-      if (bill.paymentStatus === undefined) {
-        bill.paymentStatus = 'unpaid';
-        bill.amountPaid    = 0;
-        bill.paymentDate   = '';
-        bill.penaltyAmount = 0;
-        bill.penaltyRate   = 0;
-        changed = true;
+    bl.forEach(function (b) {
+      if (b.paymentStatus === undefined) {
+        b.paymentStatus = 'unpaid';
+        b.amountPaid = 0;
+        b.paymentDate = '';
+        b.penaltyAmount = 0;
+        b.penaltyRate = 0;
+        billsChanged = true;
       }
-
-      // Add penalty fields if missing (partial migration)
-      if (bill.penaltyAmount === undefined) {
-        bill.penaltyAmount = 0;
-        bill.penaltyRate   = 0;
-        changed = true;
+      if (b.penaltyAmount === undefined) {
+        b.penaltyAmount = 0;
+        b.penaltyRate = 0;
+        billsChanged = true;
+      }
+      if (b.ref === undefined) {
+        // Don't add ref to old bills — they work fine without
+        // Only new bills get refs
       }
     });
 
-    if (changed && typeof saveDataLocal === 'function') {
-      saveDataLocal('bills', bills);
-    }
-  } catch (err) {
-    console.error('[app.js] Bill migration failed:', err);
+    if (billsChanged) saveDataLocal('bills', bl);
+  } catch (e) {
+    console.error('Bill migration error:', e.message);
   }
 }
 
-
-// ═══════════════════════════════════════════
-// SYNC INTERVALS
-// ═══════════════════════════════════════════
-
+// === START SYNC INTERVALS ===
 function startSyncIntervals() {
+  if (syncIntervalsStarted) return;
+  syncIntervalsStarted = true;
+
   // Background time sync every 5 minutes
-  if (typeof backgroundTimeSync === 'function') {
-    setInterval(backgroundTimeSync, FIVE_MINUTES_MS);
-  }
-
-  // Push pending changes periodically
-  var syncInterval = (typeof SYNC_INTERVAL !== 'undefined') ? SYNC_INTERVAL : FIVE_MINUTES_MS;
-
   setInterval(function () {
-    // FIX: use navigator.onLine consistently (not mixed with isOnline)
+    if (typeof backgroundTimeSync === 'function') backgroundTimeSync();
+  }, 3e5);
+
+  // Push pending changes
+  setInterval(function () {
     if (navigator.onLine && !isSyncing && pendingSync) {
-      if (typeof pushToCloud === 'function') {
-        pushToCloud();
-      }
+      if (typeof pushToCloud === 'function') pushToCloud();
     }
-  }, syncInterval);
+  }, SYNC_INTERVAL);
 
-  // Update sync indicator text periodically
-  setInterval(updateSyncIndicatorText, THIRTY_SECONDS_MS);
+  // Update sync indicator text
+  setInterval(function () {
+    if (isSyncing) return;
+
+    var ls = parseInt(localStorage.getItem(LAST_SYNC_KEY) || '0');
+    if (!ls) return;
+
+    var age = Date.now() - ls;
+    var text;
+
+    if (age < 6e4) text = 'Synced just now';
+    else if (age < 36e5) text = 'Synced ' + Math.floor(age / 6e4) + 'm ago';
+    else text = 'Synced ' + Math.floor(age / 36e5) + 'h ago';
+
+    updateSyncIndicator('synced', text);
+  }, 3e4);
 }
 
-/**
- * Update the sync indicator with relative time since last sync.
- * FIX: also handles offline state.
- */
-function updateSyncIndicatorText() {
-  if (typeof updateSyncIndicator !== 'function') return;
+// === SHOW LOADING STATE ===
+function showLoadingState() {
+  var container = document.querySelector('.container');
+  if (!container) return;
 
-  // FIX: check offline state too
-  if (!navigator.onLine) {
-    updateSyncIndicator('offline');
-    return;
-  }
+  var existing = document.getElementById('loadingOverlay');
+  if (existing) return;
 
-  if (isSyncing) return;
+  var overlay = document.createElement('div');
+  overlay.id = 'loadingOverlay';
+  overlay.style.cssText = 'text-align:center;padding:40px;color:var(--text-muted)';
+  overlay.innerHTML = '<div style="font-size:32px;margin-bottom:10px">💧</div>' +
+    '<div style="font-size:14px">Loading...</div>';
 
-  try {
-    var lastSyncKey = (typeof LAST_SYNC_KEY !== 'undefined') ? LAST_SYNC_KEY : 'lastSync';
-    var lastSync = parseInt(localStorage.getItem(lastSyncKey) || '0', 10);
-
-    if (!lastSync) return;
-
-    var elapsed = Date.now() - lastSync;
-
-    if (elapsed < ONE_MINUTE_MS) {
-      updateSyncIndicator('synced', 'Synced just now');
-    } else if (elapsed < ONE_HOUR_MS) {
-      updateSyncIndicator('synced', 'Synced ' + Math.floor(elapsed / ONE_MINUTE_MS) + 'm ago');
-    } else {
-      updateSyncIndicator('synced', 'Synced ' + Math.floor(elapsed / ONE_HOUR_MS) + 'h ago');
-    }
-  } catch (err) {
-    console.warn('[app.js] Failed to read last sync time:', err);
-  }
+  container.appendChild(overlay);
 }
 
+function hideLoadingState() {
+  var overlay = document.getElementById('loadingOverlay');
+  if (overlay) overlay.remove();
+}
 
-// ═══════════════════════════════════════════
-// INITIALIZATION — POST CLOUD PULL
-// ═══════════════════════════════════════════
+// === MAIN INIT ===
+document.addEventListener('DOMContentLoaded', function () {
 
-/**
- * Called after cloud data is loaded (or fails).
- * Initializes all UI components.
- */
-function initializeApp(pullSucceeded) {
+  // Step 1: Show loading
+  showLoadingState();
+
+  // Step 2: Migrate old data
   try {
+    migrateData();
+  } catch (e) {
+    console.error('Migration failed:', e.message);
+  }
+
+  // Step 3: Update dev mode UI
+  try {
+    updateDevModeUI();
+  } catch (e) {
+    console.error('Dev mode UI failed:', e.message);
+  }
+
+  // Step 4: Show login
+  if (typeof showLoginModal === 'function') showLoginModal();
+
+  // Step 5: Setup auto capitalize (event delegation)
+  if (typeof setupAutoCapitalize === 'function') setupAutoCapitalize();
+
+  // Step 6: Setup event listeners
+  setupEventListeners();
+
+  // Step 7: Setup scroll to top
+  if (typeof initScrollToTop === 'function') initScrollToTop();
+
+  // Step 8: Set default bill date
+  var billDate = safeGetElement('billDate');
+  if (billDate) billDate.value = new Date().toISOString().split('T')[0];
+
+  // Step 9: Pull from cloud and initialize
+  var pullPromise;
+  if (typeof pullFromCloud === 'function') {
+    pullPromise = pullFromCloud();
+  } else {
+    pullPromise = Promise.resolve(false);
+  }
+
+  pullPromise.then(function (pulled) {
+    // Hide loading
+    hideLoadingState();
+
     // Load UI components
     if (typeof loadCustomerDropdowns === 'function') loadCustomerDropdowns();
     if (typeof updateCurrencyDisplay === 'function') updateCurrencyDisplay();
-    if (typeof applyVisuals === 'function')          applyVisuals();
-  } catch (err) {
-    console.error('[app.js] Failed to load UI components:', err);
-  }
+    if (typeof applyVisuals === 'function') applyVisuals();
 
-  // Show main menu
-  try {
-    if (typeof showSection === 'function') showSection('menuSection');
-  } catch (err) {
-    console.error('[app.js] Failed to show menu section:', err);
-  }
+    // Show menu
+    showSection('menuSection');
 
-  // Start countdown timer
-  try {
+    // Start timer
     if (typeof initTimer === 'function') initTimer();
-  } catch (err) {
-    console.error('[app.js] Failed to init timer:', err);
-  }
 
-  // Update menu badges
-  try {
+    // Update badges
     if (typeof updateMenuBadges === 'function') updateMenuBadges();
-  } catch (err) {
-    console.error('[app.js] Failed to update badges:', err);
-  }
 
-  // Show "Ready" if no data and pull didn't succeed
-  if (!pullSucceeded) {
-    var customers = (typeof getData === 'function') ? getData('customers') : null;
-    if (!customers || !customers.length) {
-      if (typeof updateSyncIndicator === 'function') {
-        updateSyncIndicator('synced', 'Ready');
-      }
+    // Show ready if no data pulled and no customers
+    if (!pulled && !getData('customers').length) {
+      updateSyncIndicator('synced', 'Ready');
     }
-  }
 
-  // Background time sync (initial)
-  try {
+    // Start background sync
     if (typeof backgroundTimeSync === 'function') backgroundTimeSync();
-  } catch (err) {
-    console.error('[app.js] Failed initial time sync:', err);
-  }
 
-  // Start periodic sync intervals
-  startSyncIntervals();
-}
+    // Start intervals
+    startSyncIntervals();
 
+  }).catch(function (err) {
+    // Even if pull fails, still load the app
+    console.error('Init pull failed:', err.message);
+    hideLoadingState();
 
-// ═══════════════════════════════════════════
-// MAIN INIT (DOMContentLoaded)
-// ═══════════════════════════════════════════
+    if (typeof loadCustomerDropdowns === 'function') loadCustomerDropdowns();
+    if (typeof updateCurrencyDisplay === 'function') updateCurrencyDisplay();
+    if (typeof applyVisuals === 'function') applyVisuals();
 
-document.addEventListener('DOMContentLoaded', function () {
+    showSection('menuSection');
+    if (typeof initTimer === 'function') initTimer();
+    if (typeof updateMenuBadges === 'function') updateMenuBadges();
+    updateSyncIndicator('error', 'Offline start');
 
-  // Step 1: Migrate old data formats
-  migrateData();
-
-  // Step 2: Update dev mode UI
-  try {
-    if (typeof updateDevModeUI === 'function') updateDevModeUI();
-  } catch (err) {
-    console.error('[app.js] updateDevModeUI failed:', err);
-  }
-
-  // Step 3: Show login modal
-  try {
-    if (typeof showLoginModal === 'function') showLoginModal();
-  } catch (err) {
-    console.error('[app.js] showLoginModal failed:', err);
-  }
-
-  // Step 4: Setup auto-capitalize on text inputs
-  try {
-    if (typeof setupAutoCapitalize === 'function') setupAutoCapitalize();
-  } catch (err) {
-    console.error('[app.js] setupAutoCapitalize failed:', err);
-  }
-
-  // Step 5: Setup all event listeners
-  setupEventListeners();
-
-  // Step 6: Setup scroll-to-top button
-  try {
-    if (typeof initScrollToTop === 'function') initScrollToTop();
-  } catch (err) {
-    console.error('[app.js] initScrollToTop failed:', err);
-  }
-
-  // Step 7: Set default bill date (using LOCAL timezone)
-  var billDateEl = safeGetEl('billDate');
-  if (billDateEl) {
-    billDateEl.value = getLocalDateString();    // FIX: was toISOString (UTC)
-  }
-
-  // Step 8: Pull from cloud, then initialize everything
-  if (typeof pullFromCloud === 'function') {
-    pullFromCloud()
-      .then(function (pulled) {
-        initializeApp(pulled);
-      })
-      .catch(function (err) {
-        // FIX: app still initializes even if cloud pull fails
-        console.error('[app.js] Cloud pull failed:', err);
-        initializeApp(false);
-      });
-  } else {
-    // No sync module — initialize immediately
-    console.warn('[app.js] pullFromCloud not available, initializing without cloud');
-    initializeApp(false);
-  }
+    startSyncIntervals();
+  });
 });
