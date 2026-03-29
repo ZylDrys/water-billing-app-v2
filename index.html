@@ -75,6 +75,29 @@
     </div>
   </div>
 
+  <!-- DEV PAYMENT FLOW MODAL (contract then QR) -->
+<div id="devPaymentContractModal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:10003">
+  <div style="background:#fff;padding:25px;border-radius:12px;width:min(380px,92vw);box-shadow:0 4px 12px rgba(0,0,0,.2);max-height:80vh;overflow-y:auto">
+    <h3 style="margin:0 0 10px;border:none;padding:0">📋 Subscription Contract</h3>
+    <div id="devPaymentContractText" style="font-size:12px;color:#444;white-space:pre-wrap;max-height:300px;overflow-y:auto;padding:10px;background:#f8f9fa;border-radius:8px;margin-bottom:15px"></div>
+    <div style="display:flex;gap:10px">
+      <button onclick="document.getElementById('devPaymentContractModal').style.display='none'" style="background:#6c757d;flex:1">Cancel</button>
+      <button onclick="showDevPaymentQr()" style="background:#28a745;flex:1">I Agree - Proceed to Pay</button>
+    </div>
+  </div>
+</div>
+
+<!-- DEV PAYMENT QR MODAL -->
+<div id="devPaymentQrModal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:10004">
+  <div style="background:#fff;padding:25px;border-radius:12px;width:min(380px,92vw);box-shadow:0 4px 12px rgba(0,0,0,.2);text-align:center">
+    <h3 style="margin:0 0 10px;border:none;padding:0">📱 Scan to Pay Developer</h3>
+    <div id="devPaymentQrSelector" style="margin-bottom:10px"></div>
+    <div id="devPaymentQrImage" style="margin:10px auto;max-width:250px;max-height:250px"></div>
+    <p style="font-size:11px;color:#666;margin-top:10px">Scan the QR code above using your payment app</p>
+    <button onclick="document.getElementById('devPaymentQrModal').style.display='none'" style="margin-top:10px;background:#6c757d">Close</button>
+  </div>
+</div>
+
   <!-- SYNC INDICATOR -->
   <div class="sync-indicator synced" id="syncIndicator" onclick="manualSync()" title="Click to sync now">
     <span id="syncIcon">☁️</span><span id="syncText">Synced</span>
@@ -219,19 +242,33 @@
         <button onclick="restoreDefaults()">🔄 Restore Defaults</button>
       </div>
       <div id="qrPaymentSection" style="display:none;margin-top:15px">
-        <h3>📱 Payment QR Code</h3>
+        <h3>📱 Developer Payment QR Codes</h3>
+        <p style="font-size:12px;color:var(--text-muted);margin-bottom:10px">Upload multiple QR codes for different payment methods. Users will see these when they click "Pay Developer".</p>
+        <!-- QR Code List -->
+        <div id="devQrCodesList"></div>
+        <!-- Add New QR -->
+        <div class="form-group" style="margin-top:10px">
+          <label>Payment Method Name</label>
+          <input type="text" id="devQrName" placeholder="e.g. GCash, GoTyme, Maya, BPI">
+        </div>
         <div class="form-group">
           <label>Upload QR Code Image</label>
-          <div class="qr-preview" id="qrPreview"><span style="font-size:32px;color:var(--text-muted)">📷</span></div>
-          <input type="file" id="qrUpload" accept="image/*" onchange="handleQrUpload(event)" style="font-size:14px">
-          <button onclick="removeQrCode()" style="background:var(--bg-danger);margin-top:5px;font-size:13px;padding:8px">✕ Remove QR</button>
+          <input type="file" id="devQrUpload" accept="image/*" style="font-size:14px">
         </div>
-        <div class="form-group">
-          <label>Subscription Contract (editable)</label>
+        <button onclick="addDevQrCode()" style="background:#17a2b8">➕ Add Payment QR</button>
+        <div class="form-group" style="margin-top:15px">
+          <label>Subscription Contract (shown before QR)</label>
           <textarea id="subscriptionContract" rows="6" class="no-capitalize" style="width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;font-size:12px;resize:vertical;font-family:inherit"></textarea>
-          <button onclick="saveQrAndContract()" style="background:var(--bg-success);margin-top:5px">💾 Save QR & Contract</button>
+          <button onclick="saveDevContract()" style="background:var(--bg-success);margin-top:5px">💾 Save Contract</button>
         </div>
+        
+        <!-- Dev Suggestion Inbox -->
+        <h3>📬 Suggestion Inbox</h3>
+        <p style="font-size:12px;color:var(--text-muted);margin-bottom:10px">View and reply to customer suggestions. These are copies — customers can delete theirs but your copy stays.</p>
+        <div id="devSuggestionInbox"></div>
       </div>
+      <h3>💳 Support Developer</h3>
+      <button onclick="startDevPaymentFlow()" style="background:#28a745">💳 Pay Developer</button>
       <h3>💾 Data Management</h3>
       <button onclick="backupToFile()" style="background:#6c757d">📥 Backup to File</button>
       <button onclick="restoreFromFile()" style="background:#6c757d">📤 Restore from File</button>
@@ -415,6 +452,10 @@
       <button onclick="addIsEntry2('expense')" style="font-size:13px;padding:8px">➕ Add Expense</button>
 
       <div id="isSummary2" style="margin-top:15px"></div>
+      <h3>📊 Income vs Expense Chart</h3>
+      <div class="analysis-chart" id="incomeChart">
+        <div class="chart-bar-container" id="incomeChartBars"></div>
+      </div>
       <button onclick="exportIncomeStatement()" style="background:#17a2b8;margin-top:15px">📤 Export to Excel</button>
     </div>
 
@@ -449,6 +490,10 @@
         <button onclick="addBsEntry('equity')" style="font-size:13px;padding:8px">➕ Add Equity</button>
 
         <div id="bsSummary" style="margin-top:15px"></div>
+        <h3>📊 Assets vs Liabilities Chart</h3>
+        <div class="analysis-chart" id="balanceChart">
+          <div class="chart-bar-container" id="balanceChartBars"></div>
+        </div>
       </div>
       <button onclick="exportBalanceSheet()" style="background:#17a2b8;margin-top:15px">📤 Export to Excel</button>
     </div>
