@@ -1,4 +1,6 @@
-var CACHE_NAME = 'water-billing-v6';
+var CACHE_NAME = 'water-billing-v7'; // Incremented version to force update
+
+// All files to be cached by the Service Worker
 var urlsToCache = [
   '/',
   '/index.html',
@@ -25,8 +27,10 @@ var urlsToCache = [
 self.addEventListener('install', function (event) {
   event.waitUntil(
     caches.open(CACHE_NAME).then(function (cache) {
+      console.log('Service Worker: Caching files');
       return cache.addAll(urlsToCache);
     }).then(function () {
+      // Force the waiting service worker to become the active service worker.
       return self.skipWaiting();
     })
   );
@@ -39,11 +43,13 @@ self.addEventListener('activate', function (event) {
       return Promise.all(
         cacheNames.map(function (cacheName) {
           if (cacheName !== CACHE_NAME) {
+            console.log('Service Worker: Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
       );
     }).then(function () {
+      // Tell the active service worker to take control of the page immediately.
       return self.clients.claim();
     })
   );
@@ -51,30 +57,42 @@ self.addEventListener('activate', function (event) {
 
 // Fetch - serve from cache, fallback to network
 self.addEventListener('fetch', function (event) {
-  // Skip non-GET requests
-  if (event.request.method !== 'GET') return;
+  // Skip non-GET requests (e.g., POST to Google Apps Script)
+  if (event.request.method !== 'GET') {
+    return;
+  }
 
-  // Skip API calls (Google Apps Script)
-  if (event.request.url.indexOf('script.google.com') !== -1) return;
-  if (event.request.url.indexOf('timeapi.io') !== -1) return;
-  if (event.request.url.indexOf('worldtimeapi.org') !== -1) return;
-  if (event.request.url.indexOf('cloudflare.com') !== -1) return;
+  // Skip external API calls that should not be cached
+  var externalApis = [
+    'script.google.com',
+    'timeapi.io',
+    'worldtimeapi.org',
+    'cloudflare.com'
+  ];
+  if (externalApis.some(api => event.request.url.includes(api))) {
+    return;
+  }
 
   event.respondWith(
     caches.match(event.request).then(function (response) {
-      if (response) return response;
+      // Cache hit - return response
+      if (response) {
+        return response;
+      }
+
+      // Not in cache - go to network
       return fetch(event.request).then(function (networkResponse) {
-        // Cache successful responses
+        // Cache successful responses for future use
         if (networkResponse && networkResponse.status === 200) {
-          var responseClone = networkResponse.clone();
+          var responseToCache = networkResponse.clone();
           caches.open(CACHE_NAME).then(function (cache) {
-            cache.put(event.request, responseClone);
+            cache.put(event.request, responseToCache);
           });
         }
         return networkResponse;
       }).catch(function () {
-        // Offline fallback for HTML pages
-        if (event.request.headers.get('accept').indexOf('text/html') !== -1) {
+        // Network failed - offline fallback for HTML pages
+        if (event.request.headers.get('accept').includes('text/html')) {
           return caches.match('/index.html');
         }
       });
