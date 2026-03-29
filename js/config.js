@@ -112,7 +112,7 @@ var THEMES = {
   rose: { name: 'Rose', icon: '🌹', body: '#fce4ec', container: '#fff', accent: '#c2185b', accentHover: '#ad1457', success: '#e91e63', text: '#880e4f', textSec: '#ad1457', border: '#f48fb1', input: '#fff5f8', tableEven: '#fce4ec', cardBorder: '#f8bbd0', warning: '#ff6f00', warnText: '#fff', shadow: 'rgba(194,24,91,.1)' },
   lavender: { name: 'Lavender', icon: '💜', body: '#ede7f6', container: '#fff', accent: '#7b1fa2', accentHover: '#6a1b9a', success: '#9c27b0', text: '#4a148c', textSec: '#7b1fa2', border: '#ce93d8', input: '#faf5ff', tableEven: '#f3e5f5', cardBorder: '#e1bee7', warning: '#ff8f00', warnText: '#333', shadow: 'rgba(123,31,162,.1)' },
   midnight: { name: 'Midnight', icon: '🌃', body: '#0d1117', container: '#161b22', accent: '#58a6ff', accentHover: '#79b8ff', success: '#3fb950', text: '#c9d1d9', textSec: '#8b949e', border: '#30363d', input: '#0d1117', tableEven: '#1c2230', cardBorder: '#21262d', warning: '#d29922', warnText: '#fff', shadow: 'rgba(0,0,0,.4)' },
-  sand: { name: 'Sand', icon: '🏖', body: '#fdf6ec', container: '#fffdf7', accent: '#8d6e63', accentHover: '#6d4c41', success: '#a1887f', text: '#4e342e', textSec: '#795548', border: '#d7ccc8', input: '#fffdf7', tableEven: '#efebe9', cardBorder: '#d7ccc8', warning: '#ff8f00', warnText: '#333', shadow: 'rgba(141,110,99,.1)' },
+  sand: { name: 'Sand', icon: '🏖️', body: '#fdf6ec', container: '#fffdf7', accent: '#8d6e63', accentHover: '#6d4c41', success: '#a1887f', text: '#4e342e', textSec: '#795548', border: '#d7ccc8', input: '#fffdf7', tableEven: '#efebe9', cardBorder: '#d7ccc8', warning: '#ff8f00', warnText: '#333', shadow: 'rgba(141,110,99,.1)' },
   slate: { name: 'Slate', icon: '🪨', body: '#eceff1', container: '#fff', accent: '#546e7a', accentHover: '#37474f', success: '#607d8b', text: '#263238', textSec: '#546e7a', border: '#b0bec5', input: '#f5f7f8', tableEven: '#eceff1', cardBorder: '#cfd8dc', warning: '#ffb300', warnText: '#333', shadow: 'rgba(84,110,122,.1)' },
   cherry: { name: 'Cherry', icon: '🍒', body: '#ffebee', container: '#fff', accent: '#d32f2f', accentHover: '#b71c1c', success: '#e53935', text: '#b71c1c', textSec: '#c62828', border: '#ef9a9a', input: '#fff5f5', tableEven: '#ffebee', cardBorder: '#ffcdd2', warning: '#ff6f00', warnText: '#fff', shadow: 'rgba(211,47,47,.1)' },
   teal: { name: 'Teal', icon: '🌿', body: '#e0f2f1', container: '#fff', accent: '#00796b', accentHover: '#00695c', success: '#00897b', text: '#004d40', textSec: '#00695c', border: '#80cbc4', input: '#f0fffe', tableEven: '#e0f2f1', cardBorder: '#b2dfdb', warning: '#ff8f00', warnText: '#333', shadow: 'rgba(0,121,107,.1)' }
@@ -245,6 +245,12 @@ function autoCapitalize(val) {
   });
 }
 
+// === NORMALIZE NAME (replaces multiple spaces) ===
+function normalizeName(name) {
+  if (!name) return '';
+  return name.replace(/\s+/g, ' ').trim();
+}
+
 function setupAutoCapitalize() {
   // Use event delegation on document body for all current and future inputs
   document.body.addEventListener('blur', function (e) {
@@ -264,7 +270,7 @@ function setupAutoCapitalize() {
 
     // Auto capitalize
     if (el.value && el.value.length > 0) {
-      el.value = autoCapitalize(el.value);
+      el.value = autoCapitalize(normalizeName(el.value));
     }
   }, true); // Use capture phase to catch all blur events
 }
