@@ -2,6 +2,9 @@
 // CUSTOMIZE.JS - Themes, Backgrounds & Branding
 // ============================================
 
+// === CONSTANTS ===
+var MAX_SAVED_BACKGROUNDS = 20;
+
 // === APPLY THEME ===
 function applyTheme(id) {
   var t = THEMES[id] || THEMES.light;
@@ -26,12 +29,15 @@ function applyTheme(id) {
   r.setProperty('--border-focus', t.accent);
   r.setProperty('--shadow-color', t.shadow);
 
-  document.querySelector('meta[name="theme-color"]').content = t.accent;
+  var metaTheme = document.querySelector('meta[name="theme-color"]');
+  if (metaTheme) metaTheme.content = t.accent;
 }
 
 // === APPLY VISUALS ===
 function applyVisuals() {
-  var c = getCustomization(), im = getImages();
+  var c = getCustomization();
+  var im = getImages();
+
   applyTheme(c.theme || 'light');
 
   if (im.backgroundImage) {
@@ -51,11 +57,13 @@ function applyVisuals() {
 function renderThemeGrid() {
   var g = document.getElementById('themeGrid');
   if (!g) return;
+
   var c = getCustomization();
+  var currentTheme = c.theme || 'light';
 
   g.innerHTML = Object.keys(THEMES).map(function (id) {
     var t = THEMES[id];
-    var isActive = (c.theme || 'light') === id;
+    var isActive = currentTheme === id;
 
     return '<div class="theme-swatch ' + (isActive ? 'active' : '') + '" ' +
       'onclick="previewTheme(\'' + id + '\')" ' +
@@ -71,11 +79,14 @@ function renderThemeGrid() {
 function renderPresetGrid() {
   var g = document.getElementById('presetGrid');
   if (!g) return;
+
   var c = getCustomization();
 
   g.innerHTML = PRESETS.map(function (p, i) {
     var bg = p.gradient === 'none' ? THEMES[p.theme].body : p.gradient;
-    return '<div class="preset-card ' + (c.activePreset === i ? 'active' : '') + '" ' +
+    var isActive = c.activePreset === i;
+
+    return '<div class="preset-card ' + (isActive ? 'active' : '') + '" ' +
       'onclick="applyPreset(' + i + ')" ' +
       'style="background:' + bg + '">' + p.name + '</div>';
   }).join('');
@@ -83,6 +94,8 @@ function renderPresetGrid() {
 
 // === PREVIEW & APPLY THEME ===
 function previewTheme(id) {
+  if (!THEMES[id]) return;
+
   applyTheme(id);
   var c = getCustomization();
   c.theme = id;
@@ -94,6 +107,8 @@ function previewTheme(id) {
 
 // === APPLY PRESET ===
 function applyPreset(i) {
+  if (i < 0 || i >= PRESETS.length) return;
+
   var p = PRESETS[i];
   var c = getCustomization();
   c.theme = p.theme;
@@ -116,25 +131,43 @@ function applyPreset(i) {
 // === SAVED BACKGROUNDS ===
 function saveCurrentBgAsPreset() {
   var im = getImages();
-  if (!im.backgroundImage) { alert('No background.'); return }
-
-  var s = getSavedBgs();
-  if (s.some(function (b) { return b.data === im.backgroundImage })) {
-    alert('Already saved.');
+  if (!im.backgroundImage) {
+    alert('No background image to save');
     return;
   }
 
-  s.push({ id: Date.now(), name: 'BG ' + (s.length + 1), data: im.backgroundImage });
+  var s = getSavedBgs();
+
+  // Check for duplicates
+  if (s.some(function (b) { return b.data === im.backgroundImage; })) {
+    alert('This background is already saved');
+    return;
+  }
+
+  // Check limit
+  if (s.length >= MAX_SAVED_BACKGROUNDS) {
+    alert('Maximum ' + MAX_SAVED_BACKGROUNDS + ' saved backgrounds allowed.\nPlease delete one first.');
+    return;
+  }
+
+  s.push({
+    id: Date.now(),
+    name: 'BG ' + (s.length + 1),
+    data: im.backgroundImage
+  });
+
   saveSavedBgs(s);
-  scheduleSync();
+  if (typeof scheduleSync === 'function') scheduleSync();
   renderSavedBgs();
-  alert('✅ Saved!');
+  alert('✅ Background saved!');
 }
 
 function renderSavedBgs() {
   var g = document.getElementById('savedBgGrid');
   if (!g) return;
-  var s = getSavedBgs(), im = getImages();
+
+  var s = getSavedBgs();
+  var im = getImages();
 
   if (!s.length) {
     g.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--text-muted);font-size:13px">No saved backgrounds</p>';
@@ -142,17 +175,19 @@ function renderSavedBgs() {
   }
 
   g.innerHTML = s.map(function (b) {
-    return '<div class="saved-bg-item ' + (im.backgroundImage === b.data ? 'active' : '') + '" ' +
+    var isActive = im.backgroundImage === b.data;
+    return '<div class="saved-bg-item ' + (isActive ? 'active' : '') + '" ' +
       'style="background-image:url(' + b.data + ')" ' +
-      'onclick="applySavedBg(' + b.id + ')">' +
-      '<button class="delete-bg" onclick="event.stopPropagation();deleteSavedBg(' + b.id + ')">✕</button>' +
+      'onclick="applySavedBg(\'' + b.id + '\')">' +
+      '<button class="delete-bg" onclick="event.stopPropagation();deleteSavedBg(\'' + b.id + '\')">✕</button>' +
       '</div>';
   }).join('');
 }
 
 function applySavedBg(id) {
+  id = parseInt(id) || id;
   var s = getSavedBgs();
-  var b = s.find(function (x) { return x.id === id });
+  var b = s.find(function (x) { return x.id == id; });
   if (!b) return;
 
   var im = getImages();
@@ -165,6 +200,7 @@ function applySavedBg(id) {
   saveCustomizationData(c);
 
   document.body.style.backgroundImage = 'url(' + b.data + ')';
+
   var bp = document.getElementById('bgPreview');
   if (bp) {
     bp.style.backgroundImage = 'url(' + b.data + ')';
@@ -173,14 +209,42 @@ function applySavedBg(id) {
 
   renderSavedBgs();
   renderPresetGrid();
-  scheduleSync();
+  if (typeof scheduleSync === 'function') scheduleSync();
 }
 
 function deleteSavedBg(id) {
-  if (!confirm('Delete?')) return;
-  saveSavedBgs(getSavedBgs().filter(function (b) { return b.id !== id }));
-  scheduleSync();
+  id = parseInt(id) || id;
+  if (!confirm('Delete this saved background?')) return;
+
+  saveSavedBgs(getSavedBgs().filter(function (b) { return b.id != id; }));
+  if (typeof scheduleSync === 'function') scheduleSync();
   renderSavedBgs();
+}
+
+// === VALIDATE IMAGE FILE ===
+function validateImageFile(file) {
+  if (!file) return false;
+
+  var validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'];
+  if (validTypes.indexOf(file.type) === -1) {
+    alert('⚠ Please select a valid image file (JPEG, PNG, GIF, WebP)');
+    return false;
+  }
+
+  if (file.size > MAX_IMAGE_SIZE_MB * 1024 * 1024) {
+    alert('⚠ File too large. Maximum ' + MAX_IMAGE_SIZE_MB + 'MB allowed.');
+    return false;
+  }
+
+  return true;
+}
+
+// === RESET PROGRESS BAR ===
+function resetProgressBar(progressId, barId) {
+  var p = document.getElementById(progressId);
+  var b = document.getElementById(barId);
+  if (p) p.classList.remove('active');
+  if (b) b.style.width = '0';
 }
 
 // === LOGO UPLOAD ===
@@ -188,33 +252,55 @@ function handleLogoUpload(e) {
   var f = e.target.files[0];
   if (!f) return;
 
+  if (!validateImageFile(f)) {
+    e.target.value = '';
+    return;
+  }
+
   var p = document.getElementById('logoProgress');
   var b = document.getElementById('logoProgressBar');
-  p.classList.add('active');
-  b.style.width = '30%';
+  if (p) p.classList.add('active');
+  if (b) b.style.width = '30%';
 
-  resizeImage(f, 200, 200, .85).then(function (d) {
-    b.style.width = '80%';
-    var im = getImages();
-    im.companyLogo = d;
-    saveImages(im);
-    scheduleSync();
-    document.getElementById('logoPreview').innerHTML = '<img src="' + d + '">';
-    b.style.width = '100%';
-    setTimeout(function () { p.classList.remove('active'); b.style.width = '0' }, 500);
-  }).catch(function () {
-    alert('Error');
-    p.classList.remove('active');
-  });
+  resizeImage(f, 200, 200, 0.85)
+    .then(function (d) {
+      if (b) b.style.width = '80%';
+
+      var im = getImages();
+      im.companyLogo = d;
+      saveImages(im);
+      if (typeof scheduleSync === 'function') scheduleSync();
+
+      var preview = document.getElementById('logoPreview');
+      if (preview) preview.innerHTML = '<img src="' + d + '">';
+
+      if (b) b.style.width = '100%';
+      setTimeout(function () { resetProgressBar('logoProgress', 'logoProgressBar'); }, 500);
+    })
+    .catch(function (err) {
+      alert('❌ Error uploading logo: ' + (err.message || 'Unknown error'));
+      resetProgressBar('logoProgress', 'logoProgressBar');
+    });
 }
 
 function removeLogo() {
   var im = getImages();
+  if (!im.companyLogo) {
+    alert('No logo to remove');
+    return;
+  }
+
+  if (!confirm('Remove company logo?')) return;
+
   im.companyLogo = '';
   saveImages(im);
-  scheduleSync();
-  document.getElementById('logoPreview').innerHTML = '<span style="font-size:32px;color:var(--text-muted)">📷</span>';
-  document.getElementById('logoUpload').value = '';
+  if (typeof scheduleSync === 'function') scheduleSync();
+
+  var preview = document.getElementById('logoPreview');
+  if (preview) preview.innerHTML = '<span style="font-size:32px;color:var(--text-muted)">📷</span>';
+
+  var upload = document.getElementById('logoUpload');
+  if (upload) upload.value = '';
 }
 
 // === BACKGROUND UPLOAD ===
@@ -222,39 +308,62 @@ function handleBgUpload(e) {
   var f = e.target.files[0];
   if (!f) return;
 
+  if (!validateImageFile(f)) {
+    e.target.value = '';
+    return;
+  }
+
   var p = document.getElementById('bgProgress');
   var b = document.getElementById('bgProgressBar');
-  p.classList.add('active');
-  b.style.width = '20%';
+  if (p) p.classList.add('active');
+  if (b) b.style.width = '20%';
 
-  resizeImage(f, 1920, 1080, .7).then(function (d) {
-    b.style.width = '70%';
-    var im = getImages();
-    im.backgroundImage = d;
-    saveImages(im);
+  resizeImage(f, 1920, 1080, 0.7)
+    .then(function (d) {
+      if (b) b.style.width = '70%';
 
-    var c = getCustomization();
-    c.backgroundPreset = '';
-    c.activePreset = undefined;
-    saveCustomizationData(c);
+      var im = getImages();
+      im.backgroundImage = d;
+      saveImages(im);
 
-    document.body.style.backgroundImage = 'url(' + d + ')';
-    var bp = document.getElementById('bgPreview');
-    bp.style.backgroundImage = 'url(' + d + ')';
-    bp.textContent = '';
-    renderPresetGrid();
+      var c = getCustomization();
+      c.backgroundPreset = '';
+      c.activePreset = undefined;
+      saveCustomizationData(c);
 
-    b.style.width = '100%';
-    scheduleSync();
-    setTimeout(function () { p.classList.remove('active'); b.style.width = '0' }, 500);
-  }).catch(function () {
-    alert('Error');
-    p.classList.remove('active');
-  });
+      document.body.style.backgroundImage = 'url(' + d + ')';
+
+      var bp = document.getElementById('bgPreview');
+      if (bp) {
+        bp.style.backgroundImage = 'url(' + d + ')';
+        bp.textContent = '';
+      }
+
+      renderPresetGrid();
+
+      if (b) b.style.width = '100%';
+      if (typeof scheduleSync === 'function') scheduleSync();
+      setTimeout(function () { resetProgressBar('bgProgress', 'bgProgressBar'); }, 500);
+    })
+    .catch(function (err) {
+      alert('❌ Error uploading background: ' + (err.message || 'Unknown error'));
+      resetProgressBar('bgProgress', 'bgProgressBar');
+    });
 }
 
 function removeBackground() {
   var im = getImages();
+  if (!im.backgroundImage) {
+    var c = getCustomization();
+    if (!c.backgroundPreset || c.backgroundPreset === 'none') {
+      alert('No background to remove');
+      return;
+    }
+  }
+
+  if (!confirm('Remove background?')) return;
+
+  im = getImages();
   im.backgroundImage = '';
   saveImages(im);
 
@@ -264,43 +373,63 @@ function removeBackground() {
   saveCustomizationData(c);
 
   document.body.style.backgroundImage = 'none';
+
   var bp = document.getElementById('bgPreview');
-  bp.style.backgroundImage = 'none';
-  bp.textContent = 'No background set';
-  document.getElementById('bgUpload').value = '';
+  if (bp) {
+    bp.style.backgroundImage = 'none';
+    bp.textContent = 'No background set';
+  }
+
+  var upload = document.getElementById('bgUpload');
+  if (upload) upload.value = '';
 
   renderPresetGrid();
   renderSavedBgs();
-  scheduleSync();
+  if (typeof scheduleSync === 'function') scheduleSync();
 }
 
-// === LOAD FORM ===
+// === LOAD CUSTOMIZATION FORM ===
 function loadCustomizationForm() {
-  var c = getCustomization(), im = getImages();
+  var c = getCustomization();
+  var im = getImages();
 
-  document.getElementById('companyName').value = c.companyName || '';
-  document.getElementById('companyAddress').value = c.companyAddress || '';
-  document.getElementById('companyPhone').value = c.companyPhone || '';
-  document.getElementById('companyEmail').value = c.companyEmail || '';
+  // Company fields
+  var el;
+  el = document.getElementById('companyName');
+  if (el) el.value = c.companyName || '';
+
+  el = document.getElementById('companyAddress');
+  if (el) el.value = c.companyAddress || '';
+
+  el = document.getElementById('companyPhone');
+  if (el) el.value = c.companyPhone || '';
+
+  el = document.getElementById('companyEmail');
+  if (el) el.value = c.companyEmail || '';
 
   // Logo preview
-  if (im.companyLogo) {
-    document.getElementById('logoPreview').innerHTML = '<img src="' + im.companyLogo + '">';
-  } else {
-    document.getElementById('logoPreview').innerHTML = '<span style="font-size:32px;color:var(--text-muted)">📷</span>';
+  var logoPreview = document.getElementById('logoPreview');
+  if (logoPreview) {
+    if (im.companyLogo) {
+      logoPreview.innerHTML = '<img src="' + im.companyLogo + '">';
+    } else {
+      logoPreview.innerHTML = '<span style="font-size:32px;color:var(--text-muted)">📷</span>';
+    }
   }
 
   // Background preview
   var bp = document.getElementById('bgPreview');
-  if (im.backgroundImage) {
-    bp.style.backgroundImage = 'url(' + im.backgroundImage + ')';
-    bp.textContent = '';
-  } else if (c.backgroundPreset && c.backgroundPreset !== 'none') {
-    bp.style.backgroundImage = c.backgroundPreset;
-    bp.textContent = '';
-  } else {
-    bp.style.backgroundImage = 'none';
-    bp.textContent = 'No background set';
+  if (bp) {
+    if (im.backgroundImage) {
+      bp.style.backgroundImage = 'url(' + im.backgroundImage + ')';
+      bp.textContent = '';
+    } else if (c.backgroundPreset && c.backgroundPreset !== 'none') {
+      bp.style.backgroundImage = c.backgroundPreset;
+      bp.textContent = '';
+    } else {
+      bp.style.backgroundImage = 'none';
+      bp.textContent = 'No background set';
+    }
   }
 
   renderThemeGrid();
@@ -311,10 +440,24 @@ function loadCustomizationForm() {
 // === SAVE CUSTOMIZATION ===
 function saveCustomization() {
   var c = getCustomization();
-  c.companyName = autoCapitalize(document.getElementById('companyName').value.trim());
-  c.companyAddress = autoCapitalize(document.getElementById('companyAddress').value.trim());
-  c.companyPhone = document.getElementById('companyPhone').value.trim();
-  c.companyEmail = document.getElementById('companyEmail').value.trim();
+
+  var nameEl = document.getElementById('companyName');
+  var addrEl = document.getElementById('companyAddress');
+  var phoneEl = document.getElementById('companyPhone');
+  var emailEl = document.getElementById('companyEmail');
+
+  c.companyName = nameEl ? autoCapitalize(nameEl.value.trim()) : c.companyName || '';
+  c.companyAddress = addrEl ? autoCapitalize(addrEl.value.trim()) : c.companyAddress || '';
+  c.companyPhone = phoneEl ? phoneEl.value.trim() : c.companyPhone || '';
+  c.companyEmail = emailEl ? emailEl.value.trim() : c.companyEmail || '';
+
+  // Validate email format if provided
+  if (c.companyEmail && c.companyEmail.indexOf('@') === -1) {
+    alert('⚠ Please enter a valid email address');
+    if (emailEl) emailEl.focus();
+    return;
+  }
+
   saveCustomizationData(c);
-  alert('✅ Saved!');
+  alert('✅ Branding saved!');
 }
