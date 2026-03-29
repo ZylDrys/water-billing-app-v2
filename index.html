@@ -19,7 +19,7 @@
       <h2>🔒 Enter Password</h2>
       <div style="position:relative">
         <input id="loginPassword" type="password" placeholder="Password" style="width:100%;padding:12px;margin:15px 0;border-radius:8px;border:1px solid #ccc" autocomplete="off">
-        <span id="toggleLoginPassword" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px">👁</span>
+        <span id="toggleLoginPassword" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px">👁️</span>
       </div>
       <div id="loginMessage" style="color:red;font-size:14px;min-height:18px"></div>
       <button id="loginBtn" style="width:100%;padding:12px;background:#007bff;color:#fff;border:none;border-radius:8px;font-weight:bold;cursor:pointer">Login</button>
@@ -32,7 +32,7 @@
       <h2 id="promptTitle"></h2>
       <div style="position:relative">
         <input id="promptInput" type="text" style="width:100%;padding:12px;margin:15px 0;border-radius:8px;border:1px solid #ccc;font-size:16px" autocomplete="off">
-        <span id="togglePromptPassword" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px;display:none">👁</span>
+        <span id="togglePromptPassword" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px;display:none">👁️</span>
       </div>
       <div style="display:flex;gap:10px">
         <button id="promptCancel" style="background:#dc3545">Cancel</button>
@@ -44,7 +44,7 @@
   <!-- TEMP PASSWORD DURATION MODAL -->
   <div id="tempDurationModal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:10002">
     <div style="background:#fff;padding:25px;border-radius:12px;width:min(340px,90vw);box-shadow:0 4px 12px rgba(0,0,0,.2);text-align:center">
-      <h3 style="margin:0 0 15px;border:none;padding:0">⏱ Set Expiry Duration</h3>
+      <h3 style="margin:0 0 15px;border:none;padding:0">⏱️ Set Expiry Duration</h3>
       <p style="font-size:12px;color:#666;margin-bottom:12px">Choose how long the temporary password will be valid.</p>
       <div class="form-group" style="margin-bottom:10px">
         <label>Duration Value</label>
@@ -77,15 +77,15 @@
 
   <!-- SYNC INDICATOR -->
   <div class="sync-indicator synced" id="syncIndicator" onclick="manualSync()" title="Click to sync now">
-    <span id="syncIcon">☁</span><span id="syncText">Synced</span>
+    <span id="syncIcon">☁️</span><span id="syncText">Synced</span>
   </div>
 
   <!-- DEV MODE INDICATOR -->
-  <div class="dev-mode-indicator" id="devModeIndicator">🛠 DEV</div>
+  <div class="dev-mode-indicator" id="devModeIndicator">🛠️ DEV</div>
 
   <!-- TIMER WIDGET -->
   <div class="timer-widget" id="timerWidget">
-    <button class="timer-toggle" id="timerToggle" title="Toggle timer">⏱</button>
+    <button class="timer-toggle" id="timerToggle" title="Toggle timer">⏱️</button>
     <div class="timer-display" id="timerDisplay">
       <div class="timer-label">Temp Password Expires</div>
       <div class="timer-countdown inactive" id="timerCountdown">No temp password</div>
@@ -141,7 +141,6 @@
     <div id="customizeSection" class="section">
       <button onclick="showSection('menuSection')">← Back</button>
       <h2>🎨 Customize</h2>
-
       <h3>🏢 Company Branding</h3>
       <div class="form-group">
         <label>Company Logo</label>
@@ -154,10 +153,8 @@
       <div class="form-group"><label>Company Address</label><input type="text" id="companyAddress" placeholder="e.g. 123 Main St"></div>
       <div class="form-group"><label>Phone</label><input type="text" id="companyPhone" placeholder="e.g. 0917-123-4567"></div>
       <div class="form-group"><label>Email</label><input type="email" id="companyEmail" placeholder="e.g. info@aquapure.com"></div>
-
       <h3>🎨 Themes</h3><div class="theme-grid" id="themeGrid"></div>
-
-      <h3>🖼 Background</h3>
+      <h3>🖼️ Background</h3>
       <div class="form-group">
         <label>Upload Background</label>
         <div class="bg-preview" id="bgPreview">No background set</div>
@@ -168,12 +165,9 @@
           <button onclick="removeBackground()" style="background:var(--bg-danger);font-size:13px;padding:8px;flex:1">✕ Remove</button>
         </div>
       </div>
-
       <h3>📁 Saved Backgrounds</h3>
       <div class="saved-bg-grid" id="savedBgGrid"><p style="grid-column:1/-1;text-align:center;color:var(--text-muted);font-size:13px">No saved backgrounds</p></div>
-
       <h3>✨ Presets</h3><div class="preset-grid" id="presetGrid"></div>
-
       <button onclick="saveCustomization()" style="margin-top:20px;font-size:16px;padding:14px">💾 Save All</button>
     </div>
 
@@ -181,7 +175,6 @@
     <div id="settingsSection" class="section">
       <button onclick="showSection('menuSection')">← Back</button>
       <h2>⚙️ Settings</h2>
-
       <h3>💰 Billing</h3>
       <div class="currency-switcher">
         <strong>Currency:</strong>
@@ -193,43 +186,38 @@
       <div class="form-group"><label>Minimum Charge</label><input type="number" id="adminMinCharge" step="0.01" min="0" placeholder="Min charge"></div>
       <div class="form-group"><label>Penalty Rate (% of total due)</label><input type="number" id="adminPenaltyRate" step="0.1" min="0" max="100" placeholder="e.g. 10 for 10%"></div>
       <div class="form-group"><label style="display:flex;align-items:center;cursor:pointer"><input type="checkbox" id="adminRoundOff">Round off total to nearest whole number</label></div>
-
       <h3>🔐 Security</h3>
       <div>
         <label>Password</label>
         <div style="position:relative">
           <input type="password" id="adminPassword" placeholder="Enter password to save" data-clear-on-confirm="true" autocomplete="off" />
-          <span id="eyeIcon" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer">👁</span>
+          <span id="eyeIcon" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer">👁️</span>
         </div>
       </div>
       <button onclick="saveSettings()">💾 Save Settings</button>
-
       <div>
         <label>Master Password</label>
         <div style="position:relative;margin-bottom:10px">
           <input type="password" id="masterPassword" placeholder="Enter master password" data-clear-on-confirm="true" autocomplete="off">
-          <span id="eyeIconMaster" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer">👁</span>
+          <span id="eyeIconMaster" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer">👁️</span>
         </div>
         <button onclick="confirmMasterPassword()">Confirm Master Password</button>
       </div>
-
       <div id="masterPasswordActions" style="margin-top:10px;display:none">
         <button onclick="changeMasterPassword()">🔑 Change Master Password</button>
-        <button onclick="showDefaultMasterPassword()">👁 Show Default</button>
+        <button onclick="showDefaultMasterPassword()">👁️ Show Default</button>
         <button onclick="restoreDefaultMasterPassword()">🔄 Restore Default</button>
-        <button id="devModeToggleBtn" onclick="toggleDevMode()" style="background:#17a2b8;margin-top:5px">🛠 Enable Developer Mode</button>
+        <button id="devModeToggleBtn" onclick="toggleDevMode()" style="background:#17a2b8;margin-top:5px">🛠️ Enable Developer Mode</button>
       </div>
-
       <div id="temporaryPasswordButtonContainer" style="display:none;margin-top:15px">
         <button onclick="createTempPasswordPrompt()">➕ Create Temp Password</button>
-        <button onclick="deleteTempPassword()">🗑 Delete Temp Password</button>
+        <button onclick="deleteTempPassword()">🗑️ Delete Temp Password</button>
         <div style="display:flex;gap:8px;margin-top:5px">
           <button onclick="addTimeToTempPassword()" style="background:#17a2b8;flex:1">➕ Add Time</button>
           <button onclick="subtractTimeFromTempPassword()" style="background:#e65100;flex:1">➖ Subtract Time</button>
         </div>
-        <button onclick="restoreDefaults()">🔄 Restore Default</button>
+        <button onclick="restoreDefaults()">🔄 Restore Defaults</button>
       </div>
-
       <div id="qrPaymentSection" style="display:none;margin-top:15px">
         <h3>📱 Payment QR Code</h3>
         <div class="form-group">
@@ -244,7 +232,6 @@
           <button onclick="saveQrAndContract()" style="background:var(--bg-success);margin-top:5px">💾 Save QR & Contract</button>
         </div>
       </div>
-
       <h3>💾 Data Management</h3>
       <button onclick="backupToFile()" style="background:#6c757d">📥 Backup to File</button>
       <button onclick="restoreFromFile()" style="background:#6c757d">📤 Restore from File</button>
@@ -264,13 +251,12 @@
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin:10px 0;padding:10px;background:var(--bg-table-even);border-radius:8px;">
         <label style="margin:0;display:flex;align-items:center;cursor:pointer;"><input type="checkbox" id="selectAllCustomers" onchange="toggleSelectAllCustomers()"> Select All</label>
-        <button onclick="bulkDeleteCustomers()" style="width:auto;padding:8px 14px;background:var(--bg-danger);margin:0;font-size:13px;">🗑 Delete Selected</button>
+        <button onclick="bulkDeleteCustomers()" style="width:auto;padding:8px 14px;background:var(--bg-danger);margin:0;font-size:13px;">🗑️ Delete Selected</button>
       </div>
       <div class="form-group">
         <input type="text" id="newCustomerName" placeholder="Enter customer name">
         <button onclick="addCustomer()">➕ Add Customer</button>
       </div>
-
       <h3>📥 Import Customers</h3>
       <div class="import-mode-selector" id="importModeSelector">
         <button class="active" onclick="setImportMode('simple',this)">Simple (Names)</button>
@@ -306,7 +292,7 @@
       </div>
       <div class="total-display">Total Due: <span id="displayCurrencySymbol">$</span><span id="displayTotal">0.00</span></div>
       <button onclick="saveBill(false)">💾 Save Only</button>
-      <button onclick="saveBill(true)">🖨 Save & Print</button>
+      <button onclick="saveBill(true)">🖨️ Save & Print</button>
     </div>
 
     <!-- TRANSACTIONS HUB -->
@@ -320,7 +306,7 @@
         <div class="menu-card accent-purple" onclick="showSection('analysisSection')">
           <div class="menu-icon">📈</div><div class="menu-label">Analysis</div><div class="menu-desc">Reports & charts</div><div class="menu-accent"></div>
         </div>
-        <div class="menu-card accent-orange" onclick="showSection('incomeStatementSection')">
+        <div class="menu-card accent-yellow" onclick="showSection('incomeStatementSection')">
           <div class="menu-icon">💹</div><div class="menu-label">Income Statement</div><div class="menu-desc">Income vs Expense</div><div class="menu-accent"></div>
         </div>
         <div class="menu-card accent-green" onclick="showSection('balanceSheetSection')">
@@ -362,15 +348,15 @@
         <option value="all">All Status</option>
         <option value="paid">✅ Paid</option>
         <option value="unpaid">❌ Unpaid</option>
-        <option value="partial">⚠ Partial</option>
+        <option value="partial">⚠️ Partial</option>
       </select>
       <div style="display:flex;justify-content:space-between;align-items:center;margin:15px 0;padding:12px;background:var(--bg-table-even);border-radius:8px;flex-wrap:wrap;gap:10px;border:1px solid var(--bg-card-border)">
         <label style="margin:0;width:100%;display:flex;align-items:center;cursor:pointer;"><input type="checkbox" id="selectAllHistory" onchange="toggleSelectAllHistory()"> Select All</label>
         <div style="display:flex;gap:8px;width:100%;flex-wrap:wrap;">
           <button onclick="bulkMarkHistory('paid')" style="flex:1;padding:8px;font-size:12px;background:var(--bg-success);margin:0;min-width:60px;">✅ Pay</button>
           <button onclick="bulkMarkHistory('unpaid')" style="flex:1;padding:8px;font-size:12px;background:#6c757d;margin:0;min-width:60px;">❌ Unpay</button>
-          <button onclick="bulkPrintHistory()" style="flex:1;padding:8px;font-size:12px;background:#17a2b8;margin:0;min-width:60px;">🖨 Print</button>
-          <button onclick="bulkDeleteHistory()" style="flex:1;padding:8px;font-size:12px;background:var(--bg-danger);margin:0;min-width:60px;">🗑 Delete</button>
+          <button onclick="bulkPrintHistory()" style="flex:1;padding:8px;font-size:12px;background:#17a2b8;margin:0;min-width:60px;">🖨️ Print</button>
+          <button onclick="bulkDeleteHistory()" style="flex:1;padding:8px;font-size:12px;background:var(--bg-danger);margin:0;min-width:60px;">🗑️ Delete</button>
         </div>
       </div>
       <div id="historySummary" style="margin:10px 0"></div>
@@ -388,9 +374,9 @@
         <button onclick="setAnalysisPeriod('yearly',this)">Yearly</button>
       </div>
       <div class="period-selector">
-        <button onclick="changeAnalysisPeriod(-1)">◀</button>
+        <button onclick="changeAnalysisPeriod(-1)">◀️</button>
         <div class="current-period" id="analysisPeriodLabel">January 2025</div>
-        <button onclick="changeAnalysisPeriod(1)">▶</button>
+        <button onclick="changeAnalysisPeriod(1)">▶️</button>
       </div>
       <div class="stat-grid" id="analysisStats"></div>
       <div class="analysis-chart" id="analysisChart">
