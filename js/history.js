@@ -334,10 +334,23 @@ function bulkPrintHistory() {
     '<span>Outstanding:</span><span style="color:#ff6b6b">' + cf.format(ts - tc) + '</span></div>' +
     '</div></div>';
 
-  var receiptEl = document.getElementById('printReceipt');
-  if (receiptEl) {
-    receiptEl.innerHTML = html;
-    window.print();
-    receiptEl.innerHTML = '';
-  }
+    if (typeof printDocument === 'function') {
+        printDocument(null, html);      // null = no single bill data (bulk report)
+    } else {
+        var receiptEl = document.getElementById('printReceipt');
+        if (receiptEl) {
+            receiptEl.innerHTML = html;
+            window.print();
+            var _cleared2 = false;
+            function _clearOnce2() {
+                if (_cleared2) return; _cleared2 = true;
+                receiptEl.innerHTML = '';
+            }
+            window.addEventListener('afterprint', function _ap2() {
+                _clearOnce2();
+                window.removeEventListener('afterprint', _ap2);
+            });
+            setTimeout(_clearOnce2, 8000);
+        }
+    }
 }
