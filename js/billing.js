@@ -399,12 +399,26 @@ function printBill(bill) {
     new Date().toLocaleString() + '</div>' +
     '</div>';
 
-  var receiptEl = document.getElementById('printReceipt');
-  if (receiptEl) {
-    receiptEl.innerHTML = html;
-    window.print();
-    receiptEl.innerHTML = '';
-  }
+  if (typeof printDocument === 'function') {
+        printDocument(bill, html);
+    } else {
+        // Fallback if printer.js not loaded
+        var receiptEl = document.getElementById('printReceipt');
+        if (receiptEl) {
+            receiptEl.innerHTML = html;
+            window.print();
+            var _cleared = false;
+            function _clearOnce() {
+                if (_cleared) return; _cleared = true;
+                receiptEl.innerHTML = '';
+            }
+            window.addEventListener('afterprint', function _ap() {
+                _clearOnce();
+                window.removeEventListener('afterprint', _ap);
+            });
+            setTimeout(_clearOnce, 8000);
+        }
+    }
 }
 
 // === EXPORT ALL BILLS ===
