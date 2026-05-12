@@ -142,6 +142,88 @@
       <button class="customize-btn" onclick="showSection('customizeSection')" title="Customize">🎨</button>
     </div>
 
+    <!--
+  =================================================================
+PASTE BLOCK 1 — Bluetooth Printer Indicator (top-left area)
+=================================================================
+-->
+
+<!-- BT PRINTER INDICATOR (shows when connected) -->
+<div id="btPrinterIndicator"
+     onclick="_showPrinterModal()"
+     title="Bluetooth printer connected — click to manage"
+     style="display:none;position:fixed;top:40px;right:10px;z-index:8998;
+            font-size:11px;padding:4px 10px;border-radius:20px;cursor:pointer;
+            background:rgba(40,167,69,.12);color:#28a745;font-weight:700;
+            backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+            box-shadow:0 1px 6px rgba(0,0,0,.1)">
+  🖨️ BT
+</div>
+
+<!--
+=================================================================
+PASTE BLOCK 2 — Printer Selection Modal
+=================================================================
+-->
+
+<!-- PRINTER MODAL -->
+<div id="printerModal"
+     style="position:fixed;top:0;left:0;width:100%;height:100%;
+            background:rgba(0,0,0,.55);display:none;
+            align-items:center;justify-content:center;z-index:10005">
+  <div style="background:#fff;padding:24px;border-radius:14px;
+              width:min(360px,92vw);box-shadow:0 8px 32px rgba(0,0,0,.2)">
+
+    <h3 style="margin:0 0 6px;border:none;padding:0;font-size:18px">🖨️ Print</h3>
+    <p style="font-size:12px;color:#666;margin:0 0 16px">
+      Choose how to send this document to your printer.
+    </p>
+
+    <!-- System Print -->
+    <div style="padding:14px;border:1px solid #e0e0e0;border-radius:10px;margin-bottom:10px">
+      <div style="font-weight:700;font-size:14px;margin-bottom:4px">🖥️ System Print</div>
+      <div style="font-size:12px;color:#666;margin-bottom:10px">
+        Works with any printer your device can see — WiFi, USB, Cloud, Bluetooth Classic.
+        Opens a print preview window.
+      </div>
+      <button onclick="printViaSystem(printerState.pendingHtml)"
+              style="margin:0;padding:10px;background:#007bff;font-size:14px">
+        🖨️ Open Print Dialog
+      </button>
+    </div>
+
+    <!-- Bluetooth (BLE) Print -->
+    <div style="padding:14px;border:1px solid #e0e0e0;border-radius:10px;margin-bottom:10px">
+      <div style="font-weight:700;font-size:14px;margin-bottom:4px">📱 Bluetooth Thermal Print</div>
+      <div style="font-size:12px;color:#666;margin-bottom:6px">
+        Prints directly to an ESC/POS Bluetooth thermal receipt printer (58mm / 80mm).
+        Requires Chrome on Android or desktop.
+      </div>
+      <div id="btPrinterStatus" style="font-size:12px;margin-bottom:8px">
+        <span style="color:#999">⚫ No Bluetooth printer connected</span>
+      </div>
+      <button id="btConnectBtn" onclick="connectBluetoothPrinter()"
+              style="margin:0 0 5px;padding:10px;background:#17a2b8;font-size:13px">
+        🔗 Scan &amp; Connect Printer
+      </button>
+      <button id="btPrintBtn" onclick="printViaBluetooth(printerState.pendingBill)"
+              style="margin:0 0 5px;padding:10px;background:#28a745;font-size:13px"
+              disabled>
+        📄 Print via Bluetooth
+      </button>
+      <button id="btDisconnectBtn" onclick="disconnectBluetoothPrinter()"
+              style="display:none;margin:0 0 5px;padding:10px;background:#dc3545;font-size:13px">
+        ⛓️ Disconnect
+      </button>
+    </div>
+
+    <button onclick="closePrinterModal()"
+            style="margin:0;padding:10px;background:#6c757d;font-size:14px">
+      Cancel
+    </button>
+  </div>
+</div>
+
     <!-- MAIN MENU -->
     <div id="menuSection" class="section active">
       <div class="menu-grid">
@@ -514,6 +596,7 @@
   <script src="js/balance.js"></script>
   <script src="js/customize.js"></script>
   <script src="js/ui.js"></script>
+  <script src="js/printer.js"></script>
   <script src="js/app.js"></script>
 
   <script>
